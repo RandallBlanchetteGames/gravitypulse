@@ -51,16 +51,22 @@ export class GameRules {
   checkAndResetActions(player) {
     const usedCount = Object.values(player.usedActions).filter(Boolean).length;
     if (usedCount >= 5) {
-      player.usedActions = {
-        [TURN_ACTIONS.MOVE_1]: false,
-        [TURN_ACTIONS.MOVE_2]: false,
-        [TURN_ACTIONS.MOVE_3]: false,
-        [TURN_ACTIONS.GRAVITY]: false,
-        [TURN_ACTIONS.PULSE]: false
-      };
+      this.resetActions(player);
       return true; // Actions rested!
     }
     return false;
+  }
+
+  /* Reset all actions for a player at the beginning of a turn or round */
+  resetActions(player) {
+    if (!player) return;
+    player.usedActions = {
+      [TURN_ACTIONS.MOVE_1]: false,
+      [TURN_ACTIONS.MOVE_2]: false,
+      [TURN_ACTIONS.MOVE_3]: false,
+      [TURN_ACTIONS.GRAVITY]: false,
+      [TURN_ACTIONS.PULSE]: false
+    };
   }
 
   /* Spawn space hazards at start of round if enabled */

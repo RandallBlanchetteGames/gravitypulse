@@ -264,7 +264,7 @@ export default function App() {
         nextTurn = 1;
 
         // Reset & recharge action cards for all players at start of new round!
-        updatedPlayers.forEach(p => rules.checkAndResetActions(p));
+        updatedPlayers.forEach(p => rules.resetActions(p));
         roundLogs.push(`🔄 All action cards recharged for Round ${nextRound}!`);
 
         // Check Match End Condition
@@ -279,11 +279,8 @@ export default function App() {
       }
     }
 
-    // Check and rest actions if active player used all 5 cards mid-round
-    const targetPlayer = updatedPlayers[nextIdx];
-    if (targetPlayer && rules.checkAndResetActions(targetPlayer)) {
-      roundLogs.push(`Player ${targetPlayer.id} rested and recharged all action cards.`);
-    }
+    // At the beginning of each turn, players have all actions available to them again!
+    updatedPlayers.forEach(p => rules.resetActions(p));
 
     // Final sync of supercharge state with final round-end board
     updatedPlayers = updatedPlayers.map(p => {
