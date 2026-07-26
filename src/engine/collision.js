@@ -75,7 +75,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       soundEngine.playExplosion();
     }
 
-    // Cube vs Energy -> Supercharge or Overload Blow Up!
+    // Cube vs Energy Field -> Supercharge or Overload Blow Up!
     if (cubes.length > 0 && energies.length > 0 && !cubes.some(c => destroyedIds.has(c.id))) {
       const luckyCube = cubes[0];
       if (luckyCube.isSupercharged) {
@@ -89,7 +89,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       } else {
         luckyCube.isSupercharged = true;
         energies.forEach(eng => destroyedIds.add(eng.id));
-        logs.push(`⚡ Player ${luckyCube.playerId} absorbed Cosmic Energy (Supercharged)!`);
+        logs.push(`⚡ Player ${luckyCube.playerId} entered a Cosmic Energy Field (Supercharged)!`);
         effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'SUPERCHARGE' });
         soundEngine.playSupercharge();
       }
@@ -120,12 +120,12 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       soundEngine.playExplosion();
     }
 
-    // Asteroid vs Energy -> Asteroid crushes the crystal!
+    // Asteroid vs Energy Field -> Asteroid dissipates the field!
     if (asteroids.length > 0 && energies.length > 0) {
       energies.forEach(eng => {
         if (!destroyedIds.has(eng.id)) {
           destroyedIds.add(eng.id);
-          logs.push(`☄️ Asteroid crushed an Energy Crystal!`);
+          logs.push(`☄️ Asteroid dissipated a Cosmic Energy Field!`);
           effects.push({ id: Math.random() + eng.id, x: eng.x, y: eng.y, type: 'COLLISION' });
         }
       });

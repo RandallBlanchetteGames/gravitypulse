@@ -87,7 +87,7 @@ export class GameRules {
     }
     if (emptyCells.length === 0) return [];
 
-    // Spawn 1 Asteroid and 1 Energy token
+    // Spawn 1 Asteroid and 1 Cosmic Energy Field
     const randIdx1 = Math.floor(Math.random() * emptyCells.length);
     const cell1 = emptyCells.splice(randIdx1, 1)[0];
     newEntities.push({

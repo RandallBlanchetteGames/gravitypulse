@@ -55,13 +55,13 @@ export function RulesModal({ isOpen, onClose }) {
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🕳️ TURN 4 SINGULARITY SUCTION & ZONES</h4>
-            <p>At the end of Turn 4, the center Black Hole activates, sucking in all pieces and asteroids! <strong>Zone 1 (Event Horizon)</strong> is pulled <strong>2 spaces</strong> inward! <strong>Zone 2 (Accretion Field)</strong> is pulled <strong>1 space</strong> inward into Zone 1. <strong>Zone 3 (Outer Sector)</strong> is safe space! Hover over grid cells to check your zone status.</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🕳️ TURN 4 SINGULARITY SUCTION & ORBITAL DRIFT</h4>
+            <p>At the end of every turn, massless ⚡ <strong>Cosmic Energy Fields</strong> rotate 1 space clockwise along their orbit ring! Then, at the climax of Turn 4 (end of round), the center Black Hole Singularity pulls <strong>all ships, asteroids, and energy fields across the entire map inward by 1 space</strong>!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
             <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>⚡ SUPERCHARGE & ENERGY OVERLOAD</h4>
-            <p>Collect floating ⚡ <strong>Energy Crystals</strong> to become <strong>Supercharged</strong> (doubling your wave power to 2 spaces!). But beware: absorbing another energy crystal while already supercharged causes an <strong>Energy Overload blow up</strong> that destroys your piece!</p>
+            <p>Enter orbiting ⚡ <strong>Cosmic Energy Fields</strong> to absorb plasma and become <strong>Supercharged</strong> (doubling your wave power to 2 spaces!). Because these fields have no mass, they cannot be pushed or pulled by waves! Beware: absorbing another energy field while already supercharged causes an <strong>Energy Overload blow up</strong> that destroys your ship!</p>
           </div>
         </div>
 

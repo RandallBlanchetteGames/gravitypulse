@@ -123,7 +123,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
             }}
           >
             <Sparkles size={18} />
-            {hazardsEnabled ? 'Enabled (Asteroids & Energy Spawn Each Round)' : 'Disabled (Pure Tactical Gravity Mode)'}
+            {hazardsEnabled ? 'Enabled (Asteroids & Energy Fields Spawn Each Round)' : 'Disabled (Pure Tactical Gravity Mode)'}
           </button>
         </div>
 

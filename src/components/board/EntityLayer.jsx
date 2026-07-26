@@ -46,7 +46,7 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
           );
         }
 
-        // Render Energy Crystal Power-ups
+        // Render Cosmic Energy Fields
         if (entity.type === ENTITY_TYPES.ENERGY) {
           return (
             <div
@@ -59,10 +59,11 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
             >
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
-                className="energy-crystal"
-                title="⚡ ENERGY CRYSTAL: Collect to become Supercharged & double wave power!"
+                className="energy-field"
+                title="⚡ COSMIC ENERGY FIELD: Enter to absorb plasma, becoming Supercharged & doubling wave power!"
               >
-                <Zap size={15} color="#fff" fill="#00ff66" />
+                <div className="energy-field-ring" />
+                <Zap size={16} color="#fff" fill="#00ff66" style={{ zIndex: 2 }} />
               </div>
             </div>
           );

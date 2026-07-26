@@ -178,21 +178,21 @@ export function executeLocalizedGravity(board, rules) {
   return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
 }
 
-/* Execute Black Hole Suction Phase: pull all players and asteroids on the map inward 1 space */
+/* Execute Black Hole Suction Phase: pull all players, asteroids, and energy fields on the map inward 1 space */
 export function executeBlackHoleSuction(board, rules) {
   let currentBoard = board.map(e => ({ ...e }));
   const size = rules.getBoardSize();
   const cx = (size - 1) / 2;
   const cy = (size - 1) / 2;
 
-  const logs = [`🕳️ Black Hole Singularity pulls all ships and asteroids inward 1 space!`];
+  const logs = [`🕳️ Black Hole Singularity pulls all ships, asteroids, and energy fields inward 1 space!`];
   let allRespawns = [];
   let allEffects = [];
 
   soundEngine.playGravityHum(true);
 
   const targets = sortEntitiesByTieBreaker(
-    currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID),
+    currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID || e.type === ENTITY_TYPES.ENERGY),
     size
   );
 

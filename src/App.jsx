@@ -7,6 +7,7 @@ import { PHASES, TURN_ACTIONS, ENTITY_TYPES, PLAYER_COLORS, MAP_SIZES, MOVEMENT_
 import { GameRules } from './engine/rules.js';
 import { executeMove, previewTrajectory, previewWaveDisplacements } from './engine/movementResolver.js';
 import { executeGravity, executePulse, executeLocalizedGravity, executeBlackHoleSuction } from './engine/gravityPulse.js';
+import { executeOrbitalMovement } from './engine/orbitalMovement.js';
 import { getAIPlacement, getAITurnDecision } from './engine/aiDecision.js';
 import { saveGameSession, loadGameSession, clearGameSession } from './engine/storage.js';
 import { soundEngine } from './audio/soundEngine.js';
@@ -222,6 +223,12 @@ export default function App() {
     if (nextIdx >= updatedPlayers.length) {
       nextIdx = 0;
       nextTurn += 1;
+
+      // Execute orbital rotation for massless Cosmic Energy Fields at the end of each Turn
+      const orbRes = executeOrbitalMovement(updatedBoard, rules.getBoardSize(), roundLogs);
+      updatedBoard = orbRes.finalBoard;
+      if (orbRes.respawnQueue && orbRes.respawnQueue.length > 0) newRespawns.push(...orbRes.respawnQueue);
+      if (orbRes.effects) dispatchEffects(orbRes.effects);
 
       if (nextTurn <= 4) {
         roundLogs.push(`--- Round ${currentRound} | Turn ${nextTurn} of 4 ---`);
