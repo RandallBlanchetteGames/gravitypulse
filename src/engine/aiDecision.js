@@ -69,11 +69,14 @@ export function getAITurnDecision(board, playerId, rules) {
       if (action.id === TURN_ACTIONS.GRAVITY) {
         // Good if others are near edges or asteroids
         score += others.length * 10;
+        const asteroids = board.filter(e => e.type === ENTITY_TYPES.ASTEROID);
+        score += asteroids.length * 5;
         if (myPiece.isSupercharged) score += 25;
       } else if (action.id === TURN_ACTIONS.PULSE) {
-        // Good if others are crowded near us
+        // Good if others or asteroids are crowded near us
         const closeCount = others.filter(o => getChebyshevDistance(myPiece.x, myPiece.y, o.x, o.y) <= 2).length;
-        score += closeCount * 30;
+        const closeAsteroids = board.filter(e => e.type === ENTITY_TYPES.ASTEROID && getChebyshevDistance(myPiece.x, myPiece.y, e.x, e.y) <= 2).length;
+        score += closeCount * 30 + closeAsteroids * 20;
         if (myPiece.isSupercharged) score += 25;
       }
 

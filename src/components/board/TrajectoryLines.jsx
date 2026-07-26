@@ -52,14 +52,15 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
         />
       )}
 
-      {/* Option A: Wave Displacement Arrows for all affected opponents */}
+      {/* Option A: Wave Displacement Arrows for all affected pieces & asteroids */}
       {hasWave && waveDisplacements.map((d, idx) => {
+        const isAsteroid = d.entityType === 'ASTEROID';
         const x1 = `${getPercent(d.from.x)}%`;
         const y1 = `${getPercent(d.from.y)}%`;
         const x2 = `${getPercent(d.to.x)}%`;
         const y2 = `${getPercent(d.to.y)}%`;
         const strokeUrl = d.danger ? "url(#waveDanger)" : "url(#waveSafe)";
-        const shadowColor = d.danger ? "#ef4444" : "#00f0ff";
+        const shadowColor = d.danger ? "#ef4444" : (isAsteroid ? "#f59e0b" : "#00f0ff");
 
         return (
           <g key={`wave-${d.entityId}-${idx}`} style={{ filter: `drop-shadow(0 0 8px ${shadowColor})` }}>
@@ -69,17 +70,26 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
               x2={x2}
               y2={y2}
               stroke={strokeUrl}
-              strokeWidth="2.5"
-              strokeDasharray="4 3"
+              strokeWidth={isAsteroid ? "2" : "2.5"}
+              strokeDasharray={isAsteroid ? "2 3" : "4 3"}
             />
-            <circle
-              cx={x2}
-              cy={y2}
-              r="7"
-              fill="none"
-              stroke={d.danger ? "#ef4444" : "#00ff66"}
-              strokeWidth="2"
-            />
+            {isAsteroid ? (
+              <polygon
+                points={`${getPercent(d.to.x)},${getPercent(d.to.y) - 1.5} ${getPercent(d.to.x) + 1.5},${getPercent(d.to.y)} ${getPercent(d.to.x)},${getPercent(d.to.y) + 1.5} ${getPercent(d.to.x) - 1.5},${getPercent(d.to.y)}`}
+                fill="none"
+                stroke={d.danger ? "#ef4444" : "#f59e0b"}
+                strokeWidth="2"
+              />
+            ) : (
+              <circle
+                cx={x2}
+                cy={y2}
+                r="7"
+                fill="none"
+                stroke={d.danger ? "#ef4444" : "#00ff66"}
+                strokeWidth="2"
+              />
+            )}
           </g>
         );
       })}

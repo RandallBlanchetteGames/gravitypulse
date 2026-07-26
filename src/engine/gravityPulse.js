@@ -34,12 +34,12 @@ export function executeGravity(board, playerId, rules) {
   let allEffects = [];
 
   for (let s = 1; s <= power; s++) {
-    const otherCubes = sortEntitiesByTieBreaker(
-      currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE && e.id !== activeCube.id),
+    const targets = sortEntitiesByTieBreaker(
+      currentBoard.filter(e => (e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id),
       rules.getBoardSize()
     );
 
-    otherCubes.forEach(target => {
+    targets.forEach(target => {
       const d = getChebyshevDistance(target.x, target.y, activeCube.x, activeCube.y);
       const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
       if (s <= maxSteps) {
@@ -76,12 +76,12 @@ export function executePulse(board, playerId, rules) {
   let allEffects = [];
 
   for (let s = 1; s <= power; s++) {
-    const otherCubes = sortEntitiesByTieBreaker(
-      currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE && e.id !== activeCube.id),
+    const targets = sortEntitiesByTieBreaker(
+      currentBoard.filter(e => (e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id),
       rules.getBoardSize()
     );
 
-    otherCubes.forEach(target => {
+    targets.forEach(target => {
       const d = getChebyshevDistance(activeCube.x, activeCube.y, target.x, target.y);
       const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
       if (s <= maxSteps) {
@@ -173,21 +173,21 @@ export function executeBlackHoleSuction(board, rules) {
 
   soundEngine.playGravityHum(true);
 
-  // We run up to 2 steps for Zone 1 pieces
+  // We run up to 2 steps for Zone 1 pieces & asteroids
   for (let step = 1; step <= 2; step++) {
-    const cubes = sortEntitiesByTieBreaker(
-      currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE),
+    const targets = sortEntitiesByTieBreaker(
+      currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID),
       size
     );
 
     let movedInStep = false;
-    cubes.forEach(cube => {
-      const dist = Math.max(Math.abs(cube.x - cx) - 0.5, Math.abs(cube.y - cy) - 0.5);
+    targets.forEach(entity => {
+      const dist = Math.max(Math.abs(entity.x - cx) - 0.5, Math.abs(entity.y - cy) - 0.5);
       const maxSteps = dist <= 1 ? 2 : (dist <= 2 ? 1 : 0);
       if (step <= maxSteps) {
-        const vec = getStepVector(cube.x, cube.y, cx, cy);
-        cube.x += vec.x;
-        cube.y += vec.y;
+        const vec = getStepVector(entity.x, entity.y, cx, cy);
+        entity.x += vec.x;
+        entity.y += vec.y;
         movedInStep = true;
       }
     });

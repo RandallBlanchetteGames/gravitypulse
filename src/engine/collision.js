@@ -22,6 +22,9 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
         logs.push(`🚀 Player ${entity.playerId} drifted into deep void!`);
         respawnQueue.push(entity.playerId);
         effects.push({ id: Math.random() + entity.id, x: Math.max(0, Math.min(boardSize - 1, entity.x)), y: Math.max(0, Math.min(boardSize - 1, entity.y)), type: 'COLLISION' });
+      } else if (entity.type === ENTITY_TYPES.ASTEROID) {
+        logs.push(`☄️ Asteroid drifted off into deep void!`);
+        effects.push({ id: Math.random() + entity.id, x: Math.max(0, Math.min(boardSize - 1, entity.x)), y: Math.max(0, Math.min(boardSize - 1, entity.y)), type: 'COLLISION' });
       }
       soundEngine.playExplosion();
       return;
@@ -33,6 +36,9 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       if (entity.type === ENTITY_TYPES.CUBE) {
         logs.push(`🕳️ Player ${entity.playerId} sucked into the Singularity (Destroyed)!`);
         respawnQueue.push(entity.playerId);
+        effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
+      } else if (entity.type === ENTITY_TYPES.ASTEROID) {
+        logs.push(`☄️ Asteroid sucked into the Singularity!`);
         effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
       }
       soundEngine.playExplosion();
@@ -100,6 +106,29 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
         }
       });
       soundEngine.playExplosion();
+    }
+
+    // Asteroid vs Asteroid -> Both shatter!
+    if (asteroids.length > 1) {
+      asteroids.forEach(a => {
+        if (!destroyedIds.has(a.id)) {
+          destroyedIds.add(a.id);
+        }
+      });
+      logs.push(`☄️ Two Asteroids collided and shattered in deep space!`);
+      effects.push({ id: Math.random() + asteroids[0].id, x: asteroids[0].x, y: asteroids[0].y, type: 'COLLISION' });
+      soundEngine.playExplosion();
+    }
+
+    // Asteroid vs Energy -> Asteroid crushes the crystal!
+    if (asteroids.length > 0 && energies.length > 0) {
+      energies.forEach(eng => {
+        if (!destroyedIds.has(eng.id)) {
+          destroyedIds.add(eng.id);
+          logs.push(`☄️ Asteroid crushed an Energy Crystal!`);
+          effects.push({ id: Math.random() + eng.id, x: eng.x, y: eng.y, type: 'COLLISION' });
+        }
+      });
     }
   });
 

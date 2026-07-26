@@ -51,12 +51,12 @@ export function RulesModal({ isOpen, onClose }) {
 
           <div style={{ padding: '12px', background: 'rgba(157, 78, 221, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-violet)' }}>
             <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES (DISTANCE ATTENUATED)</h4>
-            <p>Unleash cosmic waves! <strong>Gravity Wave</strong> pulls opponents toward you; <strong>Pulse Wave</strong> pushes them away. Wave strength weakens with distance: <strong>Full power</strong> within 2 spaces, <strong>1 space</strong> at 3-4 spaces, and <strong>unaffected</strong> at 5+ spaces! Hover over a wave card to preview wave displacement arrows!</p>
+            <p>Unleash cosmic waves! <strong>Gravity Wave</strong> pulls opponents and floating <strong>Asteroids</strong> toward you; <strong>Pulse Wave</strong> pushes them away! Wave strength weakens with distance: <strong>Full power</strong> within 2 spaces, <strong>1 space</strong> at 3-4 spaces, and <strong>unaffected</strong> at 5+ spaces! Hover over a wave card to preview displacement arrows (amber diamonds for asteroids)!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
             <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🕳️ TURN 4 SINGULARITY SUCTION & ZONES</h4>
-            <p>At the end of Turn 4, the center Black Hole activates! <strong>Zone 1 (Event Horizon)</strong> is pulled <strong>2 spaces</strong> directly into destruction! <strong>Zone 2 (Accretion Field)</strong> is pulled <strong>1 space</strong> inward into Zone 1. <strong>Zone 3 (Outer Sector)</strong> is safe space! Hover over grid cells to check your zone status.</p>
+            <p>At the end of Turn 4, the center Black Hole activates, sucking in all pieces and asteroids! <strong>Zone 1 (Event Horizon)</strong> is pulled <strong>2 spaces</strong> inward! <strong>Zone 2 (Accretion Field)</strong> is pulled <strong>1 space</strong> inward into Zone 1. <strong>Zone 3 (Outer Sector)</strong> is safe space! Hover over grid cells to check your zone status.</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
