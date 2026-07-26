@@ -20,14 +20,16 @@ export function BlackHoleOverlay({ boardSize }) {
         boxShadow: 'inset 0 0 20px #000, 0 0 15px var(--accent-gold)'
       }} />
       <span style={{
-        fontSize: is18 ? '0.6rem' : '0.75rem',
+        fontSize: is18 ? '0.55rem' : '0.68rem',
         fontWeight: 900,
         color: 'var(--accent-gold)',
-        letterSpacing: '0.1em',
+        letterSpacing: '0.05em',
         textShadow: '0 0 10px #000, 0 0 20px var(--accent-plasma)',
-        zIndex: 5
+        zIndex: 5,
+        textAlign: 'center',
+        lineHeight: 1.1
       }}>
-        CORE
+        BLACK<br />HOLE
       </span>
     </div>
   );
