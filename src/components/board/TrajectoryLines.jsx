@@ -21,20 +21,12 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
       width: '100%',
       height: '100%',
       pointerEvents: 'none',
-      zIndex: 15
+      zIndex: 30
     }}>
       <defs>
         <linearGradient id="trajGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="var(--accent-cyan)" stopOpacity="0.8" />
           <stop offset="100%" stopColor="var(--accent-supercharge)" stopOpacity="1" />
-        </linearGradient>
-        <linearGradient id="waveSafe" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#00f0ff" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="#9d4edd" stopOpacity="1" />
-        </linearGradient>
-        <linearGradient id="waveDanger" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="#ef4444" stopOpacity="1" />
         </linearGradient>
       </defs>
 
@@ -60,25 +52,25 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
 
         if (d.unaffected) {
           return (
-            <g key={`wave-${d.entityId}-${idx}`} style={{ opacity: 0.55, filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.35))' }}>
+            <g key={`wave-${d.entityId}-${idx}`} style={{ opacity: 0.75, filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.4))' }}>
               <circle
                 cx={x1}
                 cy={y1}
-                r={isAsteroid ? "12" : "15"}
+                r={isAsteroid ? "14" : "17"}
                 fill="none"
                 stroke={isAsteroid ? "#f59e0b" : "#00f0ff"}
-                strokeWidth="1.5"
-                strokeDasharray="3 3"
+                strokeWidth="2"
+                strokeDasharray="4 3"
               />
               <text
                 x={x1}
                 y={y1}
-                dy="-18"
+                dy="-24"
                 textAnchor="middle"
                 fill="#ffffff"
-                fontSize="6.5px"
-                fontWeight="800"
-                style={{ letterSpacing: '0.04em', textShadow: '0 0 3px #000' }}
+                fontSize="7.5px"
+                fontWeight="900"
+                style={{ letterSpacing: '0.05em', textShadow: '0 0 4px #000, 0 0 8px #000, 0 0 12px #000, 0 0 16px #000' }}
               >
                 {d.reason === 'OUT_OF_RANGE' ? 'OUT OF RANGE' : 'BLOCKED'}
               </text>
@@ -88,7 +80,7 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
 
         const x2 = `${getPercent(d.to.x)}%`;
         const y2 = `${getPercent(d.to.y)}%`;
-        const strokeUrl = d.danger ? "url(#waveDanger)" : "url(#waveSafe)";
+        const strokeColor = d.danger ? "#ef4444" : (isAsteroid ? "#ffaa00" : "#00f0ff");
         const shadowColor = d.danger ? "#ef4444" : (isAsteroid ? "#f59e0b" : "#00f0ff");
 
         return (
@@ -98,25 +90,25 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
               y1={y1}
               x2={x2}
               y2={y2}
-              stroke={strokeUrl}
-              strokeWidth={isAsteroid ? "2" : "2.5"}
-              strokeDasharray={isAsteroid ? "2 3" : "4 3"}
+              stroke={strokeColor}
+              strokeWidth={isAsteroid ? "2.5" : "3"}
+              strokeDasharray={isAsteroid ? "4 3" : "6 4"}
             />
             {isAsteroid ? (
               <polygon
-                points={`${getPercent(d.to.x)},${getPercent(d.to.y) - 1.5} ${getPercent(d.to.x) + 1.5},${getPercent(d.to.y)} ${getPercent(d.to.x)},${getPercent(d.to.y) + 1.5} ${getPercent(d.to.x) - 1.5},${getPercent(d.to.y)}`}
-                fill="none"
-                stroke={d.danger ? "#ef4444" : "#f59e0b"}
-                strokeWidth="2"
+                points={`${getPercent(d.to.x)},${getPercent(d.to.y) - 2.5} ${getPercent(d.to.x) + 2.5},${getPercent(d.to.y)} ${getPercent(d.to.x)},${getPercent(d.to.y) + 2.5} ${getPercent(d.to.x) - 2.5},${getPercent(d.to.y)}`}
+                fill={d.danger ? "rgba(239, 68, 68, 0.4)" : "rgba(255, 170, 0, 0.4)"}
+                stroke={d.danger ? "#ef4444" : "#ffaa00"}
+                strokeWidth="2.5"
               />
             ) : (
               <circle
                 cx={x2}
                 cy={y2}
-                r="7"
-                fill="none"
+                r="8"
+                fill={d.danger ? "rgba(239, 68, 68, 0.4)" : "rgba(0, 255, 102, 0.4)"}
                 stroke={d.danger ? "#ef4444" : "#00ff66"}
-                strokeWidth="2"
+                strokeWidth="2.5"
               />
             )}
           </g>

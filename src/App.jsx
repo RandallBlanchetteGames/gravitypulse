@@ -93,12 +93,13 @@ export default function App() {
     }));
 
     setPlayers(newPlayers);
-    setBoard([]);
+    const initAsteroids = rules.spawnInitialAsteroids([], rules.getBoardSize(), 2);
+    setBoard(initAsteroids);
     setActivePlayerIdx(0);
     setCurrentRound(1);
     setTurnInRound(1);
     setPhase(PHASES.SETUP);
-    setLogs([`🚀 Welcome to Gravity Pulse 2026! Setup phase initiated (${config.mapSize.label}).`]);
+    setLogs([`☄️ 2 initial asteroids deployed in outer space.`, `🚀 Welcome to Gravity Pulse 2026! Setup phase initiated (${config.mapSize.label}).`]);
     setHistoryStack([]);
     setExplosions([]);
     setRespawnQueue([]);
@@ -330,13 +331,11 @@ export default function App() {
       soundEngine.playSupercharge();
 
       if (activePlayerIdx + 1 >= players.length) {
-        // Setup done! Spawn 2 random initial asteroids in vacant spaces & transition to Playing
-        const initAsteroids = rules.spawnInitialAsteroids(nextBoard, rules.getBoardSize(), 2);
-        const startBoard = [...nextBoard, ...initAsteroids];
-        setBoard(startBoard);
+        // Setup done! Transition to Playing
+        setBoard(nextBoard);
         setActivePlayerIdx(0);
         setPhase(PHASES.PLAYING);
-        setLogs(prev => [...prev, `☄️ 2 random asteroids spawned in space!`, `All players deployed! Turn 1 initiated.`]);
+        setLogs(prev => [...prev, `All players deployed! Turn 1 initiated.`]);
       } else {
         setBoard(nextBoard);
         setActivePlayerIdx(activePlayerIdx + 1);

@@ -3,7 +3,7 @@
    ========================================================================== */
 
 import React from 'react';
-import { getRegionCoords, getRegionCenter, isBlackHole } from '../../engine/boardGeometry.js';
+import { isBlackHole } from '../../engine/boardGeometry.js';
 import { PHASES } from '../../engine/types.js';
 import { soundEngine } from '../../audio/soundEngine.js';
 
@@ -77,17 +77,7 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
       const handleClick = () => {
         if (isBH) return;
         soundEngine.playClick();
-        if (isPlacementPhase) {
-          const { rx, ry } = getRegionCoords(x, y);
-          const center = getRegionCenter(rx, ry);
-          if (!isBlackHole(center.x, center.y, boardSize)) {
-            onCellClick(center.x, center.y);
-          } else {
-            onCellClick(x, y);
-          }
-        } else {
-          onCellClick(x, y);
-        }
+        onCellClick(x, y);
       };
 
       cells.push(
