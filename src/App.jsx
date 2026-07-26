@@ -279,8 +279,11 @@ export default function App() {
       }
     }
 
-    // At the beginning of each turn, players have all actions available to them again!
-    updatedPlayers.forEach(p => rules.resetActions(p));
+    // Check and rest actions if active player used all 5 cards mid-round (fallback)
+    const targetPlayer = updatedPlayers[nextIdx];
+    if (targetPlayer && rules.checkAndResetActions(targetPlayer)) {
+      roundLogs.push(`Player ${targetPlayer.id} rested and recharged all action cards.`);
+    }
 
     // Final sync of supercharge state with final round-end board
     updatedPlayers = updatedPlayers.map(p => {
