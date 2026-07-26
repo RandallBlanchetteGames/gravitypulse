@@ -29,12 +29,10 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
     if (isBlackHole(entity.x, entity.y, boardSize)) {
       destroyedIds.add(entity.id);
       if (entity.type === ENTITY_TYPES.CUBE) {
-        logs.push(`🕳️ Player ${entity.playerId} entered the Singularity! (+1 Survival Score)`);
+        logs.push(`🕳️ Player ${entity.playerId} sucked into the Singularity (Destroyed)!`);
         respawnQueue.push(entity.playerId);
-        soundEngine.playSupercharge();
-      } else {
-        soundEngine.playExplosion();
       }
+      soundEngine.playExplosion();
     }
   });
 

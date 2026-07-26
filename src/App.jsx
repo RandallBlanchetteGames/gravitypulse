@@ -206,6 +206,19 @@ export default function App() {
         roundLogs.push(`☄️ Space hazards spawned in outer sector.`);
       }
 
+      // Award +1 Survival Point to players who survived the round
+      const survivingIds = new Set(updatedBoard.filter(e => e.type === ENTITY_TYPES.CUBE).map(c => c.playerId));
+      let survivorCount = 0;
+      updatedPlayers.forEach(p => {
+        if (survivingIds.has(p.id)) {
+          p.score = (p.score || 0) + 1;
+          survivorCount++;
+        }
+      });
+      if (survivorCount > 0) {
+        roundLogs.push(`🛡️ +1 Survival Point awarded to ${survivorCount} surviving player(s)!`);
+      }
+
       nextRound += 1;
 
       // Check Match End Condition
@@ -389,12 +402,15 @@ export default function App() {
       return p;
     });
 
-    // Check if active player scored by entering Black Hole
-    if (result.logs.some(l => l.includes('entered the Singularity'))) {
-      const pObj = nextPlayers.find(p => p.id === activePlayer.id);
-      if (pObj) {
-        pObj.score = (pObj.score || 0) + (pObj.isSupercharged ? 2 : 1);
-        pObj.isSupercharged = true;
+    // Award Elimination Bonus (+1 point per opponent destroyed during this action)
+    if (result.respawnQueue.length > 0) {
+      const opponentsDestroyed = result.respawnQueue.filter(pid => pid !== activePlayer.id);
+      if (opponentsDestroyed.length > 0) {
+        const pObj = nextPlayers.find(p => p.id === activePlayer.id);
+        if (pObj) {
+          pObj.score = (pObj.score || 0) + opponentsDestroyed.length;
+          result.logs.push(`🎯 Player ${activePlayer.id} eliminated ${opponentsDestroyed.length} opponent(s)! (+${opponentsDestroyed.length} Elimination Point${opponentsDestroyed.length > 1 ? 's' : ''})`);
+        }
       }
     }
 

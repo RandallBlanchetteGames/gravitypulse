@@ -46,12 +46,12 @@ export function RulesModal({ isOpen, onClose }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--text-main)' }}>
           <div style={{ padding: '12px', background: 'rgba(0, 240, 255, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-cyan)' }}>
             <h4 style={{ fontWeight: 800, color: 'var(--accent-cyan)', marginBottom: '4px' }}>🎯 OBJECTIVE & SCORE</h4>
-            <p>Navigate the deep space grid without drifting into the void or colliding with hazards! Navigate directly into the center <strong>Black Hole Singularity</strong> to score points and gain ⚡ <strong>Supercharged</strong> status!</p>
+            <p>Navigate the deep space grid without drifting into the void, colliding with Asteroids, or entering the center <strong>Black Hole Singularity</strong> (which destroys you!). Score <strong>+1 Survival Point</strong> for surviving each round, and <strong>+1 Elimination Point</strong> per opponent you destroy or push into hazards!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(157, 78, 221, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-violet)' }}>
             <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES</h4>
-            <p>Instead of regular steps, unleash waves! <strong>Gravity Wave</strong> pulls all opponents 1 space toward you. <strong>Pulse Wave</strong> pushes all opponents 1 space away! (If you are Supercharged, wave power doubles!).</p>
+            <p>Instead of regular steps, unleash waves! <strong>Gravity Wave</strong> pulls all opponents 1 space toward you. <strong>Pulse Wave</strong> pushes all opponents 1 space away! Collect floating ⚡ <strong>Energy Crystals</strong> to become <strong>Supercharged</strong> and double your wave power!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>

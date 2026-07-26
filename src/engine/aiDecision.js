@@ -94,8 +94,8 @@ export function getAITurnDecision(board, playerId, rules) {
         if (dest.x < 0 || dest.x >= size || dest.y < 0 || dest.y >= size) {
           score -= 1000;
         } else if (isBlackHole(dest.x, dest.y, size)) {
-          // Bonus if entering black hole for supercharge!
-          score += myPiece.isSupercharged ? 50 : 150;
+          // Penalty for entering black hole (destruction!)
+          score -= 1000;
         } else {
           // Score proximity to center (stay safe from edges)
           const distToCenter = getChebyshevDistance(dest.x, dest.y, cx, cy);
@@ -103,7 +103,7 @@ export function getAITurnDecision(board, playerId, rules) {
 
           // Bonus if landing on energy token
           if (board.some(e => e.type === ENTITY_TYPES.ENERGY && e.x === dest.x && e.y === dest.y)) {
-            score += 100;
+            score += 250;
           }
 
           // Penalty if landing on asteroid

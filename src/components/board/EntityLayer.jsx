@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GRAVITY PULSE 2026 - GPU ENTITY LAYER (CUBES, ASTEROIDS, ENERGY)
+   GRAVITY PULSE 2026 - GPU ENTITY LAYER (CELESTIAL ORBS, ASTEROIDS, ENERGY)
    ========================================================================== */
 
 import React from 'react';
@@ -12,49 +12,82 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
       {board.map(entity => {
         const xPct = entity.x * 100;
         const yPct = entity.y * 100;
+        const zIndex = entity.type === ENTITY_TYPES.CUBE ? (entity.playerId === activePlayerId ? 30 : 25) : 20;
 
-        let bgStyle = { background: '#475569' }; // default asteroid
-        let label = '☄️';
-        let isSuper = false;
-
+        // Render Celestial Player Orbs
         if (entity.type === ENTITY_TYPES.CUBE) {
           const colorObj = PLAYER_COLORS.find(c => c.id === entity.playerId) || PLAYER_COLORS[0];
-          bgStyle = {
-            background: `radial-gradient(circle at 30% 30%, #fff 0%, ${colorObj.hex} 40%, #030508 100%)`,
-            border: entity.playerId === activePlayerId ? '2px solid #fff' : '1px solid rgba(255,255,255,0.3)'
+          const bgStyle = {
+            background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${colorObj.hex} 38%, #020408 100%)`,
+            border: entity.playerId === activePlayerId ? '2px solid #ffffff' : '1px solid rgba(255,255,255,0.35)'
           };
-          label = `P${entity.playerId}`;
-          isSuper = entity.isSupercharged;
-        } else if (entity.type === ENTITY_TYPES.ENERGY) {
-          bgStyle = {
-            background: 'radial-gradient(circle, #10b981 0%, #064e3b 100%)',
-            border: '1px solid #00ff66',
-            boxShadow: '0 0 15px #00ff66'
-          };
-          label = <Zap size={14} color="#fff" fill="#00ff66" />;
-        } else if (entity.type === ENTITY_TYPES.ASTEROID) {
-          bgStyle = {
-            background: 'radial-gradient(circle at 40% 40%, #64748b 0%, #334155 60%, #0f172a 100%)',
-            border: '1px solid #94a3b8',
-            boxShadow: 'inset -2px -2px 6px #000'
-          };
-          label = <Disc size={16} color="#cbd5e1" />;
+
+          return (
+            <div
+              key={entity.id}
+              className="cell-wrapper"
+              style={{
+                transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
+                zIndex
+              }}
+            >
+              <div
+                onClick={() => onEntityClick && onEntityClick(entity)}
+                className={`celestial-orb ${entity.isSupercharged ? 'supercharged' : ''}`}
+                style={bgStyle}
+                title={`Player ${entity.playerId} Orb (${entity.isSupercharged ? '⚡ Supercharged' : 'Standard'})`}
+              >
+                P{entity.playerId}
+              </div>
+            </div>
+          );
         }
 
-        return (
-          <div
-            key={entity.id}
-            onClick={() => onEntityClick && onEntityClick(entity)}
-            className={`game-piece ${isSuper ? 'supercharged' : ''}`}
-            style={{
-              ...bgStyle,
-              transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
-              zIndex: entity.type === ENTITY_TYPES.CUBE ? (entity.playerId === activePlayerId ? 30 : 25) : 20
-            }}
-          >
-            {label}
-          </div>
-        );
+        // Render Energy Crystal Power-ups
+        if (entity.type === ENTITY_TYPES.ENERGY) {
+          return (
+            <div
+              key={entity.id}
+              className="cell-wrapper"
+              style={{
+                transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
+                zIndex
+              }}
+            >
+              <div
+                onClick={() => onEntityClick && onEntityClick(entity)}
+                className="energy-crystal"
+                title="⚡ ENERGY CRYSTAL: Collect to become Supercharged & double wave power!"
+              >
+                <Zap size={15} color="#fff" fill="#00ff66" />
+              </div>
+            </div>
+          );
+        }
+
+        // Render Asteroid Hazards
+        if (entity.type === ENTITY_TYPES.ASTEROID) {
+          return (
+            <div
+              key={entity.id}
+              className="cell-wrapper"
+              style={{
+                transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
+                zIndex
+              }}
+            >
+              <div
+                onClick={() => onEntityClick && onEntityClick(entity)}
+                className="asteroid-hazard"
+                title="⚠️ ASTEROID HAZARD: Destroys any piece that collides with it!"
+              >
+                <Disc size={18} color="#cbd5e1" />
+              </div>
+            </div>
+          );
+        }
+
+        return null;
       })}
     </div>
   );
