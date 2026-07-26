@@ -9,20 +9,24 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
   const hasWave = waveDisplacements && waveDisplacements.length > 0;
   if (!hasTraj && !hasWave) return null;
 
-  // Calculate center percentages for SVG line rendering
-  const getPercent = (val) => ((val + 0.5) / boardSize) * 100;
+  // Calculate center coordinate in 0..1000 SVG viewBox space
+  const getCoord = (val) => ((val + 0.5) / boardSize) * 1000;
 
-  const points = hasTraj ? [startPos, ...trajectory].map(p => `${getPercent(p.x)},${getPercent(p.y)}`).join(' ') : '';
+  const points = hasTraj ? [startPos, ...trajectory].map(p => `${getCoord(p.x)},${getCoord(p.y)}`).join(' ') : '';
 
   return (
-    <svg style={{
-      position: 'absolute',
-      inset: 0,
-      width: '100%',
-      height: '100%',
-      pointerEvents: 'none',
-      zIndex: 30
-    }}>
+    <svg
+      viewBox="0 0 1000 1000"
+      preserveAspectRatio="none"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 30
+      }}
+    >
       <defs>
         <linearGradient id="trajGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="var(--accent-cyan)" stopOpacity="0.8" />
@@ -35,11 +39,11 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
         <polyline
           fill="none"
           stroke="url(#trajGrad)"
-          strokeWidth="3"
-          strokeDasharray="6 4"
+          strokeWidth="6"
+          strokeDasharray="12 8"
           points={points}
           style={{
-            filter: 'drop-shadow(0 0 6px var(--accent-cyan))'
+            filter: 'drop-shadow(0 0 10px var(--accent-cyan))'
           }}
         />
       )}
@@ -47,30 +51,30 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
       {/* Option A: Wave Displacement Arrows for all affected pieces & asteroids */}
       {hasWave && waveDisplacements.map((d, idx) => {
         const isAsteroid = d.entityType === 'ASTEROID';
-        const x1 = `${getPercent(d.from.x)}%`;
-        const y1 = `${getPercent(d.from.y)}%`;
+        const x1 = getCoord(d.from.x);
+        const y1 = getCoord(d.from.y);
 
         if (d.unaffected) {
           return (
-            <g key={`wave-${d.entityId}-${idx}`} style={{ opacity: 0.75, filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.4))' }}>
+            <g key={`wave-${d.entityId}-${idx}`} style={{ opacity: 0.85, filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.4))' }}>
               <circle
                 cx={x1}
                 cy={y1}
-                r={isAsteroid ? "14" : "17"}
+                r={isAsteroid ? 32 : 38}
                 fill="none"
                 stroke={isAsteroid ? "#f59e0b" : "#00f0ff"}
-                strokeWidth="2"
-                strokeDasharray="4 3"
+                strokeWidth="4"
+                strokeDasharray="8 6"
               />
               <text
                 x={x1}
                 y={y1}
-                dy="-24"
+                dy="-48"
                 textAnchor="middle"
                 fill="#ffffff"
-                fontSize="7.5px"
+                fontSize="16px"
                 fontWeight="900"
-                style={{ letterSpacing: '0.05em', textShadow: '0 0 4px #000, 0 0 8px #000, 0 0 12px #000, 0 0 16px #000' }}
+                style={{ letterSpacing: '0.05em', textShadow: '0 0 6px #000, 0 0 12px #000, 0 0 18px #000, 0 0 24px #000' }}
               >
                 {d.reason === 'OUT_OF_RANGE' ? 'OUT OF RANGE' : 'BLOCKED'}
               </text>
@@ -78,37 +82,38 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
           );
         }
 
-        const x2 = `${getPercent(d.to.x)}%`;
-        const y2 = `${getPercent(d.to.y)}%`;
+        const x2 = getCoord(d.to.x);
+        const y2 = getCoord(d.to.y);
         const strokeColor = d.danger ? "#ef4444" : (isAsteroid ? "#ffaa00" : "#00f0ff");
         const shadowColor = d.danger ? "#ef4444" : (isAsteroid ? "#f59e0b" : "#00f0ff");
+        const rad = 22; // Radius for asteroid diamond marker
 
         return (
-          <g key={`wave-${d.entityId}-${idx}`} style={{ filter: `drop-shadow(0 0 8px ${shadowColor})` }}>
+          <g key={`wave-${d.entityId}-${idx}`} style={{ filter: `drop-shadow(0 0 12px ${shadowColor})` }}>
             <line
               x1={x1}
               y1={y1}
               x2={x2}
               y2={y2}
               stroke={strokeColor}
-              strokeWidth={isAsteroid ? "2.5" : "3"}
-              strokeDasharray={isAsteroid ? "4 3" : "6 4"}
+              strokeWidth={isAsteroid ? "5" : "6"}
+              strokeDasharray={isAsteroid ? "8 6" : "12 8"}
             />
             {isAsteroid ? (
               <polygon
-                points={`${getPercent(d.to.x)},${getPercent(d.to.y) - 2.5} ${getPercent(d.to.x) + 2.5},${getPercent(d.to.y)} ${getPercent(d.to.x)},${getPercent(d.to.y) + 2.5} ${getPercent(d.to.x) - 2.5},${getPercent(d.to.y)}`}
+                points={`${x2},${y2 - rad} ${x2 + rad},${y2} ${x2},${y2 + rad} ${x2 - rad},${y2}`}
                 fill={d.danger ? "rgba(239, 68, 68, 0.4)" : "rgba(255, 170, 0, 0.4)"}
                 stroke={d.danger ? "#ef4444" : "#ffaa00"}
-                strokeWidth="2.5"
+                strokeWidth="5"
               />
             ) : (
               <circle
                 cx={x2}
                 cy={y2}
-                r="8"
+                r="20"
                 fill={d.danger ? "rgba(239, 68, 68, 0.4)" : "rgba(0, 255, 102, 0.4)"}
                 stroke={d.danger ? "#ef4444" : "#00ff66"}
-                strokeWidth="2.5"
+                strokeWidth="5"
               />
             )}
           </g>
