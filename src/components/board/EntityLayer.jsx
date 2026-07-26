@@ -31,6 +31,9 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
                 zIndex
               }}
             >
+              {entity.isSupercharged && (
+                <div className="supercharge-halo" title="⚡ SUPERCHARGED HALO: Double wave power active!" />
+              )}
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
                 className={`celestial-orb ${entity.isSupercharged ? 'supercharged' : ''}`}

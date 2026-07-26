@@ -33,6 +33,16 @@ export function executeGravity(board, playerId, rules) {
   let allRespawns = [];
   let allEffects = [];
 
+  // Pre-calculate initial distance and max steps so wave attenuation is locked to start positions
+  const initialMaxSteps = new Map();
+  currentBoard.forEach(e => {
+    if ((e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id) {
+      const d = getChebyshevDistance(e.x, e.y, activeCube.x, activeCube.y);
+      const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
+      initialMaxSteps.set(e.id, maxSteps);
+    }
+  });
+
   for (let s = 1; s <= power; s++) {
     const targets = sortEntitiesByTieBreaker(
       currentBoard.filter(e => (e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id),
@@ -40,8 +50,7 @@ export function executeGravity(board, playerId, rules) {
     );
 
     targets.forEach(target => {
-      const d = getChebyshevDistance(target.x, target.y, activeCube.x, activeCube.y);
-      const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
+      const maxSteps = initialMaxSteps.get(target.id) || 0;
       if (s <= maxSteps) {
         const vec = getStepVector(target.x, target.y, activeCube.x, activeCube.y);
         target.x += vec.x;
@@ -75,6 +84,16 @@ export function executePulse(board, playerId, rules) {
   let allRespawns = [];
   let allEffects = [];
 
+  // Pre-calculate initial distance and max steps so wave attenuation is locked to start positions
+  const initialMaxSteps = new Map();
+  currentBoard.forEach(e => {
+    if ((e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id) {
+      const d = getChebyshevDistance(activeCube.x, activeCube.y, e.x, e.y);
+      const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
+      initialMaxSteps.set(e.id, maxSteps);
+    }
+  });
+
   for (let s = 1; s <= power; s++) {
     const targets = sortEntitiesByTieBreaker(
       currentBoard.filter(e => (e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID) && e.id !== activeCube.id),
@@ -82,8 +101,7 @@ export function executePulse(board, playerId, rules) {
     );
 
     targets.forEach(target => {
-      const d = getChebyshevDistance(activeCube.x, activeCube.y, target.x, target.y);
-      const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
+      const maxSteps = initialMaxSteps.get(target.id) || 0;
       if (s <= maxSteps) {
         const vec = getStepVector(activeCube.x, activeCube.y, target.x, target.y);
         if (vec.x === 0 && vec.y === 0) {

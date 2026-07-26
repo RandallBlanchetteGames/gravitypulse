@@ -296,6 +296,25 @@ h1, h2, h3, h4, .font-heading {
   100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 18px rgba(255, 255, 255, 0.45); }
 }
 
+/* Animated GPU-accelerated rotating neon halo ring for supercharged pieces */
+.supercharge-halo {
+  position: absolute;
+  width: 96%;
+  height: 96%;
+  border-radius: 50%;
+  border: 2.5px dashed var(--accent-supercharge);
+  box-shadow: 0 0 15px var(--accent-supercharge), inset 0 0 10px var(--accent-supercharge-glow);
+  pointer-events: none;
+  animation: halo-spin 6s linear infinite;
+  z-index: -1;
+}
+
+@keyframes halo-spin {
+  0% { transform: rotate(0deg) scale(1.08) translateZ(0); }
+  50% { transform: rotate(180deg) scale(1.22) translateZ(0); }
+  100% { transform: rotate(360deg) scale(1.08) translateZ(0); }
+}
+
 .celestial-orb.supercharged {
   box-shadow: 0 0 18px var(--accent-supercharge), 0 0 35px var(--accent-supercharge-glow);
   border: 2px solid #fff !important;

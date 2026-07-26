@@ -171,17 +171,16 @@ export default function App() {
 
   /* Advance Turn or Trigger Round End Phases (4-Turn Cadence) */
   const advanceTurn = useCallback((nextBoard, nextPlayers, newRespawns = []) => {
-    // If any pieces were destroyed, increment deaths
-    let updatedPlayers = nextPlayers.map(p => ({ ...p }));
-    if (newRespawns.length > 0) {
-      newRespawns.forEach(pid => {
-        const pObj = updatedPlayers.find(p => p.id === pid);
-        if (pObj) {
-          pObj.deaths = (pObj.deaths || 0) + 1;
-          pObj.isSupercharged = false;
-        }
-      });
-    }
+    // Sync player supercharged status with board entities and increment deaths
+    let updatedPlayers = nextPlayers.map(p => {
+      const isDestroyed = newRespawns.includes(p.id);
+      const cube = nextBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
+      return {
+        ...p,
+        deaths: isDestroyed ? (p.deaths || 0) + 1 : (p.deaths || 0),
+        isSupercharged: isDestroyed ? false : (cube ? !!cube.isSupercharged : false)
+      };
+    });
 
     // Check if we need to enter Respawn phase first
     if (newRespawns.length > 0) {
@@ -265,6 +264,15 @@ export default function App() {
     if (targetPlayer && rules.checkAndResetActions(targetPlayer)) {
       roundLogs.push(`Player ${targetPlayer.id} rested and recharged all action cards.`);
     }
+
+    // Final sync of supercharge state with final round-end board
+    updatedPlayers = updatedPlayers.map(p => {
+      const cube = updatedBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
+      return {
+        ...p,
+        isSupercharged: cube ? !!cube.isSupercharged : false
+      };
+    });
 
     setBoard(updatedBoard);
     setPlayers(updatedPlayers);
@@ -460,7 +468,12 @@ export default function App() {
       const animInterval = setInterval(() => {
         stepIdx++;
         if (stepIdx < result.sequence.length) {
-          setBoard(result.sequence[stepIdx]);
+          const frameBoard = result.sequence[stepIdx];
+          setBoard(frameBoard);
+          setPlayers(prevPlayers => prevPlayers.map(p => {
+            const cube = frameBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
+            return { ...p, isSupercharged: cube ? !!cube.isSupercharged : false };
+          }));
         } else {
           clearInterval(animInterval);
           advanceTurn(result.finalBoard, nextPlayers, result.respawnQueue);
