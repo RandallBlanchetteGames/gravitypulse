@@ -327,11 +327,13 @@ export default function App() {
       soundEngine.playSupercharge();
 
       if (activePlayerIdx + 1 >= players.length) {
-        // Setup done! Transition to Playing
-        setBoard(nextBoard);
+        // Setup done! Spawn 2 random initial asteroids in vacant spaces & transition to Playing
+        const initAsteroids = rules.spawnInitialAsteroids(nextBoard, rules.getBoardSize(), 2);
+        const startBoard = [...nextBoard, ...initAsteroids];
+        setBoard(startBoard);
         setActivePlayerIdx(0);
         setPhase(PHASES.PLAYING);
-        setLogs(prev => [...prev, `All players deployed! Turn 1 initiated.`]);
+        setLogs(prev => [...prev, `☄️ 2 random asteroids spawned in space!`, `All players deployed! Turn 1 initiated.`]);
       } else {
         setBoard(nextBoard);
         setActivePlayerIdx(activePlayerIdx + 1);

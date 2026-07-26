@@ -110,4 +110,34 @@ export class GameRules {
 
     return newEntities;
   }
+
+  /* Spawn initial random asteroids in vacant spaces after setup */
+  spawnInitialAsteroids(board, size, count = 2) {
+    const newEntities = [];
+    const emptyCells = [];
+    const mid = size / 2;
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        if (!board.some(e => e.x === x && e.y === y)) {
+          // Keep away from center 2x2 Black Hole
+          if (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1) {
+            emptyCells.push({ x, y });
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < count; i++) {
+      if (emptyCells.length === 0) break;
+      const randIdx = Math.floor(Math.random() * emptyCells.length);
+      const cell = emptyCells.splice(randIdx, 1)[0];
+      newEntities.push({
+        id: `ast_init_${Date.now()}_${i}`,
+        type: ENTITY_TYPES.ASTEROID,
+        x: cell.x,
+        y: cell.y
+      });
+    }
+    return newEntities;
+  }
 }
