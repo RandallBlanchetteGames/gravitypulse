@@ -1,9 +1,9 @@
 /* ==========================================================================
-   GRAVITY PULSE 2026 - RULES QUICK REFERENCE MODAL
+   GRAVITY PULSE 2026 - RULES QUICK REFERENCE MODAL (4-TURN ROUNDS)
    ========================================================================== */
 
 import React from 'react';
-import { BookOpen, X, Orbit, Waves, Zap, Sparkles, ShieldCheck } from 'lucide-react';
+import { BookOpen, X, Orbit, Waves, Zap, Sparkles, ShieldCheck, Clock } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
 export function RulesModal({ isOpen, onClose }) {
@@ -23,7 +23,7 @@ export function RulesModal({ isOpen, onClose }) {
     }}>
       <div className="glass-card" style={{
         width: '100%',
-        maxWidth: '600px',
+        maxWidth: '620px',
         maxHeight: '90vh',
         overflowY: 'auto',
         padding: '24px',
@@ -45,23 +45,23 @@ export function RulesModal({ isOpen, onClose }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--text-main)' }}>
           <div style={{ padding: '12px', background: 'rgba(0, 240, 255, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-cyan)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-cyan)', marginBottom: '4px' }}>🎯 OBJECTIVE & SCORE</h4>
-            <p>Navigate the deep space grid without drifting into the void, colliding with Asteroids, or entering the center <strong>Black Hole Singularity</strong> (which destroys you!). Score <strong>+1 Survival Point</strong> for surviving each round, and <strong>+1 Elimination Point</strong> per opponent you destroy or push into hazards!</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-cyan)', marginBottom: '4px' }}>⏰ 4-TURN ROUND CADENCE & CARDS</h4>
+            <p>Each round consists of exactly <strong>4 turns</strong> per player. You hold 5 action cards (Move 1, 2, 3, Gravity, Pulse)—choose which 4 to play and which 1 to rest! All cards recharge automatically at the start of each new round!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(157, 78, 221, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-violet)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES</h4>
-            <p>Instead of regular steps, unleash waves! <strong>Gravity Wave</strong> pulls all opponents 1 space toward you. <strong>Pulse Wave</strong> pushes all opponents 1 space away! Collect floating ⚡ <strong>Energy Crystals</strong> to become <strong>Supercharged</strong> and double your wave power!</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES (DISTANCE ATTENUATED)</h4>
+            <p>Unleash cosmic waves! <strong>Gravity Wave</strong> pulls opponents toward you; <strong>Pulse Wave</strong> pushes them away. Wave strength weakens with distance: <strong>Full power</strong> within 2 spaces, <strong>1 space</strong> at 3-4 spaces, and <strong>unaffected</strong> at 5+ spaces! Hover over a wave card to preview wave displacement arrows!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🕳️ TURN 4 SINGULARITY SUCTION</h4>
-            <p>At the end of every round, the center Black Hole activates, pulling every piece on the board 1 space inward! Plan your positioning so opponents get sucked into the void while you stay safe!</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🕳️ TURN 4 SINGULARITY SUCTION & ZONES</h4>
+            <p>At the end of Turn 4, the center Black Hole activates! <strong>Zone 1 (Event Horizon)</strong> is pulled <strong>2 spaces</strong> directly into destruction! <strong>Zone 2 (Accretion Field)</strong> is pulled <strong>1 space</strong> inward into Zone 1. <strong>Zone 3 (Outer Sector)</strong> is safe space! Hover over grid cells to check your zone status.</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>⚡ MISTAKE PROTECTION & UNDO</h4>
-            <p>Made a casual miscalculation? Tap the <strong>Undo Last Move</strong> button at any time during your turn to safely rewind and try a different tactical approach!</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>⚡ SUPERCHARGE & ENERGY OVERLOAD</h4>
+            <p>Collect floating ⚡ <strong>Energy Crystals</strong> to become <strong>Supercharged</strong> (doubling your wave power to 2 spaces!). But beware: absorbing another energy crystal while already supercharged causes an <strong>Energy Overload blow up</strong> that destroys your piece!</p>
           </div>
         </div>
 

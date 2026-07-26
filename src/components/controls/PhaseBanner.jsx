@@ -1,12 +1,12 @@
 /* ==========================================================================
-   GRAVITY PULSE 2026 - PHASE BANNER & CASUAL INSTRUCTIONS
+   GRAVITY PULSE 2026 - PHASE BANNER & 4-TURN ROUND AWARENESS
    ========================================================================== */
 
 import React from 'react';
 import { PHASES } from '../../engine/types.js';
-import { Info, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
-export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer }) {
+export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turnInRound = 1 }) {
   const getBannerContent = () => {
     switch (phase) {
       case PHASES.SETUP:
@@ -18,8 +18,8 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer }) {
         };
       case PHASES.PLAYING:
         return {
-          title: `ROUND ${currentRound} OF ${maxRounds}`,
-          text: `Player ${activePlayer?.id || 1}'s Turn. Select a movement or wave action.`,
+          title: `ROUND ${currentRound} OF ${maxRounds} | TURN ${turnInRound} OF 4`,
+          text: `Player ${activePlayer?.id || 1}'s Turn (${5 - turnInRound} turn(s) until Turn 4 Singularity Suction!). Select an action.`,
           color: "#fff",
           border: "rgba(255, 255, 255, 0.15)"
         };

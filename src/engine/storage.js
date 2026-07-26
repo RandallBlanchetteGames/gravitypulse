@@ -12,6 +12,7 @@ export function saveGameSession(state) {
       players: state.players,
       activePlayerIndex: state.activePlayerIndex,
       currentRound: state.currentRound,
+      turnInRound: state.turnInRound || 1,
       phase: state.phase,
       rulesConfig: {
         mapSize: state.rulesConfig.mapSize,

@@ -1,11 +1,11 @@
 /* ==========================================================================
-   GRAVITY PULSE 2026 - SCOREBOARD & LEADERBOARD COMPONENT
+   GRAVITY PULSE 2026 - SCOREBOARD & ROUND TURN LEADERBOARD COMPONENT
    ========================================================================== */
 
 import React from 'react';
-import { Trophy, Shield, Zap } from 'lucide-react';
+import { Trophy, Shield, Zap, Clock } from 'lucide-react';
 
-export function Scoreboard({ players, activePlayerId }) {
+export function Scoreboard({ players, activePlayerId, currentRound = 1, maxRounds = 5, turnInRound = 1 }) {
   // Sort players by survival score descending, then deaths ascending
   const sorted = [...players].sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
@@ -17,14 +17,31 @@ export function Scoreboard({ players, activePlayerId }) {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
+        justifyContent: 'space-between',
         paddingBottom: '10px',
         borderBottom: '1px solid var(--border-light)'
       }}>
-        <Trophy size={18} color="var(--accent-gold)" />
-        <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>
-          SURVIVAL SCOREBOARD
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Trophy size={18} color="var(--accent-gold)" />
+          <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff', letterSpacing: '0.05em' }}>
+            SURVIVAL SCOREBOARD
+          </h3>
+        </div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px',
+          background: 'rgba(0, 240, 255, 0.1)',
+          border: '1px solid var(--accent-cyan)',
+          padding: '3px 8px',
+          borderRadius: '12px',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          color: 'var(--accent-cyan)'
+        }}>
+          <Clock size={13} />
+          <span>R{currentRound}/{maxRounds} • T{turnInRound}/4</span>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto' }}>

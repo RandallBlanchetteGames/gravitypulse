@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PHASES, TURN_ACTIONS, ENTITY_TYPES, PLAYER_COLORS, MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from './engine/types.js';
 import { GameRules } from './engine/rules.js';
-import { executeMove, previewTrajectory } from './engine/movementResolver.js';
+import { executeMove, previewTrajectory, previewWaveDisplacements } from './engine/movementResolver.js';
 import { executeGravity, executePulse, executeLocalizedGravity, executeBlackHoleSuction } from './engine/gravityPulse.js';
 import { getAIPlacement, getAITurnDecision } from './engine/aiDecision.js';
 import { saveGameSession, loadGameSession, clearGameSession } from './engine/storage.js';
@@ -46,6 +46,7 @@ export default function App() {
   const [players, setPlayers] = useState([]);
   const [activePlayerIdx, setActivePlayerIdx] = useState(0);
   const [currentRound, setCurrentRound] = useState(1);
+  const [turnInRound, setTurnInRound] = useState(1);
   const [logs, setLogs] = useState([]);
   const [historyStack, setHistoryStack] = useState([]); // For casual Undo Move
   const [explosions, setExplosions] = useState([]);
@@ -55,6 +56,7 @@ export default function App() {
   const [selectedAction, setSelectedAction] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [trajectory, setTrajectory] = useState([]);
+  const [waveDisplacements, setWaveDisplacements] = useState([]);
 
   // Modals
   const [isSetupOpen, setIsSetupOpen] = useState(false);
@@ -92,6 +94,7 @@ export default function App() {
     setBoard([]);
     setActivePlayerIdx(0);
     setCurrentRound(1);
+    setTurnInRound(1);
     setPhase(PHASES.SETUP);
     setLogs([`🚀 Welcome to Gravity Pulse 2026! Setup phase initiated (${config.mapSize.label}).`]);
     setHistoryStack([]);
@@ -100,6 +103,7 @@ export default function App() {
     setSelectedAction(null);
     setSelectedDirection(null);
     setTrajectory([]);
+    setWaveDisplacements([]);
     setIsGameOverOpen(false);
     clearGameSession();
   }, [rulesConfig]);
@@ -115,6 +119,7 @@ export default function App() {
           setPlayers(saved.players);
           setActivePlayerIdx(saved.activePlayerIndex || 0);
           setCurrentRound(saved.currentRound || 1);
+          setTurnInRound(saved.turnInRound || 1);
           setPhase(saved.phase || PHASES.PLAYING);
           setLogs(saved.logs || ["Restored saved game session!"]);
           if (saved.rulesConfig) {
@@ -138,25 +143,33 @@ export default function App() {
         players,
         activePlayerIndex: activePlayerIdx,
         currentRound,
+        turnInRound,
         phase,
         rulesConfig,
         logs
       });
     }
-  }, [board, players, activePlayerIdx, currentRound, phase, rulesConfig, logs]);
+  }, [board, players, activePlayerIdx, currentRound, turnInRound, phase, rulesConfig, logs]);
 
   const activePlayer = players[activePlayerIdx] || players[0];
 
-  /* Add explosion effect helper */
-  const triggerExplosion = (x, y) => {
+  /* Add explosion effect helper & batch effect dispatcher */
+  const triggerExplosion = (x, y, type = 'COLLISION') => {
     const id = `exp_${Date.now()}_${Math.random()}`;
-    setExplosions(prev => [...prev, { id, x, y }]);
+    setExplosions(prev => [...prev, { id, x, y, type }]);
     setTimeout(() => {
       setExplosions(prev => prev.filter(e => e.id !== id));
-    }, 400);
+    }, 800);
   };
 
-  /* Advance Turn or Trigger Round End Phases */
+  const dispatchEffects = (effectsList = []) => {
+    if (!effectsList || effectsList.length === 0) return;
+    effectsList.forEach(eff => {
+      triggerExplosion(eff.x, eff.y, eff.type);
+    });
+  };
+
+  /* Advance Turn or Trigger Round End Phases (4-Turn Cadence) */
   const advanceTurn = useCallback((nextBoard, nextPlayers, newRespawns = []) => {
     // If any pieces were destroyed, increment deaths
     let updatedPlayers = nextPlayers.map(p => ({ ...p }));
@@ -181,58 +194,73 @@ export default function App() {
 
     let nextIdx = activePlayerIdx + 1;
     let nextRound = currentRound;
+    let nextTurn = turnInRound;
     let updatedBoard = [...nextBoard];
     let roundLogs = [];
 
-    // If full round completed (all players took a turn)
+    // If all players have taken their turn for this step in the round
     if (nextIdx >= updatedPlayers.length) {
       nextIdx = 0;
-      roundLogs.push(`--- End of Round ${currentRound} ---`);
+      nextTurn += 1;
 
-      // 1. Turn 4 Localized Gravity Phase
-      const locRes = executeLocalizedGravity(updatedBoard, rules);
-      updatedBoard = locRes.finalBoard;
-      if (locRes.respawnQueue.length > 0) newRespawns.push(...locRes.respawnQueue);
+      if (nextTurn <= 4) {
+        roundLogs.push(`--- Round ${currentRound} | Turn ${nextTurn} of 4 ---`);
+      } else {
+        // Turn 4 Completed: End of Round Climax!
+        roundLogs.push(`--- End of Round ${currentRound}: Singularity Event ---`);
 
-      // 2. Turn 4 Black Hole Suction Phase
-      const bhRes = executeBlackHoleSuction(updatedBoard, rules);
-      updatedBoard = bhRes.finalBoard;
-      if (bhRes.respawnQueue.length > 0) newRespawns.push(...bhRes.respawnQueue);
+        // 1. Turn 4 Localized Gravity Phase
+        const locRes = executeLocalizedGravity(updatedBoard, rules);
+        updatedBoard = locRes.finalBoard;
+        if (locRes.respawnQueue.length > 0) newRespawns.push(...locRes.respawnQueue);
+        if (locRes.effects) dispatchEffects(locRes.effects);
 
-      // 3. Spawn Asteroids / Energy for next round
-      const hazards = rules.spawnHazards(updatedBoard, rules.getBoardSize());
-      updatedBoard = [...updatedBoard, ...hazards];
-      if (hazards.length > 0) {
-        roundLogs.push(`☄️ Space hazards spawned in outer sector.`);
-      }
+        // 2. Turn 4 Black Hole Suction Phase
+        const bhRes = executeBlackHoleSuction(updatedBoard, rules);
+        updatedBoard = bhRes.finalBoard;
+        if (bhRes.respawnQueue.length > 0) newRespawns.push(...bhRes.respawnQueue);
+        if (bhRes.effects) dispatchEffects(bhRes.effects);
 
-      // Award +1 Survival Point to players who survived the round
-      const survivingIds = new Set(updatedBoard.filter(e => e.type === ENTITY_TYPES.CUBE).map(c => c.playerId));
-      let survivorCount = 0;
-      updatedPlayers.forEach(p => {
-        if (survivingIds.has(p.id)) {
-          p.score = (p.score || 0) + 1;
-          survivorCount++;
+        // 3. Spawn Asteroids / Energy for next round
+        const hazards = rules.spawnHazards(updatedBoard, rules.getBoardSize());
+        updatedBoard = [...updatedBoard, ...hazards];
+        if (hazards.length > 0) {
+          roundLogs.push(`☄️ Space hazards spawned in outer sector.`);
         }
-      });
-      if (survivorCount > 0) {
-        roundLogs.push(`🛡️ +1 Survival Point awarded to ${survivorCount} surviving player(s)!`);
-      }
 
-      nextRound += 1;
+        // Award +1 Survival Point to players who survived the round
+        const survivingIds = new Set(updatedBoard.filter(e => e.type === ENTITY_TYPES.CUBE).map(c => c.playerId));
+        let survivorCount = 0;
+        updatedPlayers.forEach(p => {
+          if (survivingIds.has(p.id)) {
+            p.score = (p.score || 0) + 1;
+            survivorCount++;
+          }
+        });
+        if (survivorCount > 0) {
+          roundLogs.push(`🛡️ +1 Survival Point awarded to ${survivorCount} surviving player(s)!`);
+        }
 
-      // Check Match End Condition
-      if (nextRound > rules.gameLength.rounds) {
-        setBoard(updatedBoard);
-        setPlayers(updatedPlayers);
-        setPhase(PHASES.GAME_OVER);
-        setIsGameOverOpen(true);
-        clearGameSession();
-        return;
+        nextRound += 1;
+        nextTurn = 1;
+
+        // Reset & recharge action cards for all players at start of new round!
+        updatedPlayers.forEach(p => rules.checkAndResetActions(p));
+        roundLogs.push(`🔄 All action cards recharged for Round ${nextRound}!`);
+
+        // Check Match End Condition
+        if (nextRound > rules.gameLength.rounds) {
+          setBoard(updatedBoard);
+          setPlayers(updatedPlayers);
+          setPhase(PHASES.GAME_OVER);
+          setIsGameOverOpen(true);
+          clearGameSession();
+          return;
+        }
       }
     }
 
-    // Check and rest actions if active player used all 5 cards
+    // Check and rest actions if active player used all 5 cards mid-round
     const targetPlayer = updatedPlayers[nextIdx];
     if (targetPlayer && rules.checkAndResetActions(targetPlayer)) {
       roundLogs.push(`Player ${targetPlayer.id} rested and recharged all action cards.`);
@@ -242,9 +270,11 @@ export default function App() {
     setPlayers(updatedPlayers);
     setActivePlayerIdx(nextIdx);
     setCurrentRound(nextRound);
+    setTurnInRound(nextTurn);
     setSelectedAction(null);
     setSelectedDirection(null);
     setTrajectory([]);
+    setWaveDisplacements([]);
     if (roundLogs.length > 0) {
       setLogs(prev => [...prev, ...roundLogs]);
     }
@@ -253,7 +283,7 @@ export default function App() {
       setRespawnQueue(newRespawns);
       setPhase(PHASES.RESPAWN);
     }
-  }, [activePlayerIdx, currentRound, rules]);
+  }, [activePlayerIdx, currentRound, turnInRound, rules]);
 
   /* Handle Cell Tap (For Setup & Respawn placement) */
   const handleCellClick = (x, y) => {
@@ -348,7 +378,10 @@ export default function App() {
     if (action.special) {
       setSelectedDirection(null);
       setTrajectory([]);
+      const waves = previewWaveDisplacements(board, activePlayer.id, action.id, rules);
+      setWaveDisplacements(waves);
     } else {
+      setWaveDisplacements([]);
       // Default to Regional direction or Up
       const myPiece = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
       if (myPiece) {
@@ -390,6 +423,11 @@ export default function App() {
     } else {
       result = executeMove(board, activePlayer.id, action.id, direction || { x: 1, y: 0 }, rules);
     }
+
+    if (result.effects) {
+      dispatchEffects(result.effects);
+    }
+    setWaveDisplacements([]);
 
     // Mark action as used
     const nextPlayers = players.map(p => {
@@ -446,6 +484,7 @@ export default function App() {
     setSelectedAction(null);
     setSelectedDirection(null);
     setTrajectory([]);
+    setWaveDisplacements([]);
     soundEngine.playClick();
   };
 
@@ -463,6 +502,7 @@ export default function App() {
         currentRound={currentRound}
         maxRounds={rulesConfig.gameLength.rounds}
         activePlayer={activePlayer}
+        turnInRound={turnInRound}
       />
       <ActionDashboard
         activePlayer={activePlayer}
@@ -493,6 +533,7 @@ export default function App() {
         boardSize={rules.getBoardSize()}
         startPos={board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer?.id)}
         trajectory={trajectory}
+        waveDisplacements={waveDisplacements}
       />
       <EntityLayer
         board={board}
@@ -508,7 +549,13 @@ export default function App() {
 
   const rightPanelContent = (
     <>
-      <Scoreboard players={players} activePlayerId={activePlayer?.id} />
+      <Scoreboard
+        players={players}
+        activePlayerId={activePlayer?.id}
+        currentRound={currentRound}
+        maxRounds={rulesConfig.gameLength.rounds}
+        turnInRound={turnInRound}
+      />
       <GameLog logs={logs} />
     </>
   );

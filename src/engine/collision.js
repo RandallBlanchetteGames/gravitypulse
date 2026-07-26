@@ -1,16 +1,17 @@
 /* ==========================================================================
-   GRAVITY PULSE 2026 - COLLISION & HAZARD VERIFICATION
+   GRAVITY PULSE 2026 - COLLISION, OVERLOAD & HAZARD VERIFICATION
    ========================================================================== */
 
 import { isBlackHole } from './boardGeometry.js';
 import { ENTITY_TYPES } from './types.js';
 import { soundEngine } from '../audio/soundEngine.js';
 
-/* Check and resolve collisions for a single cell coordinate */
+/* Check and resolve collisions for all cell coordinates */
 export function resolveCellCollisions(board, boardSize, logs = []) {
   let updatedBoard = [...board];
   const destroyedIds = new Set();
   const respawnQueue = [];
+  const effects = [];
 
   // 1. Check Off-Board & Black Hole entry
   updatedBoard.forEach(entity => {
@@ -20,6 +21,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       if (entity.type === ENTITY_TYPES.CUBE) {
         logs.push(`🚀 Player ${entity.playerId} drifted into deep void!`);
         respawnQueue.push(entity.playerId);
+        effects.push({ id: Math.random() + entity.id, x: Math.max(0, Math.min(boardSize - 1, entity.x)), y: Math.max(0, Math.min(boardSize - 1, entity.y)), type: 'COLLISION' });
       }
       soundEngine.playExplosion();
       return;
@@ -31,6 +33,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
       if (entity.type === ENTITY_TYPES.CUBE) {
         logs.push(`🕳️ Player ${entity.playerId} sucked into the Singularity (Destroyed)!`);
         respawnQueue.push(entity.playerId);
+        effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
       }
       soundEngine.playExplosion();
     }
@@ -60,18 +63,30 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
         destroyedIds.add(c.id);
         logs.push(`☄️ Player ${c.playerId} crushed by Asteroid!`);
         respawnQueue.push(c.playerId);
+        effects.push({ id: Math.random() + c.id, x: c.x, y: c.y, type: 'COLLISION' });
       });
       asteroids.forEach(a => destroyedIds.add(a.id));
       soundEngine.playExplosion();
     }
 
-    // Cube vs Energy -> First cube absorbs energy & supercharges!
+    // Cube vs Energy -> Supercharge or Overload Blow Up!
     if (cubes.length > 0 && energies.length > 0 && !cubes.some(c => destroyedIds.has(c.id))) {
       const luckyCube = cubes[0];
-      luckyCube.isSupercharged = true;
-      energies.forEach(eng => destroyedIds.add(eng.id));
-      logs.push(`⚡ Player ${luckyCube.playerId} absorbed Cosmic Energy (Supercharged)!`);
-      soundEngine.playSupercharge();
+      if (luckyCube.isSupercharged) {
+        // OVERLOAD BLOW UP!
+        destroyedIds.add(luckyCube.id);
+        energies.forEach(eng => destroyedIds.add(eng.id));
+        logs.push(`💥 Player ${luckyCube.playerId} overloaded from excess energy and BLEW UP!`);
+        respawnQueue.push(luckyCube.playerId);
+        effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'OVERLOAD' });
+        soundEngine.playExplosion();
+      } else {
+        luckyCube.isSupercharged = true;
+        energies.forEach(eng => destroyedIds.add(eng.id));
+        logs.push(`⚡ Player ${luckyCube.playerId} absorbed Cosmic Energy (Supercharged)!`);
+        effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'SUPERCHARGE' });
+        soundEngine.playSupercharge();
+      }
     }
 
     // Cube vs Cube -> Both destroyed in gravitational crash!
@@ -81,6 +96,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
           destroyedIds.add(c.id);
           logs.push(`💥 Player ${c.playerId} destroyed in Cube Crash!`);
           respawnQueue.push(c.playerId);
+          effects.push({ id: Math.random() + c.id, x: c.x, y: c.y, type: 'COLLISION' });
         }
       });
       soundEngine.playExplosion();
@@ -88,5 +104,5 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
   });
 
   const finalBoard = updatedBoard.filter(e => !destroyedIds.has(e.id));
-  return { finalBoard, respawnQueue, logs };
+  return { finalBoard, respawnQueue, logs, effects };
 }
