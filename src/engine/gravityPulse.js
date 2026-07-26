@@ -178,44 +178,39 @@ export function executeLocalizedGravity(board, rules) {
   return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
 }
 
-/* Execute Black Hole Suction Phase: distance-based pull (Zone 1: 2 spaces, Zone 2: 1 space, Zone 3: 0 spaces) */
+/* Execute Black Hole Suction Phase: pull all players and asteroids on the map inward 1 space */
 export function executeBlackHoleSuction(board, rules) {
   let currentBoard = board.map(e => ({ ...e }));
   const size = rules.getBoardSize();
   const cx = (size - 1) / 2;
   const cy = (size - 1) / 2;
 
-  const logs = [`🕳️ Black Hole Singularity activates distance-based suction!`];
+  const logs = [`🕳️ Black Hole Singularity pulls all ships and asteroids inward 1 space!`];
   let allRespawns = [];
   let allEffects = [];
 
   soundEngine.playGravityHum(true);
 
-  // We run up to 2 steps for Zone 1 pieces & asteroids
-  for (let step = 1; step <= 2; step++) {
-    const targets = sortEntitiesByTieBreaker(
-      currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID),
-      size
-    );
+  const targets = sortEntitiesByTieBreaker(
+    currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE || e.type === ENTITY_TYPES.ASTEROID),
+    size
+  );
 
-    let movedInStep = false;
-    targets.forEach(entity => {
-      const dist = Math.max(Math.abs(entity.x - cx) - 0.5, Math.abs(entity.y - cy) - 0.5);
-      const maxSteps = dist <= 1 ? 2 : (dist <= 2 ? 1 : 0);
-      if (step <= maxSteps) {
-        const vec = getStepVector(entity.x, entity.y, cx, cy);
-        entity.x += vec.x;
-        entity.y += vec.y;
-        movedInStep = true;
-      }
-    });
-
-    if (movedInStep) {
-      const res = resolveCellCollisions(currentBoard, size, logs);
-      currentBoard = res.finalBoard;
-      if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
-      if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
+  let moved = false;
+  targets.forEach(entity => {
+    const vec = getStepVector(entity.x, entity.y, cx, cy);
+    if (vec.x !== 0 || vec.y !== 0) {
+      entity.x += vec.x;
+      entity.y += vec.y;
+      moved = true;
     }
+  });
+
+  if (moved) {
+    const res = resolveCellCollisions(currentBoard, size, logs);
+    currentBoard = res.finalBoard;
+    if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
+    if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
   }
 
   return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
