@@ -57,6 +57,35 @@ export function TrajectoryLines({ boardSize, startPos, trajectory = [], waveDisp
         const isAsteroid = d.entityType === 'ASTEROID';
         const x1 = `${getPercent(d.from.x)}%`;
         const y1 = `${getPercent(d.from.y)}%`;
+
+        if (d.unaffected) {
+          return (
+            <g key={`wave-${d.entityId}-${idx}`} style={{ opacity: 0.55, filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.35))' }}>
+              <circle
+                cx={x1}
+                cy={y1}
+                r={isAsteroid ? "12" : "15"}
+                fill="none"
+                stroke={isAsteroid ? "#f59e0b" : "#00f0ff"}
+                strokeWidth="1.5"
+                strokeDasharray="3 3"
+              />
+              <text
+                x={x1}
+                y={y1}
+                dy="-18"
+                textAnchor="middle"
+                fill="#ffffff"
+                fontSize="6.5px"
+                fontWeight="800"
+                style={{ letterSpacing: '0.04em', textShadow: '0 0 3px #000' }}
+              >
+                {d.reason === 'OUT_OF_RANGE' ? 'OUT OF RANGE' : 'BLOCKED'}
+              </text>
+            </g>
+          );
+        }
+
         const x2 = `${getPercent(d.to.x)}%`;
         const y2 = `${getPercent(d.to.y)}%`;
         const strokeUrl = d.danger ? "url(#waveDanger)" : "url(#waveSafe)";

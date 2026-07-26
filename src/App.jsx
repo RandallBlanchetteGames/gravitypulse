@@ -20,6 +20,7 @@ import { BlackHoleOverlay } from './components/board/BlackHoleOverlay.jsx';
 import { TrajectoryLines } from './components/board/TrajectoryLines.jsx';
 import { EntityLayer } from './components/board/EntityLayer.jsx';
 import { ExplosionLayer } from './components/board/ExplosionLayer.jsx';
+import { WaveAuraLayer } from './components/board/WaveAuraLayer.jsx';
 import { ActionDashboard } from './components/controls/ActionDashboard.jsx';
 import { PhaseBanner } from './components/controls/PhaseBanner.jsx';
 import { Scoreboard } from './components/status/Scoreboard.jsx';
@@ -57,6 +58,7 @@ export default function App() {
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [trajectory, setTrajectory] = useState([]);
   const [waveDisplacements, setWaveDisplacements] = useState([]);
+  const [waveAura, setWaveAura] = useState(null);
 
   // Modals
   const [isSetupOpen, setIsSetupOpen] = useState(false);
@@ -442,6 +444,14 @@ export default function App() {
 
     let result = { sequence: [board], finalBoard: board, respawnQueue: [], logs: [] };
 
+    if (action.id === TURN_ACTIONS.GRAVITY || action.id === TURN_ACTIONS.PULSE) {
+      const myCube = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
+      if (myCube) {
+        setWaveAura({ pos: { x: myCube.x, y: myCube.y }, type: action.id === TURN_ACTIONS.GRAVITY ? 'PULL' : 'PUSH' });
+        setTimeout(() => setWaveAura(null), 480);
+      }
+    }
+
     if (action.id === TURN_ACTIONS.GRAVITY) {
       result = executeGravity(board, activePlayer.id, rules);
     } else if (action.id === TURN_ACTIONS.PULSE) {
@@ -570,6 +580,11 @@ export default function App() {
         board={board}
         boardSize={rules.getBoardSize()}
         activePlayerId={activePlayer?.id}
+      />
+      <WaveAuraLayer
+        boardSize={rules.getBoardSize()}
+        activePos={waveAura?.pos}
+        waveType={waveAura?.type}
       />
       <ExplosionLayer
         explosions={explosions}

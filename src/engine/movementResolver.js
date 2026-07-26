@@ -100,7 +100,20 @@ export function previewWaveDisplacements(board, playerId, actionId, rules) {
   targets.forEach(target => {
     const d = getChebyshevDistance(target.x, target.y, activeCube.x, activeCube.y);
     const maxSteps = d <= 2 ? power : (d <= 4 ? 1 : 0);
-    if (maxSteps === 0) return; // Unaffected at distance >= 5
+    if (maxSteps === 0) {
+      displacements.push({
+        entityId: target.id,
+        playerId: target.playerId || null,
+        entityType: target.type,
+        from: { x: target.x, y: target.y },
+        to: { x: target.x, y: target.y },
+        type: actionId === TURN_ACTIONS.GRAVITY ? 'PULL' : 'PUSH',
+        danger: false,
+        unaffected: true,
+        reason: 'OUT_OF_RANGE'
+      });
+      return;
+    }
 
     let destX = target.x;
     let destY = target.y;
@@ -127,6 +140,7 @@ export function previewWaveDisplacements(board, playerId, actionId, rules) {
     const isAsteroid = !isOff && board.some(e => e.type === ENTITY_TYPES.ASTEROID && e.id !== target.id && e.x === destX && e.y === destY);
     const isCube = !isOff && board.some(e => e.type === ENTITY_TYPES.CUBE && e.id !== target.id && e.x === destX && e.y === destY);
     const danger = isOff || isBH || isAsteroid || isCube;
+    const isBlocked = destX === target.x && destY === target.y;
 
     displacements.push({
       entityId: target.id,
@@ -135,7 +149,9 @@ export function previewWaveDisplacements(board, playerId, actionId, rules) {
       from: { x: target.x, y: target.y },
       to: { x: destX, y: destY },
       type: actionId === TURN_ACTIONS.GRAVITY ? 'PULL' : 'PUSH',
-      danger
+      danger,
+      unaffected: isBlocked,
+      reason: isBlocked ? 'BLOCKED' : null
     });
   });
 

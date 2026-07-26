@@ -148,7 +148,7 @@ h1, h2, h3, h4, .font-heading {
   border-radius: 20px;
   box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), inset 0 0 40px rgba(0, 0, 0, 0.8);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: grid;
 }
 
@@ -502,3 +502,31 @@ h1, h2, h3, h4, .font-heading {
 .effect-implosion {
   animation: anim-singularity-implosion 800ms forwards cubic-bezier(0.5, 0, 0.8, 1);
 }
+
+/* --- Radial Wave Aura Animations --- */
+@keyframes pulse-ring-expand {
+  0% { transform: translate(-50%, -50%) scale3d(0.2, 0.2, 1); opacity: 0.95; filter: drop-shadow(0 0 15px #00f0ff); }
+  60% { opacity: 0.6; filter: drop-shadow(0 0 30px #9d4edd); }
+  100% { transform: translate(-50%, -50%) scale3d(4.2, 4.2, 1); opacity: 0; filter: drop-shadow(0 0 40px #00f0ff); }
+}
+.wave-aura-pulse {
+  background: radial-gradient(circle, transparent 40%, rgba(0, 240, 255, 0.45) 75%, rgba(157, 78, 221, 0.8) 90%, transparent 100%);
+  border: 2px solid var(--accent-cyan);
+  box-shadow: 0 0 35px var(--accent-cyan), inset 0 0 25px var(--accent-plasma);
+  animation: pulse-ring-expand 460ms forwards cubic-bezier(0.1, 0.9, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+@keyframes gravity-ring-implode {
+  0% { transform: translate(-50%, -50%) scale3d(4.2, 4.2, 1); opacity: 0.85; filter: drop-shadow(0 0 35px #f59e0b); }
+  50% { opacity: 0.75; filter: drop-shadow(0 0 25px #ef4444); }
+  100% { transform: translate(-50%, -50%) scale3d(0.2, 0.2, 1); opacity: 0; filter: drop-shadow(0 0 10px #f59e0b); }
+}
+.wave-aura-gravity {
+  background: radial-gradient(circle, transparent 40%, rgba(245, 158, 11, 0.45) 75%, rgba(239, 68, 68, 0.8) 90%, transparent 100%);
+  border: 2px dashed var(--accent-gold);
+  box-shadow: 0 0 35px var(--accent-gold), inset 0 0 25px #ef4444;
+  animation: gravity-ring-implode 460ms forwards cubic-bezier(0.8, 0, 0.9, 0.1);
+  will-change: transform, opacity;
+}
+
