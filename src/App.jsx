@@ -135,6 +135,24 @@ export default function App() {
     }
   }, [hasLoadedPrompt, initGame, rulesConfig]);
 
+  /* Initialize Web Audio API and start ambient space drone on first user interaction */
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      soundEngine.init();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []);
+
   /* Auto-save whenever board or turn changes during playing */
   useEffect(() => {
     if (phase === PHASES.PLAYING && board.length > 0) {

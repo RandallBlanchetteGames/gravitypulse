@@ -28,6 +28,7 @@ class SoundEngine {
   }
 
   toggleMute() {
+    this.init();
     this.isMuted = !this.isMuted;
     if (this.ambienceGain && this.ctx) {
       this.ambienceGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.04, this.ctx.currentTime, 0.1);
@@ -69,8 +70,9 @@ class SoundEngine {
 
   /* --- UI Click Sound --- */
   playClick() {
-    if (!this.ctx || this.isMuted) return;
+    if (this.isMuted) return;
     this.init();
+    if (!this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -88,8 +90,9 @@ class SoundEngine {
 
   /* --- Piece Movement Glide --- */
   playMove() {
-    if (!this.ctx || this.isMuted) return;
+    if (this.isMuted) return;
     this.init();
+    if (!this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -107,8 +110,9 @@ class SoundEngine {
 
   /* --- Gravity / Pulse Wave Resonance Hum --- */
   playGravityHum(isPulse = false) {
-    if (!this.ctx || this.isMuted) return;
+    if (this.isMuted) return;
     this.init();
+    if (!this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
       const filter = this.ctx.createBiquadFilter();
@@ -137,8 +141,9 @@ class SoundEngine {
 
   /* --- Destruction / Asteroid Crush Explosion Pop --- */
   playExplosion() {
-    if (!this.ctx || this.isMuted) return;
+    if (this.isMuted) return;
     this.init();
+    if (!this.ctx) return;
     try {
       const bufferSize = this.ctx.sampleRate * 0.25; // 250ms noise
       const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
@@ -167,8 +172,9 @@ class SoundEngine {
 
   /* --- Supercharged Black Hole Chime --- */
   playSupercharge() {
-    if (!this.ctx || this.isMuted) return;
+    if (this.isMuted) return;
     this.init();
+    if (!this.ctx) return;
     const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
     notes.forEach((freq, idx) => {
       try {
