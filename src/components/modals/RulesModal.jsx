@@ -50,8 +50,8 @@ export function RulesModal({ isOpen, onClose }) {
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(157, 78, 221, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-violet)' }}>
-            <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES (DISTANCE ATTENUATED)</h4>
-            <p>Unleash cosmic waves! <strong>Gravity Wave</strong> pulls opponents and floating <strong>Asteroids</strong> toward you; <strong>Pulse Wave</strong> pushes them away! Wave strength weakens with distance: <strong>Full power</strong> within 2 spaces, <strong>1 space</strong> at 3-4 spaces, and <strong>unaffected</strong> at 5+ spaces! Hover over a wave card to preview displacement arrows (amber diamonds for asteroids)!</p>
+            <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 GRAVITY & PULSE WAVES (SUPERCHARGE ATTENUATION)</h4>
+            <p>Unleash cosmic waves! <strong>Gravity Wave</strong> pulls opponents and floating <strong>Asteroids</strong> toward you; <strong>Pulse Wave</strong> pushes them away (maximum range: 4 spaces)! Basic ships displace targets by <strong>1 space</strong>. When <strong>Supercharged</strong>, your wave strength doubles to <strong>2 spaces</strong> within close range (1-2 spaces), attenuating to <strong>1 space</strong> at medium range (3-4 spaces)! Hover over a wave card to preview displacement arrows (amber diamonds for asteroids)!</p>
           </div>
 
           <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>

@@ -10,11 +10,16 @@ export function GameOverModal({ isOpen, players, onRematch, onOpenSetup }) {
   if (!isOpen) return null;
 
   const sorted = [...players].sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.deaths - b.deaths;
+    if (b.score !== a.score) return (b.score || 0) - (a.score || 0);
+    return (a.deaths || 0) - (b.deaths || 0);
   });
 
-  const winner = sorted[0];
+  const topScore = sorted[0]?.score || 0;
+  const topDeaths = sorted[0]?.deaths || 0;
+  const winners = sorted.filter(p => (p.score || 0) === topScore && (p.deaths || 0) === topDeaths);
+  const isTrueTie = winners.length > 1;
+  const runnerUp = sorted[1];
+  const isTiedScoreOnly = !isTrueTie && runnerUp && (runnerUp.score || 0) === topScore;
 
   return (
     <div style={{
@@ -58,25 +63,46 @@ export function GameOverModal({ isOpen, players, onRematch, onOpenSetup }) {
             MATCH CONCLUDED
           </span>
           <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', marginTop: '4px' }}>
-            PLAYER {winner?.id || 1} WINS! 🏆
+            {isTrueTie
+              ? (winners.length === 2 ? `PLAYERS ${winners[0].id} & ${winners[1].id} TIE! 🤝` : `IT'S A ${winners.length}-WAY TIE! 🤝`)
+              : `PLAYER ${winners[0]?.id || 1} WINS! 🏆`}
           </h2>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Survived with {winner?.score || 0} survival points across deep space!
+            {isTrueTie
+              ? `Tied with ${topScore} survival points and ${topDeaths} deaths across deep space!`
+              : `Survived with ${topScore} survival points across deep space!`}
           </p>
+          {isTrueTie && (
+            <div style={{ marginTop: '10px', padding: '8px 14px', background: 'rgba(245, 158, 11, 0.15)', border: '1px solid var(--accent-gold)', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--accent-gold)', fontWeight: 700 }}>
+              ⚖️ RESULT: COMPLETE DRAW! BOTH VICTORIOUS!
+            </div>
+          )}
+          {isTiedScoreOnly && (
+            <div style={{ marginTop: '10px', padding: '8px 14px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '8px', fontSize: '0.8rem', color: '#fca5a5', fontWeight: 700 }}>
+              ⚖️ WON BY TIE-BREAKER: FEWEST DEATHS (${topDeaths} deaths vs ${runnerUp.deaths || 0} deaths)!
+            </div>
+          )}
         </div>
 
         {/* Top 3 Leaderboard Summary */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(0,0,0,0.4)', padding: '12px', borderRadius: '12px' }}>
-          {sorted.slice(0, 4).map((p, idx) => (
-            <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: idx === 0 ? 'rgba(245, 158, 11, 0.15)' : 'transparent', borderRadius: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontWeight: 800, color: idx === 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>#{idx + 1}</span>
-                <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: p.color.hex }} />
-                <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>Player {p.id}</span>
+          {sorted.slice(0, 4).map((p, idx) => {
+            const isWinRow = winners.some(w => w.id === p.id);
+            const rank = isWinRow ? 1 : idx + 1;
+            return (
+              <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: isWinRow ? 'rgba(245, 158, 11, 0.15)' : 'transparent', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontWeight: 800, color: isWinRow ? 'var(--accent-gold)' : 'var(--text-muted)' }}>#{rank}</span>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: p.color.hex }} />
+                  <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.85rem' }}>Player {p.id}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{p.deaths || 0} deaths</span>
+                  <span style={{ fontWeight: 800, color: 'var(--accent-cyan)', fontSize: '0.9rem' }}>{p.score || 0} pts</span>
+                </div>
               </div>
-              <span style={{ fontWeight: 800, color: 'var(--accent-cyan)', fontSize: '0.9rem' }}>{p.score || 0} pts</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '8px' }}>
