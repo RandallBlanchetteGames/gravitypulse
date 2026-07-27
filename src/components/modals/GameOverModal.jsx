@@ -79,7 +79,7 @@ export function GameOverModal({ isOpen, players, onRematch, onOpenSetup }) {
           )}
           {isTiedScoreOnly && (
             <div style={{ marginTop: '10px', padding: '8px 14px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '8px', fontSize: '0.8rem', color: '#fca5a5', fontWeight: 700 }}>
-              ⚖️ WON BY TIE-BREAKER: FEWEST DEATHS (${topDeaths} deaths vs ${runnerUp.deaths || 0} deaths)!
+              ⚖️ WON BY TIE-BREAKER: FEWEST DEATHS ({topDeaths} deaths vs {runnerUp.deaths || 0} deaths)!
             </div>
           )}
         </div>
