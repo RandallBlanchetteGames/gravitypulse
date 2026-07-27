@@ -204,15 +204,6 @@ export default function App() {
       };
     });
 
-    // Check if we need to enter Respawn phase first
-    if (newRespawns.length > 0) {
-      setBoard(nextBoard);
-      setPlayers(updatedPlayers);
-      setRespawnQueue(newRespawns);
-      setPhase(PHASES.RESPAWN);
-      return;
-    }
-
     let nextIdx = activePlayerIdx + 1;
     let nextRound = currentRound;
     let nextTurn = turnInRound;
@@ -284,6 +275,29 @@ export default function App() {
           clearGameSession();
           return;
         }
+
+        // At the beginning of a new round, check if any players were destroyed during the round and need to respawn!
+        const missingPlayerIds = updatedPlayers
+          .filter(p => !updatedBoard.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id))
+          .map(p => p.id);
+
+        if (missingPlayerIds.length > 0) {
+          setBoard(updatedBoard);
+          setPlayers(updatedPlayers);
+          setActivePlayerIdx(0);
+          setCurrentRound(nextRound);
+          setTurnInRound(1);
+          setSelectedAction(null);
+          setSelectedDirection(null);
+          setTrajectory([]);
+          setWaveDisplacements([]);
+          if (roundLogs.length > 0) {
+            setLogs(prev => [...prev, ...roundLogs, `⚠️ Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
+          }
+          setRespawnQueue(missingPlayerIds);
+          setPhase(PHASES.RESPAWN);
+          return;
+        }
       }
     }
 
@@ -313,11 +327,6 @@ export default function App() {
     setWaveDisplacements([]);
     if (roundLogs.length > 0) {
       setLogs(prev => [...prev, ...roundLogs]);
-    }
-
-    if (newRespawns.length > 0) {
-      setRespawnQueue(newRespawns);
-      setPhase(PHASES.RESPAWN);
     }
   }, [activePlayerIdx, currentRound, turnInRound, rules]);
 
@@ -398,6 +407,8 @@ export default function App() {
   /* AI Playing Turn Auto-Decision Loop */
   useEffect(() => {
     if (phase === PHASES.PLAYING && activePlayer && !activePlayer.isHuman) {
+      const hasPiece = board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
+      if (!hasPiece) return;
       aiTimeoutRef.current = setTimeout(() => {
         const decision = getAITurnDecision(board, activePlayer.id, rules);
         const legalActs = rules.getLegalActions(activePlayer);
@@ -407,6 +418,20 @@ export default function App() {
     }
     return () => clearTimeout(aiTimeoutRef.current);
   }, [phase, activePlayerIdx, board, players, rules]);
+
+  /* Auto-skip turn if active player is currently destroyed (awaiting round-end respawn) */
+  useEffect(() => {
+    if (phase === PHASES.PLAYING && activePlayer) {
+      const hasPiece = board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
+      if (!hasPiece) {
+        const skipTimer = setTimeout(() => {
+          setLogs(prev => [...prev, `⏳ Player ${activePlayer.id} is destroyed (awaiting round-end respawn) - turn skipped.`]);
+          advanceTurn(board, players, []);
+        }, 500);
+        return () => clearTimeout(skipTimer);
+      }
+    }
+  }, [phase, activePlayerIdx, board, players, activePlayer, advanceTurn]);
 
   /* Handle Action Selection & Trajectory Preview */
   const handleSelectAction = (action) => {
