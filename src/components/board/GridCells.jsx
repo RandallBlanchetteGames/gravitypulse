@@ -46,7 +46,7 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
       const borderRight = (x + 1) % 3 === 0 && x < boardSize - 1 ? '2px solid rgba(0, 240, 255, 0.25)' : '1px solid rgba(255, 255, 255, 0.04)';
       const borderBottom = (y + 1) % 3 === 0 && y < boardSize - 1 ? '2px solid rgba(0, 240, 255, 0.25)' : '1px solid rgba(255, 255, 255, 0.04)';
 
-      // Round the 4 outer corners of the board and the 4 outer corners of Zone 1 and Zone 2
+      // Round only the 4 outer corners of the board itself
       let borderTopLeftRadius = 0;
       let borderTopRightRadius = 0;
       let borderBottomLeftRadius = 0;
@@ -57,22 +57,6 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
       if (x === boardSize - 1 && y === 0) borderTopRightRadius = '18px';
       if (x === 0 && y === boardSize - 1) borderBottomLeftRadius = '18px';
       if (x === boardSize - 1 && y === boardSize - 1) borderBottomRightRadius = '18px';
-
-      // Zone 1 (dist <= 1) outer 4 corners
-      const z1Min = Math.floor(cx - 1);
-      const z1Max = Math.ceil(cx + 1);
-      if (x === z1Min && y === z1Min) borderTopLeftRadius = '22px';
-      if (x === z1Max && y === z1Min) borderTopRightRadius = '22px';
-      if (x === z1Min && y === z1Max) borderBottomLeftRadius = '22px';
-      if (x === z1Max && y === z1Max) borderBottomRightRadius = '22px';
-
-      // Zone 2 (dist <= 2) outer 4 corners
-      const z2Min = Math.floor(cx - 2);
-      const z2Max = Math.ceil(cx + 2);
-      if (x === z2Min && y === z2Min) borderTopLeftRadius = '26px';
-      if (x === z2Max && y === z2Min) borderTopRightRadius = '26px';
-      if (x === z2Min && y === z2Max) borderBottomLeftRadius = '26px';
-      if (x === z2Max && y === z2Max) borderBottomRightRadius = '26px';
 
       const handleClick = () => {
         if (isBH) return;
