@@ -27,15 +27,12 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
 
       // Calculate distance from Singularity center for concentric gravity zones
       const dist = Math.max(Math.abs(x - cx) - 0.5, Math.abs(y - cy) - 0.5);
-      let zoneClass = 'gravity-zone-3';
       let tooltip = "🌌 OUTER SECTOR (Zone 3): Stable space! Unaffected by Turn 4 suction.";
       
       if (!isBH) {
         if (dist <= 1) {
-          zoneClass = 'gravity-zone-1';
           tooltip = "⚠️ EVENT HORIZON (Zone 1): Extreme Gravity! On Turn 4, pieces here are pulled 2 spaces inward directly into destruction!";
         } else if (dist <= 2) {
-          zoneClass = 'gravity-zone-2';
           tooltip = "💫 ACCRETION FIELD (Zone 2): Moderate Gravity! On Turn 4, pieces here are pulled 1 space inward into Zone 1.";
         }
       } else {
@@ -69,7 +66,7 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
           key={`${x}-${y}`}
           onClick={handleClick}
           title={tooltip}
-          className={`grid-cell ${!isBH ? zoneClass : ''} ${isTraj ? 'cell-highlight' : ''}`}
+          className={`grid-cell ${isTraj ? 'cell-highlight' : ''}`}
           style={{
             borderRight,
             borderBottom,
