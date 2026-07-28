@@ -546,3 +546,19 @@ h1, h2, h3, h4, .font-heading {
   will-change: transform, opacity;
 }
 
+/* --- Stem Cell Inspired Overflow Bounce Indicators --- */
+@keyframes bounce-indicator-down {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+@keyframes bounce-indicator-up {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+.scroll-bounce-down {
+  animation: bounce-indicator-down 1.2s infinite ease-in-out;
+}
+.scroll-bounce-up {
+  animation: bounce-indicator-up 1.2s infinite ease-in-out;
+}
+

@@ -38,34 +38,9 @@ class SoundEngine {
 
   /* --- Subtle Deep Space Ambient Drone --- */
   startAmbience() {
-    if (!this.ctx || this.isAmbiencePlaying) return;
-    try {
-      this.ambienceOsc1 = this.ctx.createOscillator();
-      this.ambienceOsc2 = this.ctx.createOscillator();
-      const filter = this.ctx.createBiquadFilter();
-      this.ambienceGain = this.ctx.createGain();
-
-      this.ambienceOsc1.type = 'sine';
-      this.ambienceOsc1.frequency.value = 55; // Low A
-      this.ambienceOsc2.type = 'triangle';
-      this.ambienceOsc2.frequency.value = 110; // Octave A
-
-      filter.type = 'lowpass';
-      filter.frequency.value = 240;
-
-      this.ambienceGain.gain.value = this.isMuted ? 0 : 0.04; // Very subtle, calming
-
-      this.ambienceOsc1.connect(filter);
-      this.ambienceOsc2.connect(filter);
-      filter.connect(this.ambienceGain);
-      this.ambienceGain.connect(this.ctx.destination);
-
-      this.ambienceOsc1.start();
-      this.ambienceOsc2.start();
-      this.isAmbiencePlaying = true;
-    } catch (e) {
-      console.warn("Ambience initialization failed:", e);
-    }
+    // User requested Option 4: Silence ambient background drones to prevent bass headaches
+    // leaving only thematic action and click effect noises active.
+    return;
   }
 
   /* --- UI Click Sound --- */

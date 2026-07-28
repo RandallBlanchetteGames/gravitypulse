@@ -2,14 +2,26 @@
    GRAVITY PULSE 2026 - GAME LOG & EVENT HISTORY FEED
    ========================================================================== */
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ScrollText } from 'lucide-react';
 
 export function GameLog({ logs = [] }) {
-  const bottomRef = useRef(null);
+  const containerRef = useRef(null);
+  const [hasMoreAbove, setHasMoreAbove] = useState(false);
+  const [hasMoreBelow, setHasMoreBelow] = useState(false);
+
+  const checkScroll = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    setHasMoreAbove(el.scrollTop > 10);
+    setHasMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 10);
+  };
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      checkScroll();
+    }
   }, [logs.length]);
 
   return (
@@ -27,16 +39,40 @@ export function GameLog({ logs = [] }) {
         </h3>
       </div>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-        maxHeight: '260px',
-        minHeight: '160px',
-        overflowY: 'auto',
-        fontSize: '0.8rem',
-        paddingRight: '4px'
-      }}>
+      {hasMoreAbove && (
+        <div 
+          className="scroll-bounce-up"
+          onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{
+            textAlign: 'center',
+            color: 'var(--accent-cyan)',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            padding: '2px 0',
+            letterSpacing: '0.05em',
+            textShadow: '0 0 8px rgba(0, 240, 255, 0.6)'
+          }}
+          title="Scroll to oldest events"
+        >
+          ▲ MORE EVENTS ABOVE ▲
+        </div>
+      )}
+
+      <div 
+        ref={containerRef}
+        onScroll={checkScroll}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          maxHeight: '260px',
+          minHeight: '160px',
+          overflowY: 'auto',
+          fontSize: '0.8rem',
+          paddingRight: '4px'
+        }}
+      >
         {logs.length === 0 ? (
           <span style={{ color: 'var(--text-dim)', fontStyle: 'italic', padding: '10px 0' }}>
             Awaiting gravitational movement...
@@ -60,8 +96,27 @@ export function GameLog({ logs = [] }) {
             </div>
           ))
         )}
-        <div ref={bottomRef} />
       </div>
+
+      {hasMoreBelow && (
+        <div 
+          className="scroll-bounce-down"
+          onClick={() => containerRef.current?.scrollTo({ top: containerRef.current?.scrollHeight, behavior: 'smooth' })}
+          style={{
+            textAlign: 'center',
+            color: 'var(--accent-cyan)',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            padding: '2px 0',
+            letterSpacing: '0.05em',
+            textShadow: '0 0 8px rgba(0, 240, 255, 0.6)'
+          }}
+          title="Scroll to newest events"
+        >
+          ▼ MORE EVENTS BELOW ▼
+        </div>
+      )}
     </div>
   );
 }
