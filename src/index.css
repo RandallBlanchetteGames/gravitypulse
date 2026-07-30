@@ -128,6 +128,9 @@ h1, h2, h3, h4, .font-heading {
     gap: 14px;
     padding-bottom: 90px; /* Space for action bottom bar */
   }
+  .shell-center { order: 1; }
+  .shell-left { order: 2; }
+  .shell-right { order: 3; }
 }
 
 /* --- Aspect-Ratio Board Container --- */
@@ -391,11 +394,11 @@ h1, h2, h3, h4, .font-heading {
   background: rgba(13, 16, 29, 0.85);
   border: 1px solid var(--accent-cyan);
   color: var(--text-main);
-  padding: 12px 20px;
+  padding: 8px 12px;
   border-radius: 12px;
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -403,6 +406,43 @@ h1, h2, h3, h4, .font-heading {
   gap: 8px;
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   box-shadow: 0 4px 15px rgba(0, 240, 255, 0.15);
+}
+
+.action-card-btn {
+  padding: 10px 14px;
+}
+.action-icon {
+  width: 16px;
+  height: 16px;
+}
+.action-label {
+  font-size: 0.85rem;
+}
+
+.direction-btn {
+  padding: 6px 4px;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .neon-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  .action-card-btn {
+    padding: 14px 18px;
+  }
+  .action-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .action-label {
+    font-size: 0.95rem;
+  }
+  .direction-btn {
+    padding: 10px 4px;
+    font-size: 0.8rem;
+  }
 }
 
 .neon-btn:hover:not(:disabled) {

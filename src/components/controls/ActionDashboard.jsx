@@ -34,7 +34,7 @@ export function ActionDashboard({
   const showDirSelector = isFreeMove && selectedAction && !selectedAction.special;
 
   return (
-    <div className="glass-card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+    <div className="glass-card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px', minHeight: '400px' }}>
       {/* Active Player Banner */}
       <div style={{
         display: 'flex',
@@ -94,12 +94,10 @@ export function ActionDashboard({
                 <button
                   key={dir.label}
                   onClick={() => { soundEngine.playClick(); onSelectDirection(dir); }}
-                  className="neon-btn"
+                  className="neon-btn direction-btn"
                   style={{
-                    padding: '10px 4px',
                     background: isSel ? 'var(--accent-cyan)' : undefined,
-                    color: isSel ? '#030508' : undefined,
-                    fontSize: '0.8rem'
+                    color: isSel ? '#030508' : undefined
                   }}
                 >
                   {dir.label}
