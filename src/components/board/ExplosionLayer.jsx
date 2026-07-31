@@ -38,17 +38,30 @@ export function ExplosionLayer({ explosions = [], boardSize }) {
         return (
           <div
             key={exp.id || Math.random()}
-            className={`game-piece ${animClass}`}
+            className="cell-wrapper"
             style={{
               transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
-              background: bg,
-              border: 'none',
-              boxShadow: shadow,
-              pointerEvents: 'none',
-              fontSize: '1.4rem'
+              zIndex: 40
             }}
           >
-            {icon}
+            <div
+              className={`game-piece ${animClass}`}
+              style={{
+                width: '78%',
+                height: '78%',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: bg,
+                border: 'none',
+                boxShadow: shadow,
+                pointerEvents: 'none',
+                fontSize: '1.4rem'
+              }}
+            >
+              {icon}
+            </div>
           </div>
         );
       })}
