@@ -68,19 +68,36 @@ export function ActionDashboard({
         </span>
       </div>
 
+      {/* Execute Button - MOVED TO TOP FOR MOBILE UX */}
+      {isHuman && selectedAction && (
+        <button
+          onClick={() => onExecuteAction(selectedAction, selectedDirection)}
+          className="neon-btn btn-violet"
+          style={{
+            padding: '14px',
+            fontSize: '1rem',
+            boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)'
+          }}
+        >
+          CONFIRM & EXECUTE MOVEMENT 🚀
+        </button>
+      )}
+
       {/* Action Buttons List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>SELECT ACTION:</span>
-        {legalActions.map(act => (
-          <ActionCard
-            key={act.id}
-            action={act}
-            isSelected={selectedAction?.id === act.id}
-            isUsed={activePlayer.usedActions[act.id]}
-            disabled={!isHuman}
-            onSelectAction={(a) => { soundEngine.playClick(); onSelectAction(a); }}
-          />
-        ))}
+        <div className="action-grid">
+          {legalActions.map(act => (
+            <ActionCard
+              key={act.id}
+              action={act}
+              isSelected={selectedAction?.id === act.id}
+              isUsed={activePlayer.usedActions[act.id]}
+              disabled={!isHuman}
+              onSelectAction={(a) => { soundEngine.playClick(); onSelectAction(a); }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Direction Selector (Only in Free Directional Mode for directional moves) */}
@@ -108,22 +125,6 @@ export function ActionDashboard({
         </div>
       )}
 
-      {/* Execute Button */}
-      {isHuman && selectedAction && (
-        <button
-          onClick={() => onExecuteAction(selectedAction, selectedDirection)}
-          className="neon-btn btn-violet"
-          style={{
-            padding: '14px',
-            fontSize: '1rem',
-            marginTop: '8px',
-            boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)'
-          }}
-        >
-          CONFIRM & EXECUTE MOVEMENT 🚀
-        </button>
-      )}
-
       {/* Undo Move Button (Casual Mistake Protection!) */}
       {canUndo && isHuman && (
         <button
@@ -135,7 +136,7 @@ export function ActionDashboard({
             background: 'rgba(239, 68, 68, 0.1)',
             borderColor: '#ef4444',
             color: '#ef4444',
-            marginTop: '4px'
+            marginTop: 'auto'
           }}
         >
           <RotateCcw size={14} /> Undo Last Move (Casual Protection)

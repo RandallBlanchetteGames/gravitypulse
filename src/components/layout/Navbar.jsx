@@ -16,17 +16,14 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
   };
 
   return (
-    <header style={{
+    <header className="top-navbar" style={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '12px 24px',
       background: 'rgba(3, 5, 8, 0.9)',
       borderBottom: '1px solid var(--border-neon)',
-      backdropFilter: 'blur(16px)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100
+      backdropFilter: 'blur(16px)'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{

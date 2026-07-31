@@ -93,6 +93,12 @@ h1, h2, h3, h4, .font-heading {
 }
 
 /* --- Responsive Shell Layouts --- */
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
 .cosmic-shell {
   display: grid;
   width: 100%;
@@ -121,6 +127,10 @@ h1, h2, h3, h4, .font-heading {
 
 /* Mobile: Vertical Stack with Bottom Sheet & Pinned Board */
 @media (max-width: 767px) {
+  .top-navbar {
+    position: relative;
+    z-index: 10;
+  }
   .cosmic-shell {
     display: flex;
     flex-direction: column;
@@ -157,7 +167,7 @@ h1, h2, h3, h4, .font-heading {
 
 @media (max-width: 767px) {
   .board-container {
-    width: min(100vw - 20px, 72vh);
+    width: min(100vw - 20px, 65vh);
     max-width: 100%;
     border-radius: 12px;
   }
@@ -410,6 +420,19 @@ h1, h2, h3, h4, .font-heading {
 
 .action-card-btn {
   padding: 10px 14px;
+  white-space: normal;
+  line-height: 1.2;
+  text-align: left;
+}
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (max-width: 767px) {
+  .action-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 .action-icon {
   width: 16px;
