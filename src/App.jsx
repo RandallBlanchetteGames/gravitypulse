@@ -17,6 +17,7 @@ import { Navbar } from './components/layout/Navbar.jsx';
 import { ResponsiveShell } from './components/layout/ResponsiveShell.jsx';
 import { BoardContainer } from './components/board/BoardContainer.jsx';
 import { GridCells } from './components/board/GridCells.jsx';
+import { RegionIndicatorLayer } from './components/board/RegionIndicatorLayer.jsx';
 import { BlackHoleOverlay } from './components/board/BlackHoleOverlay.jsx';
 import { TrajectoryLines } from './components/board/TrajectoryLines.jsx';
 import { EntityLayer } from './components/board/EntityLayer.jsx';
@@ -601,6 +602,11 @@ export default function App() {
         phase={phase}
         onCellClick={handleCellClick}
         previewTrajectory={trajectory}
+      />
+      <RegionIndicatorLayer 
+        rulesConfig={rulesConfig}
+        rules={rules}
+        boardSize={rules.getBoardSize()}
       />
       <BlackHoleOverlay boardSize={rules.getBoardSize()} />
       <TrajectoryLines

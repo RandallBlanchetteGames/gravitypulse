@@ -602,3 +602,63 @@ h1, h2, h3, h4, .font-heading {
   animation: bounce-indicator-up 1.2s infinite ease-in-out;
 }
 
+/* ==========================================================================
+   REGIONAL MOVEMENT INDICATORS (SOLAR WIND DUST)
+   ========================================================================== */
+
+.region-indicator {
+  position: relative;
+  overflow: hidden;
+  /* Use a mask to softly fade the edges so dust doesn't clip harshly */
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 70%);
+}
+
+.region-indicator::before {
+  content: '';
+  position: absolute;
+  /* Make it larger so it can translate entirely across the box seamlessly */
+  top: -100px; left: -100px; right: -100px; bottom: -100px;
+  /* Unified dim cyan/white space dust pattern */
+  background-image: radial-gradient(rgba(0, 240, 255, 0.45) 1px, transparent 1px),
+                    radial-gradient(rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px);
+  /* The lowest common multiple of 24 and 36 is 72. We'll translate by 72px for a seamless loop */
+  background-size: 24px 24px, 36px 36px;
+  background-position: 0 0, 12px 12px;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Intermittent Pulsing Gust Animations (Seamless loop over 72px) */
+@keyframes wind-gust-up {
+  0% { transform: translateY(0); opacity: 0.15; }
+  10% { opacity: 0.6; }
+  30% { opacity: 0.15; }
+  100% { transform: translateY(-72px); opacity: 0.15; }
+}
+
+@keyframes wind-gust-down {
+  0% { transform: translateY(0); opacity: 0.15; }
+  10% { opacity: 0.6; }
+  30% { opacity: 0.15; }
+  100% { transform: translateY(72px); opacity: 0.15; }
+}
+
+@keyframes wind-gust-left {
+  0% { transform: translateX(0); opacity: 0.15; }
+  10% { opacity: 0.6; }
+  30% { opacity: 0.15; }
+  100% { transform: translateX(-72px); opacity: 0.15; }
+}
+
+@keyframes wind-gust-right {
+  0% { transform: translateX(0); opacity: 0.15; }
+  10% { opacity: 0.6; }
+  30% { opacity: 0.15; }
+  100% { transform: translateX(72px); opacity: 0.15; }
+}
+
+.dust-flow-up::before { animation: wind-gust-up 4s linear infinite; }
+.dust-flow-down::before { animation: wind-gust-down 4s linear infinite; }
+.dust-flow-left::before { animation: wind-gust-left 4s linear infinite; }
+.dust-flow-right::before { animation: wind-gust-right 4s linear infinite; }
