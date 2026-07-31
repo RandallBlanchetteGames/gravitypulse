@@ -25,14 +25,27 @@ export class GameRules {
   /* Determine clockwise movement direction for a region coordinate (rx, ry) */
   getRegionalDirection(rx, ry) {
     const maxR = this.getRegionCount() - 1;
-    if (ry === 0 && rx < maxR) return DIRECTIONS.RIGHT;
-    if (rx === maxR && ry < maxR) return DIRECTIONS.DOWN;
-    if (ry === maxR && rx > 0) return DIRECTIONS.LEFT;
-    if (rx === 0 && ry > 0) return DIRECTIONS.UP;
-    // Inner loop fallback for 6x6 center rings
-    if (ry <= rx && rx + ry <= maxR) return DIRECTIONS.RIGHT;
-    if (rx > ry && rx + ry > maxR) return DIRECTIONS.DOWN;
-    if (ry >= rx && rx + ry >= maxR) return DIRECTIONS.LEFT;
+    const midLeft = Math.floor(maxR / 2);
+    const midRight = Math.ceil(maxR / 2);
+
+    // 1. Central four regions jettison outward
+    if (rx === midLeft && ry === midLeft) return DIRECTIONS.UP;         // Top Left
+    if (rx === midRight && ry === midLeft) return DIRECTIONS.RIGHT;     // Top Right
+    if (rx === midLeft && ry === midRight) return DIRECTIONS.LEFT;      // Bottom Left
+    if (rx === midRight && ry === midRight) return DIRECTIONS.DOWN;     // Bottom Right
+
+    // 2. Clockwise concentric rings for all other regions
+    const ring = Math.min(rx, ry, maxR - rx, maxR - ry);
+    
+    // Top edge of the current ring
+    if (ry === ring && rx < maxR - ring) return DIRECTIONS.RIGHT;
+    // Right edge of the current ring
+    if (rx === maxR - ring && ry < maxR - ring) return DIRECTIONS.DOWN;
+    // Bottom edge of the current ring
+    if (ry === maxR - ring && rx > ring) return DIRECTIONS.LEFT;
+    // Left edge of the current ring
+    if (rx === ring && ry > ring) return DIRECTIONS.UP;
+
     return DIRECTIONS.UP;
   }
 
