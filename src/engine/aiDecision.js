@@ -90,7 +90,22 @@ export function getAITurnDecision(board, playerId, rules) {
         const path = previewTrajectory(board, playerId, action.id, dir, rules);
         if (path.length === 0) return;
         
-        const dest = path[path.length - 1];
+        let dest = path[path.length - 1];
+        
+        // Find the ACTUAL destination by checking for hazards/collisions along the path
+        for (let i = 0; i < path.length; i++) {
+          const step = path[i];
+          if (step.x < 0 || step.x >= size || step.y < 0 || step.y >= size) {
+            dest = step; break;
+          }
+          if (isBlackHole(step.x, step.y, size)) {
+            dest = step; break;
+          }
+          if (board.some(e => (e.type === ENTITY_TYPES.ASTEROID || (e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId)) && e.x === step.x && e.y === step.y)) {
+            dest = step; break;
+          }
+        }
+
         let score = 0;
 
         // Penalty if moving off board
