@@ -34,7 +34,7 @@ export function ActionDashboard({
   const showDirSelector = isFreeMove && selectedAction && !selectedAction.special;
 
   return (
-    <div className="glass-card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px', minHeight: '400px' }}>
+    <div className="glass-card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {/* Active Player Banner */}
       <div style={{
         display: 'flex',
@@ -136,7 +136,7 @@ export function ActionDashboard({
             background: 'rgba(239, 68, 68, 0.1)',
             borderColor: '#ef4444',
             color: '#ef4444',
-            marginTop: 'auto'
+            marginTop: '4px'
           }}
         >
           <RotateCcw size={14} /> Undo Last Move (Casual Protection)
