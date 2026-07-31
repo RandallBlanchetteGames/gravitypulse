@@ -63,6 +63,11 @@ export function RulesModal({ isOpen, onClose }) {
             <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>⚡ SUPERCHARGE & ENERGY OVERLOAD</h4>
             <p>Enter orbiting ⚡ <strong>Cosmic Energy Fields</strong> to absorb plasma and become <strong>Supercharged</strong> (doubling your wave power to 2 spaces!). Because these fields have no mass, they cannot be pushed or pulled by waves! Beware: absorbing another energy field while already supercharged causes an <strong>Energy Overload blow up</strong> that destroys your ship!</p>
           </div>
+
+          <div style={{ padding: '12px', background: 'rgba(255, 0, 127, 0.05)', borderRadius: '10px', borderLeft: '3px solid #ff007f' }}>
+            <h4 style={{ fontWeight: 800, color: '#ff007f', marginBottom: '4px' }}>💥 SCORING & KAMIKAZE SACRIFICE</h4>
+            <p>You earn <strong>+1 point</strong> for every opponent you eliminate! <strong>The Sacrifice Tactic:</strong> Crashing your piece directly into an opponent destroys BOTH pieces in a gravitational crash, but you still earn +1 point for the elimination! Use this tactic wisely!</p>
+          </div>
         </div>
 
         <button

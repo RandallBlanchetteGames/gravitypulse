@@ -113,6 +113,11 @@ export function getAITurnDecision(board, playerId, rules) {
           if (board.some(e => e.type === ENTITY_TYPES.ASTEROID && e.x === dest.x && e.y === dest.y)) {
             score -= 500;
           }
+
+          // Bonus if landing on opponent cube (Kamikaze / Sacrifice tactic)
+          if (board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId && e.x === dest.x && e.y === dest.y)) {
+            score += 800;
+          }
         }
 
         // Add small random fuzz for casual variety
