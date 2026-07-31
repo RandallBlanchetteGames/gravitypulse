@@ -33,6 +33,11 @@ export function ExplosionLayer({ explosions = [], boardSize }) {
           icon = "🕳️";
           bg = "radial-gradient(circle, #000000 0%, #9d4edd 70%, transparent 100%)";
           shadow = "0 0 40px #9d4edd, inset 0 0 15px #000";
+        } else if (exp.type === 'SPAWN') {
+          animClass = "effect-spawn";
+          icon = "✨";
+          bg = "radial-gradient(circle, #00f0ff 0%, #0055ff 70%, transparent 100%)";
+          shadow = "0 0 35px #00f0ff";
         }
 
         return (

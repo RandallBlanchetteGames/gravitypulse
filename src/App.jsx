@@ -344,7 +344,7 @@ export default function App() {
         isSupercharged: false
       };
       const nextBoard = [...board, newCube];
-      triggerExplosion(x, y);
+      triggerExplosion(x, y, 'SPAWN');
       soundEngine.playSupercharge();
 
       if (activePlayerIdx + 1 >= players.length) {
@@ -372,7 +372,7 @@ export default function App() {
       };
       const nextBoard = [...board, newCube];
       const remainingQueue = respawnQueue.slice(1);
-      triggerExplosion(x, y);
+      triggerExplosion(x, y, 'SPAWN');
       soundEngine.playSupercharge();
 
       setBoard(nextBoard);
