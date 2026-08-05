@@ -56,6 +56,7 @@ export function RulesModal({ isOpen, onClose }) {
           <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
             <li>Push opponents into the center <strong>Black Hole</strong>.</li>
             <li>Smash them into <strong>Asteroids</strong>.</li>
+            <li>Push them <strong>off the map</strong> to destroy them!</li>
             <li>Earn <strong>+1 point</strong> for every opponent you destroy.</li>
           </ul>
           <p style={{ marginTop: '8px', fontStyle: 'italic', opacity: 0.8 }}>Ready to play? Or check Detailed Rules for advanced mechanics.</p>
