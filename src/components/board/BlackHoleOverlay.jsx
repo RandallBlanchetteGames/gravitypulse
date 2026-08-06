@@ -20,7 +20,7 @@ export function BlackHoleOverlay({ boardSize }) {
         background: 'rgba(157, 78, 221, 0.05)',
         boxShadow: 'inset 0 0 25px rgba(157, 78, 221, 0.22), 0 0 15px rgba(157, 78, 221, 0.1)',
         border: '1px solid rgba(157, 78, 221, 0.35)',
-        borderRadius: is18 ? '22px' : '28px',
+        borderRadius: '50%',
         pointerEvents: 'none',
         zIndex: 2
       }} />
@@ -36,33 +36,17 @@ export function BlackHoleOverlay({ boardSize }) {
         background: 'radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(239, 68, 68, 0.08) 100%)',
         boxShadow: 'inset 0 0 20px rgba(239, 68, 68, 0.35)',
         border: '1px solid rgba(239, 68, 68, 0.45)',
-        borderRadius: is18 ? '16px' : '22px',
+        borderRadius: '50%',
         pointerEvents: 'none',
         zIndex: 3
       }} />
 
       {/* Center Singularity Core (2x2 area in center) */}
       <div className={`black-hole-core ${is18 ? 'size-18' : ''}`}>
-        <div className="accretion-ring" />
-        <div className="accretion-ring-outer" />
-        <div style={{
-          position: 'absolute',
-          width: '55%',
-          height: '55%',
-          background: 'radial-gradient(circle, #000 30%, rgba(139, 92, 246, 0.8) 70%, transparent 100%)',
-          borderRadius: '50%',
-          boxShadow: 'inset 0 0 20px #000, 0 0 15px var(--accent-gold)'
-        }} />
-        <span style={{
-          fontSize: is18 ? '0.55rem' : '0.68rem',
-          fontWeight: 900,
-          color: 'var(--accent-gold)',
-          letterSpacing: '0.05em',
-          textShadow: '0 0 10px #000, 0 0 20px var(--accent-plasma)',
-          zIndex: 5,
-          textAlign: 'center',
-          lineHeight: 1.1
-        }}>
+        <div className="bh-accretion-disk-2" />
+        <div className="bh-accretion-disk-1" />
+        <div className="bh-event-horizon" />
+        <span className="bh-text" style={{ fontSize: is18 ? '0.55rem' : '0.68rem' }}>
           BLACK<br />HOLE
         </span>
       </div>

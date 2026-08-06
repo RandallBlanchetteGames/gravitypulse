@@ -229,9 +229,7 @@ h1, h2, h3, h4, .font-heading {
   transform: translate(-50%, -50%);
   width: 16.666%; /* 2 spaces in 12x12 */
   height: 16.666%;
-  background: #000000;
   border-radius: 50%;
-  box-shadow: 0 0 30px var(--accent-gold), 0 0 60px var(--accent-plasma), inset 0 0 15px #000;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -244,22 +242,51 @@ h1, h2, h3, h4, .font-heading {
   height: 11.111%;
 }
 
-.accretion-ring {
+.bh-event-horizon {
   position: absolute;
-  inset: -8px;
-  border: 2px dashed var(--accent-gold);
+  inset: 0;
+  background: #000;
   border-radius: 50%;
-  animation: accretion-spin 12s linear infinite;
-  opacity: 0.8;
+  box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 15px rgba(245, 158, 11, 0.8), 0 0 30px rgba(157, 78, 221, 0.6);
+  z-index: 2;
 }
 
-.accretion-ring-outer {
+.bh-accretion-disk-1 {
   position: absolute;
-  inset: -16px;
-  border: 1px dotted var(--accent-plasma);
+  inset: -30%;
   border-radius: 50%;
-  animation: accretion-spin 20s linear infinite reverse;
-  opacity: 0.6;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(139, 92, 246, 0.4) 20%, rgba(245, 158, 11, 0.8) 40%, transparent 60%, rgba(239, 68, 68, 0.5) 80%, transparent 100%);
+  filter: blur(4px);
+  animation: accretion-spin 8s linear infinite;
+  z-index: 1;
+}
+
+.bh-accretion-disk-2 {
+  position: absolute;
+  inset: -60%;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, transparent 0%, rgba(245, 158, 11, 0.3) 30%, transparent 50%, rgba(157, 78, 221, 0.4) 70%, transparent 100%);
+  filter: blur(8px);
+  animation: accretion-spin 15s linear infinite reverse;
+  z-index: 0;
+}
+
+.bh-text {
+  z-index: 5;
+  text-align: center;
+  line-height: 1.1;
+  font-weight: 900;
+  color: var(--accent-gold);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px #000, 0 0 20px var(--accent-plasma);
+  animation: text-warp 4s ease-in-out infinite;
+}
+
+@keyframes text-warp {
+  0%, 100% { transform: scale(1) skewX(0deg) skewY(0deg); opacity: 1; filter: blur(0px); }
+  25% { transform: scale(1.05) skewX(2deg) skewY(-1deg); opacity: 0.9; filter: blur(0.5px); }
+  50% { transform: scale(0.95) skewX(-2deg) skewY(1deg); opacity: 0.8; filter: blur(1px); }
+  75% { transform: scale(1.02) skewX(1deg) skewY(2deg); opacity: 0.95; filter: blur(0.5px); }
 }
 
 /* --- Entity Layer & GPU Piece Positioning --- */
