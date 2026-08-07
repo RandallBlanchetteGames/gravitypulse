@@ -37,12 +37,12 @@ export function RulesModal({ isOpen, onClose }) {
       color: "var(--accent-violet)",
       content: (
         <>
-          <p>Unleash cosmic waves to push and pull your enemies!</p>
+          <p>Use waves to push and pull other players.</p>
           <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
             <li><strong>Gravity Wave:</strong> Pulls opponents and Asteroids towards you.</li>
             <li><strong>Pulse Wave:</strong> Pushes opponents and Asteroids away.</li>
           </ul>
-          <p style={{ marginTop: '8px' }}>Move around the board and use waves to force opponents into hazards!</p>
+          <p style={{ marginTop: '8px' }}>Use movement and waves to force other players into hazards.</p>
         </>
       )
     },
@@ -59,7 +59,7 @@ export function RulesModal({ isOpen, onClose }) {
             <li>Push them <strong>off the map</strong> to destroy them!</li>
             <li>Earn <strong>+1 point</strong> for every opponent you destroy.</li>
           </ul>
-          <p style={{ marginTop: '8px', fontStyle: 'italic', opacity: 0.8 }}>Ready to play? Or check Detailed Rules for advanced mechanics.</p>
+          <p style={{ marginTop: '8px', fontStyle: 'italic', opacity: 0.8 }}>Ready to play? You can check the Detailed Rules for more info.</p>
         </>
       )
     }
@@ -147,16 +147,16 @@ export function RulesModal({ isOpen, onClose }) {
                 <p>Waves push/pull by <strong>1 space</strong> normally. If <strong>Supercharged</strong>, waves move targets by <strong>2 spaces</strong> within close range (1-2 spaces), but attenuate to <strong>1 space</strong> at medium range (3-4 spaces).</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>TURN 4 SINGULARITY & ORBITAL DRIFT</h4>
+                <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>TURN 4: BLACK HOLE PULL</h4>
                 <p>End of every turn: Cosmic Energy Fields rotate 1 space clockwise. <br/>End of Turn 4: The center Black Hole pulls <strong>all pieces across the entire map inward by 1 space</strong>.</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>SUPERCHARGE OVERLOAD</h4>
-                <p>Collect Cosmic Energy to become Supercharged (double wave power). Energy fields have no mass and aren't affected by waves. <strong>Warning:</strong> Collecting a second energy field while already supercharged causes a fatal <strong>Energy Overload</strong>!</p>
+                <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>SUPERCHARGING</h4>
+                <p>Collect Cosmic Energy to become Supercharged (double wave power). Energy fields have no mass and aren't affected by waves. <strong>Warning:</strong> If you collect a second energy field while already supercharged, your ship will overload and explode!</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(255, 0, 127, 0.05)', borderRadius: '10px', borderLeft: '3px solid #ff007f' }}>
-                <h4 style={{ fontWeight: 800, color: '#ff007f', marginBottom: '4px' }}>KAMIKAZE SACRIFICE</h4>
-                <p>Crashing your ship directly into an opponent destroys BOTH pieces, but you still earn +1 point for the elimination! Use this tactic wisely!</p>
+                <h4 style={{ fontWeight: 800, color: '#ff007f', marginBottom: '4px' }}>COLLISIONS</h4>
+                <p>Crashing directly into another player destroys both ships, but you still get a point for the elimination.</p>
               </div>
             </div>
           )}

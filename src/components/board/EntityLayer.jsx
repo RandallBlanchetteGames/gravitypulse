@@ -60,7 +60,7 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
                 className="energy-field"
-                title="COSMIC ENERGY FIELD: Enter to absorb plasma, becoming Supercharged & doubling wave power!"
+                title="ENERGY FIELD: Move here to become Supercharged and double your wave power."
               >
                 <div className="energy-field-ring" />
                 <Zap size={16} color="#fff" fill="#00ff66" style={{ zIndex: 2 }} />

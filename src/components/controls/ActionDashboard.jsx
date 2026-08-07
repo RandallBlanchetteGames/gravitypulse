@@ -83,7 +83,7 @@ export function ActionDashboard({
             gap: '8px'
           }}
         >
-          CONFIRM & EXECUTE MOVEMENT <Rocket size={18} />
+          CONFIRM ACTION <Rocket size={18} />
         </button>
       )}
 
@@ -143,7 +143,7 @@ export function ActionDashboard({
             marginTop: '4px'
           }}
         >
-          <RotateCcw size={14} /> Undo Last Move (Casual Protection)
+          <RotateCcw size={14} /> Undo Move
         </button>
       )}
     </div>

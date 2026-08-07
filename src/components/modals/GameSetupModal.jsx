@@ -57,7 +57,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Settings color="var(--accent-cyan)" size={24} />
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>MATCH CUSTOMIZATION</h2>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>GAME SETTINGS</h2>
           </div>
           <button onClick={onClose} className="neon-btn" style={{ padding: '6px 10px', minWidth: 'auto' }}>
             <X size={18} />
@@ -123,7 +123,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
             }}
           >
             <Sparkles size={18} />
-            {hazardsEnabled ? 'Enabled (Asteroids & Energy Fields Spawn Each Round)' : 'Disabled (Pure Tactical Gravity Mode)'}
+            {hazardsEnabled ? 'Enabled (Asteroids & Energy Fields)' : 'Disabled (Pure Tactical Gravity Mode)'}
           </button>
         </div>
 
@@ -209,7 +209,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
             boxShadow: '0 0 25px rgba(157, 78, 221, 0.5)'
           }}
         >
-          <Check size={20} /> START CUSTOMIZED MATCH 🚀
+          <Check size={20} /> START MATCH <Sparkles size={18} />
         </button>
       </div>
     </div>

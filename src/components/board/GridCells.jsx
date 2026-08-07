@@ -31,9 +31,9 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
       
       if (!isBH) {
         if (dist <= 1) {
-          tooltip = "EVENT HORIZON (Zone 1): Extreme Gravity! On Turn 4, pieces here are pulled 1 space inward directly into destruction!";
+          tooltip = "EVENT HORIZON: Pieces here are pulled into the Black Hole on Turn 4.";
         } else if (dist <= 2) {
-          tooltip = "ACCRETION FIELD (Zone 2): Moderate Gravity! On Turn 4, pieces here are pulled 1 space inward into Zone 1.";
+          tooltip = "ACCRETION FIELD: Pieces here are pulled 1 space inward on Turn 4.";
         }
       } else {
         tooltip = "BLACK HOLE SINGULARITY: Absolute void. Entering destroys the piece immediately.";

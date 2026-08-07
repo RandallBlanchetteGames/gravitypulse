@@ -12,28 +12,28 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turn
       case PHASES.SETUP:
         return {
           title: "SETUP PHASE",
-          text: "Tap anywhere in a 3x3 Region to deploy your piece to its center!",
+          text: "Tap an empty space to deploy your ship.",
           color: "var(--accent-cyan)",
           border: "rgba(0, 240, 255, 0.3)"
         };
       case PHASES.PLAYING:
         return {
           title: `ROUND ${currentRound} OF ${maxRounds} | TURN ${turnInRound} OF 4`,
-          text: `Player ${activePlayer?.id || 1}'s Turn (${5 - turnInRound} turn(s) until Turn 4 Singularity Suction!). Select an action.`,
+          text: `Player ${activePlayer?.id || 1}'s Turn (${5 - turnInRound} turns until the Black Hole pulls). Choose an action.`,
           color: "#fff",
           border: "rgba(255, 255, 255, 0.15)"
         };
       case PHASES.RESPAWN:
         return {
           title: "RESPAWN PHASE",
-          text: `Player ${activePlayer?.id || 1}: Tap a safe region center to re-enter the cosmic field!`,
+          text: "Tap an empty space to respawn.",
           color: "var(--accent-supercharge)",
           border: "rgba(0, 255, 102, 0.3)"
         };
       default:
         return {
-          title: "COSMIC FIELD ACTIVE",
-          text: "Survival objective in progress.",
+          title: "MATCH ACTIVE",
+          text: "Match in progress.",
           color: "var(--text-main)",
           border: "rgba(255, 255, 255, 0.1)"
         };
