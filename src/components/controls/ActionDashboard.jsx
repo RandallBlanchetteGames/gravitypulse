@@ -154,22 +154,24 @@ export function ActionDashboard({
       )}
 
       {/* Undo Move Button (Casual Mistake Protection!) */}
-      {canUndo && isHuman && (
-        <button
-          onClick={() => { soundEngine.playClick(); onUndoMove(); }}
-          className="neon-btn"
-          style={{
-            padding: '10px',
-            fontSize: '0.85rem',
-            background: 'rgba(239, 68, 68, 0.1)',
-            borderColor: '#ef4444',
-            color: '#ef4444',
-            marginTop: '4px'
-          }}
-        >
-          <RotateCcw size={14} /> Undo Move
-        </button>
-      )}
+      <div style={{ minHeight: '44px', marginTop: '4px' }}>
+        {canUndo && isHuman && (
+          <button
+            onClick={() => { soundEngine.playClick(); onUndoMove(); }}
+            className="neon-btn"
+            style={{
+              padding: '10px',
+              fontSize: '0.85rem',
+              background: 'rgba(239, 68, 68, 0.1)',
+              borderColor: '#ef4444',
+              color: '#ef4444',
+              width: '100%'
+            }}
+          >
+            <RotateCcw size={14} /> Undo Move
+          </button>
+        )}
+      </div>
     </div>
   );
 }

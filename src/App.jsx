@@ -513,8 +513,17 @@ export default function App() {
     setLogs(prev => [...prev, ...result.logs]);
 
     // Animate sequence frames if any
-    if (result.sequence.length > 1) {
+    if (result.sequence.length > 0) {
       let stepIdx = 0;
+      
+      // Start the very first frame IMMEDIATELY
+      setBoard(result.sequence[0]);
+      setPlayers(prevPlayers => prevPlayers.map(p => {
+        const cube = result.sequence[0].find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
+        return { ...p, isSupercharged: cube ? !!cube.isSupercharged : false };
+      }));
+
+      // Sequence through remaining frames every 160ms (matching the CSS transition exactly)
       const animInterval = setInterval(() => {
         stepIdx++;
         if (stepIdx < result.sequence.length) {
@@ -525,8 +534,12 @@ export default function App() {
             return { ...p, isSupercharged: cube ? !!cube.isSupercharged : false };
           }));
         } else {
+          // Once the final frame is reached, we MUST WAIT an additional 160ms
+          // for the final CSS movement transition to settle before changing the turn!
           clearInterval(animInterval);
-          advanceTurn(result.finalBoard, nextPlayers, result.respawnQueue);
+          setTimeout(() => {
+            advanceTurn(result.finalBoard, nextPlayers, result.respawnQueue);
+          }, 160);
         }
       }, 160);
     } else {
