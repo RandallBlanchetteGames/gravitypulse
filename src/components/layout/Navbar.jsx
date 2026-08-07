@@ -3,7 +3,7 @@
    ========================================================================== */
 
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Settings, BookOpen, RotateCcw, Orbit } from 'lucide-react';
+import { Volume2, VolumeX, Settings, BookOpen, RotateCcw, Orbit, Home } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
 export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
@@ -64,6 +64,18 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
           <span>•</span>
           <span>{rulesConfig.gameLength.label.split(' ')[0]} Rnds</span>
         </div>
+
+        <button
+          onClick={() => {
+            soundEngine.playClick();
+            window.location.href = 'https://blanchettegames.com';
+          }}
+          className="neon-btn"
+          style={{ padding: '8px 14px', fontSize: '0.85rem' }}
+          title="Back to Blanchette Games Hub"
+        >
+          <Home size={16} /> Hub
+        </button>
 
         <button
           onClick={handleToggleMute}
