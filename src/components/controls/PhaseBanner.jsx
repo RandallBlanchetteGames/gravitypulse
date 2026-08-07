@@ -12,7 +12,7 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turn
       case PHASES.SETUP:
         return {
           title: "SETUP PHASE",
-          text: "Tap an empty space to deploy your ship.",
+          text: "Tap an empty space to deploy your piece.",
           color: "var(--accent-cyan)",
           border: "rgba(0, 240, 255, 0.3)"
         };

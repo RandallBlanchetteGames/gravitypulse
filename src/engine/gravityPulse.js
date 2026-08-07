@@ -185,7 +185,7 @@ export function executeBlackHoleSuction(board, rules) {
   const cx = (size - 1) / 2;
   const cy = (size - 1) / 2;
 
-  const logs = [`🕳️ Black Hole Singularity pulls all ships, asteroids, and energy fields inward 1 space!`];
+  const logs = [`🕳️ Black Hole Singularity pulls all pieces, asteroids, and energy fields inward 1 space!`];
   let allRespawns = [];
   let allEffects = [];
 

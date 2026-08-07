@@ -152,11 +152,11 @@ export function RulesModal({ isOpen, onClose }) {
               </div>
               <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
                 <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>SUPERCHARGING</h4>
-                <p>Collect Cosmic Energy to become Supercharged (double wave power). Energy fields have no mass and aren't affected by waves. <strong>Warning:</strong> If you collect a second energy field while already supercharged, your ship will overload and explode!</p>
+                <p>Collect Cosmic Energy to become Supercharged (double wave power). Energy fields have no mass and aren't affected by waves. <strong>Warning:</strong> If you collect a second energy field while already supercharged, your piece will overload and explode!</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(255, 0, 127, 0.05)', borderRadius: '10px', borderLeft: '3px solid #ff007f' }}>
                 <h4 style={{ fontWeight: 800, color: '#ff007f', marginBottom: '4px' }}>COLLISIONS</h4>
-                <p>Crashing directly into another player destroys both ships, but you still get a point for the elimination.</p>
+                <p>Crashing directly into another player destroys both pieces, but you still get a point for the elimination.</p>
               </div>
             </div>
           )}
