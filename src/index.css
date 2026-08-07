@@ -439,30 +439,31 @@ h1, h2, h3, h4, .font-heading {
 .asteroid-hazard {
   width: 74%;
   height: 74%;
-  clip-path: polygon(20% 0%, 80% 5%, 100% 30%, 90% 75%, 60% 100%, 15% 90%, 0% 55%, 5% 20%);
-  background: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 50%, #0f172a 100%);
+  border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%;
+  background: radial-gradient(circle at 35% 35%, #94a3b8 0%, #475569 60%, #1e293b 100%);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
   cursor: help;
-  animation: asteroid-drift 5s ease-in-out infinite alternate;
-  will-change: transform;
+  animation: asteroid-drift 8s ease-in-out infinite alternate;
+  will-change: transform, border-radius;
 }
 
 .asteroid-hazard::before {
   content: '';
   position: absolute;
   inset: 0;
-  box-shadow: inset 8px 8px 16px rgba(255, 255, 255, 0.15), inset -12px -12px 24px rgba(0, 0, 0, 0.9);
+  border-radius: inherit;
+  box-shadow: inset 10px 10px 20px rgba(255, 255, 255, 0.25), inset -10px -10px 20px rgba(0, 0, 0, 0.7);
   pointer-events: none;
   z-index: 1;
 }
 
 @keyframes asteroid-drift {
-  0% { transform: rotate(-10deg) scale(0.97); }
-  100% { transform: rotate(10deg) scale(1.03); }
+  0% { transform: rotate(-15deg) scale(0.97); border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%; }
+  100% { transform: rotate(15deg) scale(1.03); border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%; }
 }
 
 /* Dynamic Energy Field Lighting Overlay */
@@ -476,12 +477,13 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .asteroid-hazard .lighting-overlay {
-  clip-path: polygon(20% 0%, 80% 5%, 100% 30%, 90% 75%, 60% 100%, 15% 90%, 0% 55%, 5% 20%);
+  border-radius: inherit;
 }
 
 .quantum-singularity .lighting-overlay {
-  mask-image: radial-gradient(circle, transparent 55%, black 60%);
-  -webkit-mask-image: radial-gradient(circle, transparent 55%, black 60%);
+  /* Using a donut mask to cut out both the center and the square corners */
+  mask-image: radial-gradient(circle, transparent 48%, black 50%, black 72%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle, transparent 48%, black 50%, black 72%, transparent 74%);
 }
 
 /* Cosmic plasma energy field power-up */
