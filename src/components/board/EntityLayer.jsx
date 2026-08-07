@@ -13,7 +13,7 @@ const hexToRgba = (hex, alpha = 0.8) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick }) {
+export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, activePlayerId, onEntityClick }) {
   // 1. Identify all entities that cast light (Energy Fields AND Supercharged Players)
   const lightSources = board.filter(e => 
     e.type === ENTITY_TYPES.ENERGY || (e.type === ENTITY_TYPES.CUBE && e.isSupercharged)
@@ -165,4 +165,4 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
       })}
     </div>
   );
-}
+});

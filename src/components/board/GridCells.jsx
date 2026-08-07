@@ -7,7 +7,7 @@ import { isBlackHole } from '../../engine/boardGeometry.js';
 import { PHASES } from '../../engine/types.js';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [] }) {
+export const GridCells = React.memo(function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [] }) {
   const cells = [];
   const isPlacementPhase = phase === PHASES.SETUP || phase === PHASES.RESPAWN;
   const cx = (boardSize - 1) / 2;
@@ -102,4 +102,4 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
   }
 
   return <>{cells}</>;
-}
+});
