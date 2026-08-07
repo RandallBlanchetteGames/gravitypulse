@@ -16,15 +16,7 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
   };
 
   return (
-    <header className="top-navbar" style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '12px 24px',
-      background: 'rgba(3, 5, 8, 0.9)',
-      borderBottom: '1px solid var(--border-neon)',
-      backdropFilter: 'blur(16px)'
-    }}>
+    <header className="top-navbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
           width: '38px',
@@ -48,9 +40,9 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+      <div className="nav-buttons">
         {/* Setup Badge Indicator */}
-        <div style={{
+        <div className="setup-badge" style={{
           display: 'flex',
           gap: '6px',
           background: 'rgba(255, 255, 255, 0.04)',
@@ -74,7 +66,7 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
           style={{ padding: '8px 14px', fontSize: '0.85rem' }}
           title="Back to Blanchette Games Hub"
         >
-          <Home size={16} /> Hub
+          <Home size={16} /> <span className="nav-btn-text">Hub</span>
         </button>
 
         <button
@@ -91,7 +83,7 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
           className="neon-btn"
           style={{ padding: '8px 14px', fontSize: '0.85rem' }}
         >
-          <BookOpen size={16} /> Rules
+          <BookOpen size={16} /> <span className="nav-btn-text">Rules</span>
         </button>
 
         <button
@@ -99,7 +91,7 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
           className="neon-btn"
           style={{ padding: '8px 14px', fontSize: '0.85rem' }}
         >
-          <Settings size={16} /> Setup
+          <Settings size={16} /> <span className="nav-btn-text">Setup</span>
         </button>
 
         <button
