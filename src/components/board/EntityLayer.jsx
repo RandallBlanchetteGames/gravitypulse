@@ -49,6 +49,11 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
         const yPct = entity.y * 100;
         const zIndex = entity.type === ENTITY_TYPES.CUBE ? (entity.playerId === activePlayerId ? 30 : 25) : 20;
 
+        // Generate a pseudo-random animation delay based on entity ID so they don't all pulse/wobble in unison
+        const idStr = String(entity.id);
+        const charCode = idStr.charCodeAt(idStr.length - 1) || 5;
+        const animDelay = `-${(charCode % 10) * 0.8}s`;
+
         // Render Quantum Singularity Player Pieces
         if (entity.type === ENTITY_TYPES.CUBE) {
           const colorObj = PLAYER_COLORS.find(c => c.id === entity.playerId) || PLAYER_COLORS[0];
@@ -59,7 +64,8 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               className="cell-wrapper"
               style={{
                 transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
-                zIndex
+                zIndex,
+                '--anim-delay': animDelay
               }}
             >
               {entity.isSupercharged && (
@@ -94,7 +100,8 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               className="cell-wrapper"
               style={{
                 transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
-                zIndex
+                zIndex,
+                '--anim-delay': animDelay
               }}
             >
               <div
@@ -117,7 +124,8 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               className="cell-wrapper"
               style={{
                 transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
-                zIndex
+                zIndex,
+                '--anim-delay': animDelay
               }}
             >
               <div

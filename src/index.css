@@ -359,6 +359,7 @@ h1, h2, h3, h4, .font-heading {
   pointer-events: auto;
   cursor: pointer;
   animation: singularity-wobble 4s ease-in-out infinite alternate;
+  animation-delay: var(--anim-delay, 0s);
   will-change: transform;
 }
 
@@ -369,6 +370,7 @@ h1, h2, h3, h4, .font-heading {
   border: 4px solid var(--player-color);
   box-shadow: 0 0 15px var(--player-color), inset 0 0 10px var(--player-color);
   animation: ring-morph 5s linear infinite;
+  animation-delay: var(--anim-delay, 0s);
   pointer-events: none;
 }
 
@@ -439,7 +441,7 @@ h1, h2, h3, h4, .font-heading {
 .asteroid-hazard {
   width: 74%;
   height: 74%;
-  border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%;
+  clip-path: polygon(15% 8%, 25% 4%, 35% 8%, 45% 2%, 55% 5%, 65% 3%, 75% 9%, 85% 15%, 92% 25%, 97% 35%, 94% 45%, 98% 55%, 92% 65%, 88% 75%, 80% 85%, 70% 92%, 60% 95%, 50% 92%, 40% 97%, 30% 90%, 20% 94%, 12% 85%, 5% 75%, 2% 65%, 6% 55%, 2% 45%, 5% 35%, 8% 25%, 12% 15%);
   background: radial-gradient(circle at 35% 35%, #94a3b8 0%, #475569 60%, #1e293b 100%);
   position: relative;
   display: flex;
@@ -448,22 +450,22 @@ h1, h2, h3, h4, .font-heading {
   pointer-events: auto;
   cursor: help;
   animation: asteroid-drift 8s ease-in-out infinite alternate;
-  will-change: transform, border-radius;
+  animation-delay: var(--anim-delay, 0s);
+  will-change: transform;
 }
 
 .asteroid-hazard::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   box-shadow: inset 10px 10px 20px rgba(255, 255, 255, 0.25), inset -10px -10px 20px rgba(0, 0, 0, 0.7);
   pointer-events: none;
   z-index: 1;
 }
 
 @keyframes asteroid-drift {
-  0% { transform: rotate(-15deg) scale(0.97); border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%; }
-  100% { transform: rotate(15deg) scale(1.03); border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%; }
+  0% { transform: rotate(-15deg) scale(0.97); }
+  100% { transform: rotate(15deg) scale(1.03); }
 }
 
 /* Dynamic Energy Field Lighting Overlay */
@@ -477,7 +479,7 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .asteroid-hazard .lighting-overlay {
-  border-radius: inherit;
+  clip-path: polygon(15% 8%, 25% 4%, 35% 8%, 45% 2%, 55% 5%, 65% 3%, 75% 9%, 85% 15%, 92% 25%, 97% 35%, 94% 45%, 98% 55%, 92% 65%, 88% 75%, 80% 85%, 70% 92%, 60% 95%, 50% 92%, 40% 97%, 30% 90%, 20% 94%, 12% 85%, 5% 75%, 2% 65%, 6% 55%, 2% 45%, 5% 35%, 8% 25%, 12% 15%);
 }
 
 .quantum-singularity .lighting-overlay {
@@ -486,42 +488,27 @@ h1, h2, h3, h4, .font-heading {
   -webkit-mask-image: radial-gradient(circle, transparent 48%, black 50%, black 72%, transparent 74%);
 }
 
-/* Cosmic plasma energy field power-up */
+/* Cosmic plasma energy field power-up (Neutron Core) */
 .energy-field {
   width: 76%;
   height: 76%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 255, 102, 0.85) 0%, rgba(16, 185, 129, 0.45) 55%, rgba(6, 78, 59, 0.15) 85%, transparent 100%);
-  border: 1.5px dashed #6ee7b7;
-  box-shadow: 0 0 16px #00ff66, inset 0 0 12px rgba(0, 255, 102, 0.6);
+  background: #ffffff;
+  box-shadow: 0 0 30px #00ff66, 0 0 60px rgba(0, 255, 102, 0.6), 0 0 90px rgba(0, 255, 102, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
   cursor: help;
   position: relative;
-  animation: field-pulse 2.5s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+  animation: neutron-pulse 4s ease-in-out infinite alternate;
+  animation-delay: var(--anim-delay, 0s);
+  will-change: transform, box-shadow;
 }
 
-.energy-field-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1px dotted rgba(110, 231, 183, 0.7);
-  animation: field-ring-spin 8s linear infinite;
-  pointer-events: none;
-  will-change: transform;
-}
-
-@keyframes field-pulse {
-  0% { transform: scale(0.93); opacity: 0.85; }
-  100% { transform: scale(1.07); opacity: 1; }
-}
-
-@keyframes field-ring-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes neutron-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 20px #00ff66, 0 0 40px rgba(0, 255, 102, 0.4); }
+  100% { transform: scale(1.05); box-shadow: 0 0 40px #00ff66, 0 0 80px rgba(0, 255, 102, 0.8), 0 0 120px rgba(0, 255, 102, 0.4); }
 }
 
 /* --- Buttons & Interactive Controls --- */
