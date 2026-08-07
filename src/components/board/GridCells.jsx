@@ -40,8 +40,14 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
       }
 
       // Subtle regional grid boundary borders (thick line every 3 cells)
-      const borderRight = (x + 1) % 3 === 0 && x < boardSize - 1 ? '2px solid rgba(0, 240, 255, 0.25)' : '1px solid rgba(255, 255, 255, 0.04)';
-      const borderBottom = (y + 1) % 3 === 0 && y < boardSize - 1 ? '2px solid rgba(0, 240, 255, 0.25)' : '1px solid rgba(255, 255, 255, 0.04)';
+      const isRightNeon = (x + 1) % 3 === 0 && x < boardSize - 1;
+      const isBottomNeon = (y + 1) % 3 === 0 && y < boardSize - 1;
+      let neonClass = '';
+      if (isRightNeon && isBottomNeon) neonClass = 'border-right-bottom-neon';
+      else if (isRightNeon) neonClass = 'border-right-neon';
+      else if (isBottomNeon) neonClass = 'border-bottom-neon';
+
+      const interactiveClass = (isPlacementPhase && !isBH) ? 'cell-interactive' : '';
 
       // Round only the 4 outer corners of the board itself
       let borderTopLeftRadius = 0;
@@ -66,10 +72,8 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
           key={`${x}-${y}`}
           onClick={handleClick}
           title={tooltip}
-          className={`grid-cell ${isTraj ? 'cell-highlight' : ''}`}
+          className={`grid-cell ${isTraj ? 'cell-highlight' : ''} ${neonClass} ${interactiveClass}`.trim()}
           style={{
-            borderRight,
-            borderBottom,
             borderTopLeftRadius,
             borderTopRightRadius,
             borderBottomLeftRadius,
