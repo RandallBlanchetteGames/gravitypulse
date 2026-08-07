@@ -7,6 +7,41 @@ import { ENTITY_TYPES, PLAYER_COLORS } from '../../engine/types.js';
 import { Zap, Disc } from 'lucide-react';
 
 export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick }) {
+  // 1. Identify all Energy Fields on the board to cast light
+  const energyFields = board.filter(e => e.type === ENTITY_TYPES.ENERGY);
+
+  // Helper to render dynamic lighting overlays on entities
+  const renderLighting = (entity) => {
+    if (energyFields.length === 0) return null;
+    
+    return energyFields.map((ef, i) => {
+      const dx = ef.x - entity.x;
+      const dy = ef.y - entity.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      const MAX_LIGHT_DIST = 5; // Light falls off after 5 spaces
+      if (dist > MAX_LIGHT_DIST || dist === 0) return null;
+      
+      const angle = Math.atan2(dy, dx);
+      const intensity = Math.max(0, 1 - (dist / MAX_LIGHT_DIST));
+      
+      // Position the radial gradient highlight on the edge facing the energy field
+      const xPos = 50 + Math.cos(angle) * 50;
+      const yPos = 50 + Math.sin(angle) * 50;
+      
+      return (
+        <div 
+          key={`light-${entity.id}-${i}`}
+          className="lighting-overlay"
+          style={{
+            background: `radial-gradient(circle at ${xPos}% ${yPos}%, rgba(0, 255, 102, 0.8) 0%, transparent 60%)`,
+            opacity: intensity
+          }}
+        />
+      );
+    });
+  };
+
   return (
     <div className="entity-layer">
       {board.map(entity => {
@@ -14,13 +49,9 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
         const yPct = entity.y * 100;
         const zIndex = entity.type === ENTITY_TYPES.CUBE ? (entity.playerId === activePlayerId ? 30 : 25) : 20;
 
-        // Render Celestial Player Orbs
+        // Render Quantum Singularity Player Pieces
         if (entity.type === ENTITY_TYPES.CUBE) {
           const colorObj = PLAYER_COLORS.find(c => c.id === entity.playerId) || PLAYER_COLORS[0];
-          const bgStyle = {
-            background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${colorObj.hex} 38%, #020408 100%)`,
-            border: entity.playerId === activePlayerId ? '2px solid #ffffff' : '1px solid rgba(255,255,255,0.35)'
-          };
 
           return (
             <div
@@ -36,11 +67,20 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               )}
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
-                className={`celestial-orb ${entity.isSupercharged ? 'supercharged' : ''}`}
-                style={bgStyle}
-                title={`Player ${entity.playerId} Orb (${entity.isSupercharged ? 'Supercharged' : 'Standard'})`}
+                className={`quantum-singularity ${entity.isSupercharged ? 'supercharged' : ''}`}
+                style={{ '--player-color': colorObj.hex }}
+                title={`Player ${entity.playerId} Singularity (${entity.isSupercharged ? 'Supercharged' : 'Standard'})`}
               >
-                P{entity.playerId}
+                {/* The hollow ring */}
+                <div className="quantum-ring" />
+                {/* The bright singularity core */}
+                <div className="quantum-core" />
+                
+                {/* Player ID label floating slightly above */}
+                <div className="quantum-text">P{entity.playerId}</div>
+
+                {/* Dynamic Lighting Overlay */}
+                {renderLighting(entity)}
               </div>
             </div>
           );
@@ -69,7 +109,7 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
           );
         }
 
-        // Render Asteroid Hazards
+        // Render Metallic Obsidian Asteroid Hazards
         if (entity.type === ENTITY_TYPES.ASTEROID) {
           return (
             <div
@@ -85,7 +125,10 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
                 className="asteroid-hazard"
                 title="ASTEROID HAZARD: Destroys any piece that collides with it!"
               >
-                <Disc size={18} color="#cbd5e1" />
+                {/* No icon needed for this rugged version, it's just a rock */}
+                
+                {/* Dynamic Lighting Overlay */}
+                {renderLighting(entity)}
               </div>
             </div>
           );
