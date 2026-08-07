@@ -293,7 +293,7 @@ export default function App() {
           setTrajectory([]);
           setWaveDisplacements([]);
           if (roundLogs.length > 0) {
-            setLogs(prev => [...prev, ...roundLogs, `⚠️ Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
+            setLogs(prev => [...prev, ...roundLogs, `Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
           }
           setRespawnQueue(missingPlayerIds);
           setPhase(PHASES.RESPAWN);

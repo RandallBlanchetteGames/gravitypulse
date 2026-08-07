@@ -32,13 +32,13 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               }}
             >
               {entity.isSupercharged && (
-                <div className="supercharge-halo" title="⚡ SUPERCHARGED HALO: Double wave power active!" />
+                <div className="supercharge-halo" title="SUPERCHARGED HALO: Double wave power active!" />
               )}
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
                 className={`celestial-orb ${entity.isSupercharged ? 'supercharged' : ''}`}
                 style={bgStyle}
-                title={`Player ${entity.playerId} Orb (${entity.isSupercharged ? '⚡ Supercharged' : 'Standard'})`}
+                title={`Player ${entity.playerId} Orb (${entity.isSupercharged ? 'Supercharged' : 'Standard'})`}
               >
                 P{entity.playerId}
               </div>
@@ -60,7 +60,7 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
                 className="energy-field"
-                title="⚡ COSMIC ENERGY FIELD: Enter to absorb plasma, becoming Supercharged & doubling wave power!"
+                title="COSMIC ENERGY FIELD: Enter to absorb plasma, becoming Supercharged & doubling wave power!"
               >
                 <div className="energy-field-ring" />
                 <Zap size={16} color="#fff" fill="#00ff66" style={{ zIndex: 2 }} />
@@ -83,7 +83,7 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
                 className="asteroid-hazard"
-                title="⚠️ ASTEROID HAZARD: Destroys any piece that collides with it!"
+                title="ASTEROID HAZARD: Destroys any piece that collides with it!"
               >
                 <Disc size={18} color="#cbd5e1" />
               </div>

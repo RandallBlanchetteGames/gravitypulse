@@ -5,7 +5,7 @@
 import React from 'react';
 import { ActionCard } from './ActionCard.jsx';
 import { DIRECTIONS, MOVEMENT_STYLES, PHASES } from '../../engine/types.js';
-import { RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ShieldAlert } from 'lucide-react';
+import { RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ShieldAlert, Zap, Rocket } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
 export function ActionDashboard({
@@ -51,8 +51,8 @@ export function ActionDashboard({
             background: activePlayer.color.hex,
             boxShadow: `0 0 10px ${activePlayer.color.hex}`
           }} />
-          <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff' }}>
-            Player {activePlayer.id} {activePlayer.isSupercharged ? '⚡' : ''}
+          <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            Player {activePlayer.id} {activePlayer.isSupercharged && <Zap size={18} color="#00ff66" fill="#00ff66" />}
           </span>
         </div>
         <span style={{
@@ -76,10 +76,14 @@ export function ActionDashboard({
           style={{
             padding: '14px',
             fontSize: '1rem',
-            boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)'
+            boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
           }}
         >
-          CONFIRM & EXECUTE MOVEMENT 🚀
+          CONFIRM & EXECUTE MOVEMENT <Rocket size={18} />
         </button>
       )}
 

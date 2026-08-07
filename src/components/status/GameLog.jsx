@@ -78,23 +78,26 @@ export function GameLog({ logs = [] }) {
             Awaiting gravitational movement...
           </span>
         ) : (
-          logs.map((log, idx) => (
-            <div
-              key={idx}
-              style={{
-                padding: '6px 10px',
-                background: 'rgba(255, 255, 255, 0.02)',
-                borderLeft: log.includes('💥') || log.includes('☄️') || log.includes('🚀') ? '3px solid #ef4444' :
-                            log.includes('⚡') ? '3px solid #00ff66' :
-                            log.includes('🕳️') ? '3px solid var(--accent-gold)' : '3px solid var(--accent-cyan)',
-                borderRadius: '4px',
-                color: 'var(--text-main)',
-                lineHeight: 1.3
-              }}
-            >
-              {log}
-            </div>
-          ))
+          logs.map((log, idx) => {
+            const cleanLog = log.replace(/[✨💥⚡💀💫🕳️🌌⚠️❤️⭐🌟🔥☄️🚀]/g, '').trim();
+            return (
+              <div
+                key={idx}
+                style={{
+                  padding: '6px 10px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  borderLeft: log.includes('💥') || log.includes('☄️') || log.includes('🚀') ? '3px solid #ef4444' :
+                              log.includes('⚡') ? '3px solid #00ff66' :
+                              log.includes('🕳️') ? '3px solid var(--accent-gold)' : '3px solid var(--accent-cyan)',
+                  borderRadius: '4px',
+                  color: 'var(--text-main)',
+                  lineHeight: 1.3
+                }}
+              >
+                {cleanLog}
+              </div>
+            );
+          })
         )}
       </div>
 

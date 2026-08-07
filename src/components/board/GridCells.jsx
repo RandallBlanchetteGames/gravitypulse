@@ -27,16 +27,16 @@ export function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [
 
       // Calculate distance from Singularity center for concentric gravity zones
       const dist = Math.max(Math.abs(x - cx) - 0.5, Math.abs(y - cy) - 0.5);
-      let tooltip = "🌌 OUTER SECTOR (Zone 3): Outer space. On Turn 4, pieces here are pulled 1 space inward towards the Black Hole.";
+      let tooltip = "OUTER SECTOR (Zone 3): Outer space. On Turn 4, pieces here are pulled 1 space inward towards the Black Hole.";
       
       if (!isBH) {
         if (dist <= 1) {
-          tooltip = "⚠️ EVENT HORIZON (Zone 1): Extreme Gravity! On Turn 4, pieces here are pulled 1 space inward directly into destruction!";
+          tooltip = "EVENT HORIZON (Zone 1): Extreme Gravity! On Turn 4, pieces here are pulled 1 space inward directly into destruction!";
         } else if (dist <= 2) {
-          tooltip = "💫 ACCRETION FIELD (Zone 2): Moderate Gravity! On Turn 4, pieces here are pulled 1 space inward into Zone 1.";
+          tooltip = "ACCRETION FIELD (Zone 2): Moderate Gravity! On Turn 4, pieces here are pulled 1 space inward into Zone 1.";
         }
       } else {
-        tooltip = "🕳️ BLACK HOLE SINGULARITY: Absolute void. Entering destroys the piece immediately.";
+        tooltip = "BLACK HOLE SINGULARITY: Absolute void. Entering destroys the piece immediately.";
       }
 
       // Subtle regional grid boundary borders (thick line every 3 cells)
