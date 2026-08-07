@@ -173,9 +173,9 @@ export default function App() {
   const activePlayer = players[activePlayerIdx] || players[0];
 
   /* Add explosion effect helper & batch effect dispatcher */
-  const triggerExplosion = (x, y, type = 'COLLISION') => {
-    const id = `exp_${Date.now()}_${Math.random()}`;
-    setExplosions(prev => [...prev, { id, x, y, type }]);
+  const triggerExplosion = (x, y, type = 'COLLISION', playerId = null) => {
+    const id = Date.now() + Math.random();
+    setExplosions(prev => [...prev, { id, x, y, type, playerId }]);
     setTimeout(() => {
       setExplosions(prev => prev.filter(e => e.id !== id));
     }, 800);
@@ -340,7 +340,7 @@ export default function App() {
         isSupercharged: false
       };
       const nextBoard = [...board, newCube];
-      triggerExplosion(x, y, 'SPAWN');
+      triggerExplosion(x, y, 'SPAWN', activePlayer.id);
       soundEngine.playSupercharge();
 
       if (activePlayerIdx + 1 >= players.length) {
@@ -368,7 +368,7 @@ export default function App() {
       };
       const nextBoard = [...board, newCube];
       const remainingQueue = respawnQueue.slice(1);
-      triggerExplosion(x, y, 'SPAWN');
+      triggerExplosion(x, y, 'SPAWN', pid);
       soundEngine.playSupercharge();
 
       setBoard(nextBoard);

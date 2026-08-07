@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import React from 'react';
+import { PLAYER_COLORS } from '../../engine/types.js';
 
 export function ExplosionLayer({ explosions = [], boardSize }) {
   if (!explosions || explosions.length === 0) return null;
@@ -17,6 +18,9 @@ export function ExplosionLayer({ explosions = [], boardSize }) {
         let bg = "radial-gradient(circle, #ff007f 0%, #f59e0b 60%, transparent 100%)";
         let shadow = "0 0 30px #ff007f";
 
+        let isPortal = false;
+        let portalColor = "#00f0ff";
+
         if (exp.type === 'SUPERCHARGE') {
           animClass = "effect-supercharge";
           bg = "radial-gradient(circle, #00ff66 0%, #00f0ff 70%, transparent 100%)";
@@ -30,9 +34,10 @@ export function ExplosionLayer({ explosions = [], boardSize }) {
           bg = "radial-gradient(circle, #000000 0%, #9d4edd 70%, transparent 100%)";
           shadow = "0 0 40px #9d4edd, inset 0 0 15px #000";
         } else if (exp.type === 'SPAWN') {
+          isPortal = true;
           animClass = "effect-spawn";
-          bg = "radial-gradient(circle, #00f0ff 0%, #0055ff 70%, transparent 100%)";
-          shadow = "0 0 35px #00f0ff";
+          const colorObj = PLAYER_COLORS.find(c => c.id === exp.playerId) || PLAYER_COLORS[0];
+          portalColor = colorObj.hex;
         }
 
         return (
@@ -44,18 +49,30 @@ export function ExplosionLayer({ explosions = [], boardSize }) {
               zIndex: 40
             }}
           >
-            <div
-              className={`game-piece ${animClass}`}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                background: bg,
-                border: 'none',
-                boxShadow: shadow,
-                pointerEvents: 'none'
-              }}
-            />
+            {isPortal ? (
+              <div
+                className={`quantum-portal ${animClass}`}
+                style={{
+                  '--portal-color': portalColor
+                }}
+              >
+                <div className="portal-ring" />
+                <div className="portal-core" />
+              </div>
+            ) : (
+              <div
+                className={`game-piece ${animClass}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  background: bg,
+                  border: 'none',
+                  boxShadow: shadow,
+                  pointerEvents: 'none'
+                }}
+              />
+            )}
           </div>
         );
       })}

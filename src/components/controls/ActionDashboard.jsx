@@ -68,24 +68,42 @@ export function ActionDashboard({
         </span>
       </div>
 
-      {/* Execute Button - MOVED TO TOP FOR MOBILE UX */}
-      {isHuman && selectedAction && (
-        <button
-          onClick={() => onExecuteAction(selectedAction, selectedDirection)}
-          className="neon-btn btn-violet"
-          style={{
-            padding: '14px',
-            fontSize: '1rem',
-            boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px'
-          }}
-        >
-          CONFIRM ACTION <Rocket size={18} />
-        </button>
-      )}
+      {/* Execute Button Area (Locked Height to Prevent Layout Shifts) */}
+      <div style={{ minHeight: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {isHuman ? (
+          selectedAction ? (
+            <button
+              onClick={() => onExecuteAction(selectedAction, selectedDirection)}
+              className="neon-btn btn-violet"
+              style={{
+                width: '100%',
+                padding: '14px',
+                fontSize: '1rem',
+                boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              CONFIRM ACTION <Rocket size={18} />
+            </button>
+          ) : (
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+              Select an action to continue
+            </span>
+          )
+        ) : (
+          <span style={{ 
+            fontSize: '0.9rem', 
+            fontWeight: 600, 
+            color: 'var(--accent-cyan)',
+            animation: 'pulse 1.5s infinite' 
+          }}>
+            AI IS THINKING...
+          </span>
+        )}
+      </div>
 
       {/* Action Buttons List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
