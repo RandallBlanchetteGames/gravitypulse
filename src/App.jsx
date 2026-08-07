@@ -58,8 +58,6 @@ export default function App() {
   // UI Selection State
   const [selectedAction, setSelectedAction] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
-  const [trajectory, setTrajectory] = useState([]);
-  const [waveDisplacements, setWaveDisplacements] = useState([]);
   const [waveAura, setWaveAura] = useState(null);
 
   // Modals
@@ -107,8 +105,6 @@ export default function App() {
     setRespawnQueue([]);
     setSelectedAction(null);
     setSelectedDirection(null);
-    setTrajectory([]);
-    setWaveDisplacements([]);
     setIsGameOverOpen(false);
     clearGameSession();
   }, [rulesConfig]);
@@ -285,13 +281,14 @@ export default function App() {
         if (missingPlayerIds.length > 0) {
           setBoard(updatedBoard);
           setPlayers(updatedPlayers);
+          if (!rules.hazardsEnabled) {
+            setBoard(board.filter(e => e.type !== ENTITY_TYPES.ASTEROID));
+          }
+          setSelectedAction(null);
+          setSelectedDirection(null);
           setActivePlayerIdx(0);
           setCurrentRound(nextRound);
           setTurnInRound(1);
-          setSelectedAction(null);
-          setSelectedDirection(null);
-          setTrajectory([]);
-          setWaveDisplacements([]);
           if (roundLogs.length > 0) {
             setLogs(prev => [...prev, ...roundLogs, `Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
           }
@@ -324,15 +321,14 @@ export default function App() {
     setTurnInRound(nextTurn);
     setSelectedAction(null);
     setSelectedDirection(null);
-    setTrajectory([]);
-    setWaveDisplacements([]);
+    setExplosions([]);
     if (roundLogs.length > 0) {
       setLogs(prev => [...prev, ...roundLogs]);
     }
   }, [activePlayerIdx, currentRound, turnInRound, rules]);
 
   /* Handle Cell Tap (For Setup & Respawn placement) */
-  const handleCellClick = (x, y) => {
+  const handleCellClickLogic = (x, y) => {
     if (phase === PHASES.SETUP) {
       if (board.some(e => e.x === x && e.y === y)) return;
       const newCube = {
@@ -385,6 +381,14 @@ export default function App() {
     }
   };
 
+  const cellClickRef = useRef(handleCellClickLogic);
+  useEffect(() => {
+    cellClickRef.current = handleCellClickLogic;
+  });
+  const handleCellClick = useCallback((x, y) => {
+    cellClickRef.current(x, y);
+  }, []);
+
   /* AI Setup and Respawn Auto-Placement Loop */
   useEffect(() => {
     if (phase === PHASES.SETUP && activePlayer && !activePlayer.isHuman) {
@@ -434,31 +438,16 @@ export default function App() {
     }
   }, [phase, activePlayerIdx, board, players, activePlayer, advanceTurn]);
 
-  /* Handle Action Selection & Trajectory Preview */
+  /* Handle Action Selection */
   const handleSelectAction = (action) => {
     setSelectedAction(action);
     if (action.special) {
       setSelectedDirection(null);
-      setTrajectory([]);
-      const waves = previewWaveDisplacements(board, activePlayer.id, action.id, rules);
-      setWaveDisplacements(waves);
-    } else {
-      setWaveDisplacements([]);
-      // Default to Regional direction or Up
-      const myPiece = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
-      if (myPiece) {
-        const path = previewTrajectory(board, activePlayer.id, action.id, selectedDirection || { x: 1, y: 0 }, rules);
-        setTrajectory(path);
-      }
     }
   };
 
   const handleSelectDirection = (dir) => {
     setSelectedDirection(dir);
-    if (selectedAction && !selectedAction.special) {
-      const path = previewTrajectory(board, activePlayer.id, selectedAction.id, dir, rules);
-      setTrajectory(path);
-    }
   };
 
   /* Execute Action (with Undo State Protection) */
@@ -497,7 +486,6 @@ export default function App() {
     if (result.effects) {
       dispatchEffects(result.effects);
     }
-    setWaveDisplacements([]);
 
     // Mark action as used
     const nextPlayers = players.map(p => {
@@ -558,8 +546,6 @@ export default function App() {
     setHistoryStack(prev => prev.slice(0, -1));
     setSelectedAction(null);
     setSelectedDirection(null);
-    setTrajectory([]);
-    setWaveDisplacements([]);
     soundEngine.playClick();
   };
 
@@ -568,6 +554,18 @@ export default function App() {
     setIsSetupOpen(false);
     initGame(newConfig);
   };
+
+  // Compute dynamic UI states on render
+  let trajectory = [];
+  let waveDisplacements = [];
+  
+  if (phase === PHASES.PLAYING && selectedAction && activePlayer) {
+    if (selectedAction.special) {
+      waveDisplacements = previewWaveDisplacements(board, activePlayer.id, selectedAction.id, rules);
+    } else {
+      trajectory = previewTrajectory(board, activePlayer.id, selectedAction.id, selectedDirection || { x: 1, y: 0 }, rules);
+    }
+  }
 
   // Build Left and Right Panel structures for ResponsiveShell
   const leftPanelContent = (

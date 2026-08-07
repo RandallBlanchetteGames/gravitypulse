@@ -34,12 +34,8 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
       const MAX_LIGHT_DIST = 5; // Light falls off after 5 spaces
       if (dist > MAX_LIGHT_DIST || dist === 0) return null;
       
-      const angle = Math.atan2(dy, dx);
+      const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
       const intensity = Math.max(0, 1 - (dist / MAX_LIGHT_DIST));
-      
-      // Position the radial gradient highlight on the edge facing the light source
-      const xPos = 50 + Math.cos(angle) * 50;
-      const yPos = 50 + Math.sin(angle) * 50;
       
       // Determine light color based on source type
       let lightColor = "rgba(0, 255, 102, 0.8)"; // Default energy field green
@@ -53,8 +49,10 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
           key={`light-${entity.id}-${i}`}
           className="lighting-overlay"
           style={{
-            background: `radial-gradient(circle at ${xPos}% ${yPos}%, ${lightColor} 0%, transparent 60%)`,
-            opacity: intensity
+            background: `radial-gradient(circle at 100% 50%, ${lightColor} 0%, transparent 60%)`,
+            opacity: intensity,
+            transform: `rotate(${angleDeg}deg)`,
+            transformOrigin: '50% 50%'
           }}
         />
       );
