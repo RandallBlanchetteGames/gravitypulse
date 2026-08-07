@@ -6,17 +6,29 @@ import React from 'react';
 import { ENTITY_TYPES, PLAYER_COLORS } from '../../engine/types.js';
 import { Zap, Disc } from 'lucide-react';
 
+const hexToRgba = (hex, alpha = 0.8) => {
+  const r = parseInt(hex.slice(1, 3), 16) || 0;
+  const g = parseInt(hex.slice(3, 5), 16) || 255;
+  const b = parseInt(hex.slice(5, 7), 16) || 102;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick }) {
-  // 1. Identify all Energy Fields on the board to cast light
-  const energyFields = board.filter(e => e.type === ENTITY_TYPES.ENERGY);
+  // 1. Identify all entities that cast light (Energy Fields AND Supercharged Players)
+  const lightSources = board.filter(e => 
+    e.type === ENTITY_TYPES.ENERGY || (e.type === ENTITY_TYPES.CUBE && e.isSupercharged)
+  );
 
   // Helper to render dynamic lighting overlays on entities
   const renderLighting = (entity) => {
-    if (energyFields.length === 0) return null;
+    if (lightSources.length === 0) return null;
     
-    return energyFields.map((ef, i) => {
-      const dx = ef.x - entity.x;
-      const dy = ef.y - entity.y;
+    return lightSources.map((source, i) => {
+      // Don't cast light on yourself
+      if (source.id === entity.id) return null;
+
+      const dx = source.x - entity.x;
+      const dy = source.y - entity.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
       const MAX_LIGHT_DIST = 5; // Light falls off after 5 spaces
@@ -25,16 +37,23 @@ export function EntityLayer({ board, boardSize, activePlayerId, onEntityClick })
       const angle = Math.atan2(dy, dx);
       const intensity = Math.max(0, 1 - (dist / MAX_LIGHT_DIST));
       
-      // Position the radial gradient highlight on the edge facing the energy field
+      // Position the radial gradient highlight on the edge facing the light source
       const xPos = 50 + Math.cos(angle) * 50;
       const yPos = 50 + Math.sin(angle) * 50;
+      
+      // Determine light color based on source type
+      let lightColor = "rgba(0, 255, 102, 0.8)"; // Default energy field green
+      if (source.type === ENTITY_TYPES.CUBE) {
+        const colorObj = PLAYER_COLORS.find(c => c.id === source.playerId) || PLAYER_COLORS[0];
+        lightColor = hexToRgba(colorObj.hex, 0.8);
+      }
       
       return (
         <div 
           key={`light-${entity.id}-${i}`}
           className="lighting-overlay"
           style={{
-            background: `radial-gradient(circle at ${xPos}% ${yPos}%, rgba(0, 255, 102, 0.8) 0%, transparent 60%)`,
+            background: `radial-gradient(circle at ${xPos}% ${yPos}%, ${lightColor} 0%, transparent 60%)`,
             opacity: intensity
           }}
         />
