@@ -6,6 +6,7 @@
 import { ENTITY_TYPES, TURN_ACTIONS, DIRECTIONS } from './types.js';
 import { getChebyshevDistance, isBlackHole, getRegionCoords, getRegionCenter } from './boardGeometry.js';
 import { previewTrajectory } from './movementResolver.js';
+import { executeGravity, executePulse } from './gravityPulse.js';
 
 /* Get AI Setup or Respawn Placement (pick a safe region center or edge cell) */
 export function getAIPlacement(board, playerId, rules) {
@@ -61,22 +62,31 @@ export function getAITurnDecision(board, playerId, rules) {
 
   legalActions.forEach(action => {
     if (action.special) {
-      // Score Gravity or Pulse
+      // Score Gravity or Pulse by SIMULATING the result (Pre-Cognition)
       let score = 0;
       const others = board.filter(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId);
       if (others.length === 0) return;
 
-      if (action.id === TURN_ACTIONS.GRAVITY) {
-        // Good if others are near edges or asteroids
-        score += others.length * 10;
-        const asteroids = board.filter(e => e.type === ENTITY_TYPES.ASTEROID);
-        score += asteroids.length * 5;
-        if (myPiece.isSupercharged) score += 25;
-      } else if (action.id === TURN_ACTIONS.PULSE) {
-        // Good if others or asteroids are crowded near us
-        const closeCount = others.filter(o => getChebyshevDistance(myPiece.x, myPiece.y, o.x, o.y) <= 2).length;
-        const closeAsteroids = board.filter(e => e.type === ENTITY_TYPES.ASTEROID && getChebyshevDistance(myPiece.x, myPiece.y, e.x, e.y) <= 2).length;
-        score += closeCount * 30 + closeAsteroids * 20;
+      const isSimulation = true;
+      const simResult = action.id === TURN_ACTIONS.GRAVITY 
+        ? executeGravity(board, playerId, rules, isSimulation)
+        : executePulse(board, playerId, rules, isSimulation);
+
+      // Check if this action caused the AI to die (Suicide Prevention)
+      const amIAlive = simResult.finalBoard.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === playerId);
+      if (!amIAlive) {
+        score -= 5000; // NEVER DO THIS
+      } else {
+        // Count actual opponents destroyed by this action
+        const endingOthers = simResult.finalBoard.filter(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId).length;
+        const kills = others.length - endingOthers;
+        score += kills * 500;
+        
+        // Minor board control bonuses if no kills
+        if (kills === 0) {
+          if (action.id === TURN_ACTIONS.GRAVITY) score += 20;
+          if (action.id === TURN_ACTIONS.PULSE) score += 15;
+        }
         if (myPiece.isSupercharged) score += 25;
       }
 
@@ -115,9 +125,9 @@ export function getAITurnDecision(board, playerId, rules) {
           // Penalty for entering black hole (destruction!)
           score -= 1000;
         } else {
-          // Score proximity to center (stay safe from edges)
+          // Score proximity to center (stay safe from edges where localized gravity pulls you out)
           const distToCenter = getChebyshevDistance(dest.x, dest.y, cx, cy);
-          score -= distToCenter * 5;
+          score -= distToCenter * 10; // Increased penalty for being near edges
 
           // Bonus if landing on energy token
           if (board.some(e => e.type === ENTITY_TYPES.ENERGY && e.x === dest.x && e.y === dest.y)) {
@@ -129,9 +139,9 @@ export function getAITurnDecision(board, playerId, rules) {
             score -= 500;
           }
 
-          // Bonus if landing on opponent cube (Kamikaze / Sacrifice tactic)
+          // Kamikaze / Sacrifice tactic (greatly reduced so AI prioritizes survival)
           if (board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId && e.x === dest.x && e.y === dest.y)) {
-            score += 800;
+            score += 100;
           }
         }
 

@@ -18,7 +18,7 @@ export function getStepVector(fromX, fromY, toX, toY) {
 }
 
 /* Execute Gravity Wave: pull opponents toward active player with distance attenuation */
-export function executeGravity(board, playerId, rules) {
+export function executeGravity(board, playerId, rules, isSimulation = false) {
   let currentBoard = board.map(e => ({ ...e }));
   const activeCube = currentBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === playerId);
   
@@ -26,7 +26,9 @@ export function executeGravity(board, playerId, rules) {
     return { sequence: [currentBoard], finalBoard: currentBoard, respawnQueue: [], logs: [`Player ${playerId} cannot activate Gravity without a piece!`], effects: [] };
   }
 
-  soundEngine.playGravityHum(false);
+  if (!isSimulation) {
+    soundEngine.playGravityHum(false);
+  }
   const power = activeCube.isSupercharged ? 2 : 1;
   const sequence = [];
   const logs = [`🌊 Player ${playerId} triggers Gravity Wave (Power ${power})!`];
@@ -69,7 +71,7 @@ export function executeGravity(board, playerId, rules) {
 }
 
 /* Execute Pulse Wave: push opponents away from active player with distance attenuation */
-export function executePulse(board, playerId, rules) {
+export function executePulse(board, playerId, rules, isSimulation = false) {
   let currentBoard = board.map(e => ({ ...e }));
   const activeCube = currentBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === playerId);
   
@@ -77,7 +79,9 @@ export function executePulse(board, playerId, rules) {
     return { sequence: [currentBoard], finalBoard: currentBoard, respawnQueue: [], logs: [`Player ${playerId} cannot activate Pulse without a piece!`], effects: [] };
   }
 
-  soundEngine.playGravityHum(true);
+  if (!isSimulation) {
+    soundEngine.playGravityHum(true);
+  }
   const power = activeCube.isSupercharged ? 2 : 1;
   const sequence = [];
   const logs = [`⚡ Player ${playerId} triggers Pulse Wave (Power ${power})!`];
