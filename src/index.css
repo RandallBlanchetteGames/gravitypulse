@@ -69,7 +69,7 @@ body {
   background: var(--bg-void-deep);
   background-image: var(--bg-cosmic-radial);
   color: var(--text-main);
-  min-height: 100vh;
+  min-height: 100svh;
   min-height: -webkit-fill-available;
   overflow-x: hidden;
   display: flex;
@@ -111,7 +111,7 @@ h1, h2, h3, h4, .font-heading {
   width: 100%;
   max-width: 1800px;
   margin: 0 auto;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100svh - 70px);
   padding: 16px;
   gap: 20px;
 }
@@ -157,11 +157,13 @@ h1, h2, h3, h4, .font-heading {
   align-items: center;
   width: 100%;
   position: relative;
+  overflow: hidden;
+  border-radius: 20px;
 }
 
 .board-container {
   aspect-ratio: 1 / 1;
-  width: min(100% - 10px, calc(100vh - 160px));
+  width: min(100% - 10px, calc(100svh - 160px));
   max-width: 760px;
   background: rgba(3, 5, 8, 0.85);
   border: 2px solid var(--accent-cyan-dim);
@@ -190,7 +192,7 @@ h1, h2, h3, h4, .font-heading {
 
 @media (max-width: 767px) {
   .board-container {
-    width: min(100vw - 20px, 65vh);
+    width: min(100vw - 20px, 65svh);
     max-width: 100%;
     border-radius: 12px;
   }
