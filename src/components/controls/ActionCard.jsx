@@ -20,20 +20,20 @@ export function ActionCard({ action, isSelected, isUsed, disabled, onSelectActio
       className={`neon-btn action-card-btn ${action.special ? 'btn-violet' : ''}`}
       style={{
         width: '100%',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         background: isSelected ? 'var(--accent-cyan)' : (isUsed ? 'rgba(255,255,255,0.02)' : undefined),
         color: isSelected ? '#030508' : (isUsed ? 'var(--text-dim)' : undefined),
         borderColor: isSelected ? '#fff' : undefined,
         position: 'relative'
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
         {getIcon()}
         <span className="action-label" style={{ fontWeight: 700 }}>{action.label}</span>
       </div>
 
       {isUsed && (
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+        <span style={{ position: 'absolute', right: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-dim)' }}>
           <CheckCircle2 size={14} /> Used
         </span>
       )}
