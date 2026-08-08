@@ -126,23 +126,47 @@ export function getAITurnDecision(board, player, rules) {
           // Penalty for entering black hole (destruction!)
           score -= 1000;
         } else {
-          // Score proximity to center (stay safe from edges where localized gravity pulls you out)
+          // 1. The Goldilocks Zone (Midpoint between Black Hole and Edge)
           const distToCenter = getChebyshevDistance(dest.x, dest.y, cx, cy);
-          score -= distToCenter * 10; // Increased penalty for being near edges
-
-          // Bonus if landing on energy token
-          if (board.some(e => e.type === ENTITY_TYPES.ENERGY && e.x === dest.x && e.y === dest.y)) {
-            score += 250;
+          
+          if (distToCenter <= 1) {
+            // Event Horizon: Extremely dangerous!
+            score -= 150;
+          } else if (distToCenter === 2 || distToCenter === 3) {
+            // Goldilocks Zone: Safe orbit, good board control
+            score += 50;
+          } else {
+            // Edge of the board: Minor penalty to avoid falling off
+            score -= 20;
           }
 
-          // Penalty if landing on asteroid
+          // 2. Energy Field Tactics
+          const destHasEnergy = board.some(e => e.type === ENTITY_TYPES.ENERGY && e.x === dest.x && e.y === dest.y);
+          if (destHasEnergy) {
+            if (myPiece.isSupercharged) {
+              // Danger: Overload! Avoid picking up a second energy field.
+              score -= 200;
+            } else {
+              // Excellent: Become Supercharged!
+              score += 250;
+            }
+          }
+
+          // 3. Asteroid Avoidance
           if (board.some(e => e.type === ENTITY_TYPES.ASTEROID && e.x === dest.x && e.y === dest.y)) {
             score -= 500;
           }
 
-          // Kamikaze / Sacrifice tactic (greatly reduced so AI prioritizes survival)
-          if (board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId && e.x === dest.x && e.y === dest.y)) {
-            score += 100;
+          // 4. Combat & Kamikaze Tactics
+          const enemyTarget = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId !== playerId && e.x === dest.x && e.y === dest.y);
+          if (enemyTarget) {
+            if (myPiece.isSupercharged && !enemyTarget.isSupercharged) {
+              // Supercharged AI values its life too much to suicide on a weak target
+              score -= 300;
+            } else {
+              // Normal AI, or fighting a Supercharged enemy: Kamikaze is worth it! (+1 Point)
+              score += 150;
+            }
           }
         }
 

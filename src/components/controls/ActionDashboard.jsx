@@ -35,47 +35,11 @@ export function ActionDashboard({
 
   return (
     <div className="glass-card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-      {/* Active Player Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingBottom: '12px',
-        borderBottom: '1px solid var(--border-light)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '16px',
-            height: '16px',
-            borderRadius: '4px',
-            background: activePlayer.color.hex,
-            boxShadow: `0 0 10px ${activePlayer.color.hex}`
-          }} />
-          <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            Player {activePlayer.id} {activePlayer.isSupercharged && <Zap size={18} color="#00ff66" fill="#00ff66" />}
-          </span>
-        </div>
-        <span style={{
-          fontSize: '0.75rem',
-          fontWeight: 700,
-          background: isHuman ? 'rgba(0, 240, 255, 0.15)' : 'rgba(148, 163, 184, 0.15)',
-          color: isHuman ? 'var(--accent-cyan)' : 'var(--text-muted)',
-          padding: '4px 10px',
-          borderRadius: '12px',
-          border: `1px solid ${isHuman ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)'}`
-        }}>
-          {isHuman ? 'YOUR TURN' : 'AI OPPONENT'}
-        </span>
-      </div>
-
-
-
       {/* Action Buttons List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-          SELECT AN ACTION. TAP TO CONFIRM.
-        </span>
-        
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            SELECT AN ACTION. TAP TO CONFIRM.
+          </span>
         {/* Moves Group */}
         <div className="action-grid">
           {legalActions.filter(act => !act.special).map(act => (

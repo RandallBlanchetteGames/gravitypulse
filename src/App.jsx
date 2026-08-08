@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Zap } from 'lucide-react';
 import { PHASES, TURN_ACTIONS, ENTITY_TYPES, PLAYER_COLORS, MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from './engine/types.js';
 import { GameRules } from './engine/rules.js';
 import { executeMove, previewTrajectory, previewWaveDisplacements } from './engine/movementResolver.js';
@@ -689,22 +690,58 @@ export default function App() {
       <ResponsiveShell
         leftPanel={leftPanelContent}
         centerHeader={
-          <div className="setup-badge" style={{
-            display: 'flex',
-            gap: '8px',
-            background: 'var(--glass-bg)',
-            padding: '6px 16px',
-            borderRadius: '20px',
-            border: '1px solid var(--border-neon)',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            color: 'var(--text-main)',
-            boxShadow: 'var(--glass-shadow)',
-            marginBottom: '4px'
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            width: '100%', 
+            marginBottom: '8px',
+            padding: '0 4px'
           }}>
-            <span style={{ color: 'var(--accent-cyan)' }}>{rulesConfig.mapSize.label.split(' ')[0]} Grid</span>
-            <span style={{ color: 'var(--text-muted)' }}>•</span>
-            <span>{rulesConfig.gameLength.label.split(' ')[0]} Rnds</span>
+            {/* Player Info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '14px',
+                height: '14px',
+                borderRadius: '3px',
+                background: activePlayer?.color.hex || '#fff',
+                boxShadow: `0 0 8px ${activePlayer?.color.hex || '#fff'}`
+              }} />
+              <span style={{ fontWeight: 800, fontSize: '1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                P{activePlayer?.id} {activePlayer?.isSupercharged && <Zap size={16} color="#00ff66" fill="#00ff66" />}
+              </span>
+            </div>
+
+            {/* Game Settings Badge */}
+            <div className="setup-badge" style={{
+              display: 'flex',
+              gap: '6px',
+              background: 'var(--glass-bg)',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              border: '1px solid var(--border-neon)',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              color: 'var(--text-main)',
+              boxShadow: 'var(--glass-shadow)'
+            }}>
+              <span style={{ color: 'var(--accent-cyan)' }}>{rulesConfig.mapSize.label.split(' ')[0]}</span>
+              <span style={{ color: 'var(--text-muted)' }}>•</span>
+              <span>{rulesConfig.gameLength.label.split(' ')[0]}</span>
+            </div>
+
+            {/* Turn Status */}
+            <span style={{
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              background: activePlayer?.isHuman ? 'rgba(0, 240, 255, 0.15)' : 'rgba(148, 163, 184, 0.15)',
+              color: activePlayer?.isHuman ? 'var(--accent-cyan)' : 'var(--text-muted)',
+              padding: '4px 8px',
+              borderRadius: '12px',
+              border: `1px solid ${activePlayer?.isHuman ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)'}`
+            }}>
+              {activePlayer?.isHuman ? 'YOUR TURN' : 'AI OPPONENT'}
+            </span>
           </div>
         }
         centerBoard={centerBoardContent}
