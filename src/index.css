@@ -517,13 +517,13 @@ h1, h2, h3, h4, .font-heading {
   -webkit-mask-image: radial-gradient(circle, transparent 48%, black 50%, black 72%, transparent 74%);
 }
 
-/* Cosmic plasma energy field power-up (Neutron Core) */
+/* Cosmic plasma energy field power-up */
 .energy-field {
   width: 76%;
   height: 76%;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 30px #00ff66, 0 0 60px rgba(0, 255, 102, 0.6), 0 0 90px rgba(0, 255, 102, 0.3);
+  background: radial-gradient(circle, #00ff66 0%, #00cc55 100%);
+  box-shadow: 0 0 30px #00ff66, 0 0 60px rgba(0, 255, 102, 0.6), inset 0 0 10px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -536,8 +536,8 @@ h1, h2, h3, h4, .font-heading {
 }
 
 @keyframes neutron-pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 20px #00ff66, 0 0 40px rgba(0, 255, 102, 0.4); }
-  100% { transform: scale(1.05); box-shadow: 0 0 40px #00ff66, 0 0 80px rgba(0, 255, 102, 0.8), 0 0 120px rgba(0, 255, 102, 0.4); }
+  0% { transform: scale(0.95); box-shadow: 0 0 20px #00ff66, 0 0 40px rgba(0, 255, 102, 0.4), inset 0 0 10px #ffffff; }
+  100% { transform: scale(1.05); box-shadow: 0 0 40px #00ff66, 0 0 80px rgba(0, 255, 102, 0.8), inset 0 0 15px #ffffff; }
 }
 
 /* --- Buttons & Interactive Controls --- */

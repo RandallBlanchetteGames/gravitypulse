@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { ENTITY_TYPES, PLAYER_COLORS } from '../../engine/types.js';
-import { Zap, Disc } from 'lucide-react';
+import { Zap, Disc, Waves } from 'lucide-react';
 
 const hexToRgba = (hex, alpha = 0.8) => {
   const r = parseInt(hex.slice(1, 3), 16) || 0;
@@ -14,9 +14,9 @@ const hexToRgba = (hex, alpha = 0.8) => {
 };
 
 export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, activePlayerId, onEntityClick }) {
-  // 1. Identify all entities that cast light (Energy Fields AND Supercharged Players)
+  // 1. Identify all entities that cast light (All Players and Energy Fields)
   const lightSources = board.filter(e => 
-    e.type === ENTITY_TYPES.ENERGY || (e.type === ENTITY_TYPES.CUBE && e.isSupercharged)
+    e.type === ENTITY_TYPES.ENERGY || e.type === ENTITY_TYPES.CUBE
   );
 
   // Helper to render dynamic lighting overlays on entities
@@ -31,11 +31,16 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
       const dy = source.y - entity.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
-      const MAX_LIGHT_DIST = 5; // Light falls off after 5 spaces
+      const isSuper = source.type === ENTITY_TYPES.ENERGY || (source.type === ENTITY_TYPES.CUBE && source.isSupercharged);
+      const MAX_LIGHT_DIST = isSuper ? 6 : 4; 
+      
       if (dist > MAX_LIGHT_DIST || dist === 0) return null;
       
       const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-      const intensity = Math.max(0, 1 - (dist / MAX_LIGHT_DIST));
+      
+      // Calculate intensity based on distance and source type (super = 100% base, normal = 60% base)
+      const baseIntensity = isSuper ? 1.0 : 0.6;
+      const intensity = Math.max(0, baseIntensity * (1 - (dist / MAX_LIGHT_DIST)));
       
       // Determine light color based on source type
       let lightColor = "rgba(0, 255, 102, 0.8)"; // Default energy field green
@@ -111,6 +116,13 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
 
         // Render Cosmic Energy Fields
         if (entity.type === ENTITY_TYPES.ENERGY) {
+          const cx = (boardSize - 1) / 2;
+          const cy = (boardSize - 1) / 2;
+          const dx = entity.x - cx;
+          const dy = entity.y - cy;
+          // Add 90 degrees because the Waves icon is horizontally drawn and we want it to point outward
+          const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
+
           return (
             <div
               key={entity.id}
@@ -126,8 +138,9 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
                 className="energy-field"
                 title="ENERGY FIELD: Move here to become Supercharged and double your wave power."
               >
-                <div className="energy-field-ring" />
-                <Zap size={16} color="#fff" fill="#00ff66" style={{ zIndex: 2 }} />
+                <div style={{ transform: `rotate(${angleDeg}deg)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Waves size={22} color="#fff" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 0 8px #fff)' }} />
+                </div>
               </div>
             </div>
           );
