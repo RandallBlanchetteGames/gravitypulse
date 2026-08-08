@@ -72,7 +72,9 @@ export function ActionDashboard({
 
       {/* Action Buttons List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>SELECT ACTION:</span>
+        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+          SELECT AN ACTION. TAP TO CONFIRM.
+        </span>
         <div className="action-grid">
           {legalActions.map(act => (
             <ActionCard
@@ -81,7 +83,14 @@ export function ActionDashboard({
               isSelected={selectedAction?.id === act.id}
               isUsed={activePlayer.usedActions[act.id]}
               disabled={!isHuman}
-              onSelectAction={(a) => { soundEngine.playClick(); onSelectAction(a); }}
+              onSelectAction={(a) => { 
+                soundEngine.playClick(); 
+                if (selectedAction?.id === a.id) {
+                  onExecuteAction(a, selectedDirection);
+                } else {
+                  onSelectAction(a); 
+                }
+              }}
             />
           ))}
         </div>
@@ -119,55 +128,34 @@ export function ActionDashboard({
       )}
 
       {/* Consolidated Action Execution Area */}
-      <div style={{ minHeight: '52px', marginTop: '4px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
-        {!isHuman ? (
-          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--accent-cyan)', animation: 'pulse 1.5s infinite' }}>
-            AI IS THINKING...
-          </span>
-        ) : (
-          <>
-            {canUndo && (
-              <button
-                onClick={() => { soundEngine.playClick(); onUndoMove(); }}
-                className="neon-btn"
-                style={{
-                  flex: 1,
-                  padding: '12px 10px',
-                  fontSize: '0.9rem',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  borderColor: '#ef4444',
-                  color: '#ef4444',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <RotateCcw size={14} /> Undo
-              </button>
-            )}
-            
-            {selectedAction && (
-              <button
-                onClick={() => onExecuteAction(selectedAction, selectedDirection)}
-                className="neon-btn btn-violet"
-                style={{
-                  flex: canUndo ? '2' : '1',
-                  padding: '12px 10px',
-                  fontSize: '0.9rem',
-                  boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                CONFIRM <Rocket size={16} />
-              </button>
-            )}
-          </>
-        )}
-      </div>
+      {(canUndo || !isHuman) && (
+        <div style={{ minHeight: '52px', marginTop: '4px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+          {!isHuman ? (
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--accent-cyan)', animation: 'pulse 1.5s infinite' }}>
+              AI IS THINKING...
+            </span>
+          ) : (
+            <button
+              onClick={() => { soundEngine.playClick(); onUndoMove(); }}
+              className="neon-btn"
+              style={{
+                flex: 1,
+                padding: '12px 10px',
+                fontSize: '0.9rem',
+                background: 'rgba(239, 68, 68, 0.1)',
+                borderColor: '#ef4444',
+                color: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
+              }}
+            >
+              <RotateCcw size={14} /> Undo
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
