@@ -28,35 +28,16 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
           justifyContent: 'center',
           boxShadow: '0 0 15px rgba(0, 240, 255, 0.4)'
         }}>
-          <Orbit color="#030508" size={24} />
+          <Orbit color="#030508" size={24} style={{ transform: 'scaleX(-1)' }} />
         </div>
         <div>
           <h1 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
             GRAVITY <span style={{ color: 'var(--accent-cyan)' }}>PULSE</span>
           </h1>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            2026 • Casual Tactical Edition
-          </span>
         </div>
       </div>
 
       <div className="nav-buttons">
-        {/* Setup Badge Indicator */}
-        <div className="setup-badge" style={{
-          display: 'flex',
-          gap: '6px',
-          background: 'rgba(255, 255, 255, 0.04)',
-          padding: '6px 12px',
-          borderRadius: '20px',
-          border: '1px solid var(--border-light)',
-          fontSize: '0.8rem',
-          color: 'var(--text-main)'
-        }}>
-          <span style={{ color: 'var(--accent-cyan)' }}>{rulesConfig.mapSize.label.split(' ')[0]}</span>
-          <span>•</span>
-          <span>{rulesConfig.gameLength.label.split(' ')[0]} Rnds</span>
-        </div>
-
         <button
           onClick={() => {
             soundEngine.playClick();

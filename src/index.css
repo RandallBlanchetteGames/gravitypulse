@@ -572,7 +572,30 @@ h1, h2, h3, h4, .font-heading {
 }
 @media (max-width: 767px) {
   .action-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+  .action-grid > *:nth-child(1),
+  .action-grid > *:nth-child(2),
+  .action-grid > *:nth-child(3) {
+    grid-column: span 2;
+  }
+  .action-grid > *:nth-child(4),
+  .action-grid > *:nth-child(5) {
+    grid-column: span 3;
+  }
+  .action-card-btn {
+    padding: 8px 6px;
+    font-size: 0.75rem;
+    justify-content: center;
+  }
+  .action-card-btn > div:first-child {
+    flex-direction: column;
+    gap: 4px !important;
+  }
+  .action-card-btn .action-label {
+    font-size: 0.7rem;
+    text-align: center;
   }
 }
 .action-icon {

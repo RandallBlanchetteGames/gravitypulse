@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { ListFilter, Trophy } from 'lucide-react';
 
-export function ResponsiveShell({ leftPanel, centerBoard, rightPanel }) {
+export function ResponsiveShell({ leftPanel, centerHeader, centerBoard, rightPanel }) {
   const [mobileTab, setMobileTab] = useState('controls'); // 'controls', 'scores', 'log'
 
   return (
@@ -16,8 +16,11 @@ export function ResponsiveShell({ leftPanel, centerBoard, rightPanel }) {
       </section>
 
       {/* Center Column: Interactive Aspect-Ratio Board */}
-      <section className="shell-center board-wrapper">
-        {centerBoard}
+      <section className="shell-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        {centerHeader}
+        <div className="board-wrapper">
+          {centerBoard}
+        </div>
       </section>
 
       {/* Right Column (Desktop/Tablet): Scoreboard & Game Log */}

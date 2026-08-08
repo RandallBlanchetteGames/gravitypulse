@@ -671,6 +671,25 @@ export default function App() {
 
       <ResponsiveShell
         leftPanel={leftPanelContent}
+        centerHeader={
+          <div className="setup-badge" style={{
+            display: 'flex',
+            gap: '8px',
+            background: 'var(--glass-bg)',
+            padding: '6px 16px',
+            borderRadius: '20px',
+            border: '1px solid var(--border-neon)',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            color: 'var(--text-main)',
+            boxShadow: 'var(--glass-shadow)',
+            marginBottom: '4px'
+          }}>
+            <span style={{ color: 'var(--accent-cyan)' }}>{rulesConfig.mapSize.label.split(' ')[0]} Grid</span>
+            <span style={{ color: 'var(--text-muted)' }}>•</span>
+            <span>{rulesConfig.gameLength.label.split(' ')[0]} Rnds</span>
+          </div>
+        }
         centerBoard={centerBoardContent}
         rightPanel={rightPanelContent}
       />
