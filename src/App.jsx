@@ -438,6 +438,19 @@ export default function App() {
     }
   }, [phase, activePlayerIdx, board, players, activePlayer, advanceTurn]);
 
+  /* Auto-select Default Direction (Using Regional Orbit Logic) */
+  useEffect(() => {
+    if (phase === PHASES.PLAYING && activePlayer?.isHuman) {
+      if (!selectedDirection) {
+        const myCube = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
+        if (myCube) {
+          const dir = rules.getRegionalDirection(myCube.x, myCube.y);
+          setSelectedDirection(dir);
+        }
+      }
+    }
+  }, [activePlayer, board, phase, rules, selectedDirection]);
+
   /* Handle Action Selection */
   const handleSelectAction = (action) => {
     setSelectedAction(action);
@@ -453,6 +466,10 @@ export default function App() {
   /* Execute Action (with Undo State Protection) */
   const handleExecuteAction = (action, direction) => {
     if (!action || !activePlayer) return;
+
+    // Instantly clear the selection so the green preview boxes disappear during the animation
+    setSelectedAction(null);
+    setSelectedDirection(null);
 
     // Record state for casual Undo Protection!
     if (activePlayer.isHuman) {

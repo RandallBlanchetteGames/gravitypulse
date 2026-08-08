@@ -75,8 +75,53 @@ export function ActionDashboard({
         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
           SELECT AN ACTION. TAP TO CONFIRM.
         </span>
+        
+        {/* Moves Group */}
         <div className="action-grid">
-          {legalActions.map(act => (
+          {legalActions.filter(act => !act.special).map(act => (
+            <ActionCard
+              key={act.id}
+              action={act}
+              isSelected={selectedAction?.id === act.id}
+              isUsed={activePlayer.usedActions[act.id]}
+              disabled={!isHuman}
+              onSelectAction={(a) => { 
+                soundEngine.playClick(); 
+                if (selectedAction?.id === a.id) {
+                  onExecuteAction(a, selectedDirection);
+                } else {
+                  onSelectAction(a); 
+                }
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Direction Selector Injection (Only in Free Directional Mode) */}
+        {isFreeMove && isHuman && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', visibility: showDirSelector ? 'visible' : 'hidden' }}>
+            {[DIRECTIONS.UP, DIRECTIONS.DOWN, DIRECTIONS.LEFT, DIRECTIONS.RIGHT].map(dir => {
+              const isSel = selectedDirection?.label === dir.label;
+              return (
+                <button
+                  key={dir.label}
+                  onClick={() => { soundEngine.playClick(); onSelectDirection(dir); }}
+                  className="neon-btn direction-btn"
+                  style={{
+                    background: isSel ? 'var(--accent-cyan)' : undefined,
+                    color: isSel ? '#030508' : undefined
+                  }}
+                >
+                  {dir.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Waves Group */}
+        <div className="action-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          {legalActions.filter(act => act.special).map(act => (
             <ActionCard
               key={act.id}
               action={act}
@@ -95,37 +140,6 @@ export function ActionDashboard({
           ))}
         </div>
       </div>
-
-      {/* Direction Selector (Only in Free Directional Mode for directional moves) */}
-      {isFreeMove && isHuman && (
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '8px', 
-          paddingTop: '6px',
-          visibility: showDirSelector ? 'visible' : 'hidden'
-        }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>CHOOSE DIRECTION:</span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-            {[DIRECTIONS.UP, DIRECTIONS.DOWN, DIRECTIONS.LEFT, DIRECTIONS.RIGHT].map(dir => {
-              const isSel = selectedDirection?.label === dir.label;
-              return (
-                <button
-                  key={dir.label}
-                  onClick={() => { soundEngine.playClick(); onSelectDirection(dir); }}
-                  className="neon-btn direction-btn"
-                  style={{
-                    background: isSel ? 'var(--accent-cyan)' : undefined,
-                    color: isSel ? '#030508' : undefined
-                  }}
-                >
-                  {dir.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Consolidated Action Execution Area */}
       {(canUndo || !isHuman) && (
