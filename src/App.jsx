@@ -415,7 +415,7 @@ export default function App() {
       const hasPiece = board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
       if (!hasPiece) return;
       aiTimeoutRef.current = setTimeout(() => {
-        const decision = getAITurnDecision(board, activePlayer.id, rules);
+        const decision = getAITurnDecision(board, activePlayer, rules);
         const legalActs = rules.getLegalActions(activePlayer);
         const actObj = legalActs.find(a => a.id === decision.actionId) || legalActs[0];
         handleExecuteAction(actObj, decision.direction);

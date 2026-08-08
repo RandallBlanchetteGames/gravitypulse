@@ -42,8 +42,9 @@ export function getAIPlacement(board, playerId, rules) {
 }
 
 /* Get snappy AI action choice (<50ms evaluation) */
-export function getAITurnDecision(board, playerId, rules) {
-  const legalActions = rules.getLegalActions({ usedActions: {} }); // We will pass actual player object in App
+export function getAITurnDecision(board, player, rules) {
+  const playerId = player.id;
+  const legalActions = rules.getLegalActions(player); // Only evaluate actions the AI actually has left this round
   const myPiece = board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === playerId);
   
   if (!myPiece || legalActions.length === 0) {
