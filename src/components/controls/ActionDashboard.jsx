@@ -68,42 +68,7 @@ export function ActionDashboard({
         </span>
       </div>
 
-      {/* Execute Button Area (Locked Height to Prevent Layout Shifts) */}
-      <div style={{ minHeight: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {isHuman ? (
-          selectedAction ? (
-            <button
-              onClick={() => onExecuteAction(selectedAction, selectedDirection)}
-              className="neon-btn btn-violet"
-              style={{
-                width: '100%',
-                padding: '14px',
-                fontSize: '1rem',
-                boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              CONFIRM ACTION <Rocket size={18} />
-            </button>
-          ) : (
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
-              Select an action to continue
-            </span>
-          )
-        ) : (
-          <span style={{ 
-            fontSize: '0.9rem', 
-            fontWeight: 600, 
-            color: 'var(--accent-cyan)',
-            animation: 'pulse 1.5s infinite' 
-          }}>
-            AI IS THINKING...
-          </span>
-        )}
-      </div>
+
 
       {/* Action Buttons List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -153,23 +118,54 @@ export function ActionDashboard({
         </div>
       )}
 
-      {/* Undo Move Button (Casual Mistake Protection!) */}
-      <div style={{ minHeight: '44px', marginTop: '4px' }}>
-        {canUndo && isHuman && (
-          <button
-            onClick={() => { soundEngine.playClick(); onUndoMove(); }}
-            className="neon-btn"
-            style={{
-              padding: '10px',
-              fontSize: '0.85rem',
-              background: 'rgba(239, 68, 68, 0.1)',
-              borderColor: '#ef4444',
-              color: '#ef4444',
-              width: '100%'
-            }}
-          >
-            <RotateCcw size={14} /> Undo Move
-          </button>
+      {/* Consolidated Action Execution Area */}
+      <div style={{ minHeight: '52px', marginTop: '4px', display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+        {!isHuman ? (
+          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--accent-cyan)', animation: 'pulse 1.5s infinite' }}>
+            AI IS THINKING...
+          </span>
+        ) : (
+          <>
+            {canUndo && (
+              <button
+                onClick={() => { soundEngine.playClick(); onUndoMove(); }}
+                className="neon-btn"
+                style={{
+                  flex: 1,
+                  padding: '12px 10px',
+                  fontSize: '0.9rem',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  borderColor: '#ef4444',
+                  color: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <RotateCcw size={14} /> Undo
+              </button>
+            )}
+            
+            {selectedAction && (
+              <button
+                onClick={() => onExecuteAction(selectedAction, selectedDirection)}
+                className="neon-btn btn-violet"
+                style={{
+                  flex: canUndo ? '2' : '1',
+                  padding: '12px 10px',
+                  fontSize: '0.9rem',
+                  boxShadow: '0 0 20px rgba(157, 78, 221, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                CONFIRM <Rocket size={16} />
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
