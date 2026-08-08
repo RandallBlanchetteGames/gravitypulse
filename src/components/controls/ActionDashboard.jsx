@@ -99,7 +99,14 @@ export function ActionDashboard({
 
         {/* Direction Selector Injection (Only in Free Directional Mode) */}
         {isFreeMove && isHuman && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', visibility: showDirSelector ? 'visible' : 'hidden' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: '6px', 
+            opacity: showDirSelector ? 1 : 0.4,
+            pointerEvents: showDirSelector ? 'auto' : 'none',
+            transition: 'opacity 0.2s ease'
+          }}>
             {[DIRECTIONS.UP, DIRECTIONS.DOWN, DIRECTIONS.LEFT, DIRECTIONS.RIGHT].map(dir => {
               const isSel = selectedDirection?.label === dir.label;
               return (
