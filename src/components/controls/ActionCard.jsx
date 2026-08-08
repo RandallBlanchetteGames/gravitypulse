@@ -8,16 +8,20 @@ import { DIRECTIONS, TURN_ACTIONS } from '../../engine/types.js';
 
 export function ActionCard({ action, isSelected, isUsed, disabled, onSelectAction }) {
   const getIcon = () => {
-    if (action.id === TURN_ACTIONS.GRAVITY) return <Waves className="action-icon" color="var(--accent-cyan)" />;
-    if (action.id === TURN_ACTIONS.PULSE) return <Zap className="action-icon" color="var(--accent-violet)" />;
-    return <ArrowRight className="action-icon" color="#fff" />;
+    const iconColor = isSelected ? '#030508' : (action.id === TURN_ACTIONS.GRAVITY ? 'var(--accent-cyan)' : (action.id === TURN_ACTIONS.PULSE ? 'var(--accent-violet)' : '#fff'));
+    if (action.id === TURN_ACTIONS.GRAVITY) return <Waves className="action-icon" color={iconColor} />;
+    if (action.id === TURN_ACTIONS.PULSE) return <Zap className="action-icon" color={iconColor} />;
+    return <ArrowRight className="action-icon" color={iconColor} />;
   };
+
+  // Only apply the violet hover styling if it is specifically the Pulse action AND not currently selected
+  const specialClass = action.id === TURN_ACTIONS.PULSE && !isSelected ? 'btn-violet' : '';
 
   return (
     <button
       onClick={() => !disabled && !isUsed && onSelectAction(action)}
       disabled={disabled || isUsed}
-      className={`neon-btn action-card-btn ${action.special ? 'btn-violet' : ''}`}
+      className={`neon-btn action-card-btn ${specialClass}`}
       style={{
         width: '100%',
         justifyContent: 'center',
