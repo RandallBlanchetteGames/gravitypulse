@@ -19,15 +19,12 @@ export function RulesModal({ isOpen, onClose }) {
       color: "var(--accent-cyan)",
       content: (
         <>
-          <p>Each round you play exactly <strong>4 turns</strong>. You have 5 action cards:</p>
+          <p>There are 4 turns each round. You get 5 actions to choose from to use once each round:</p>
           <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
-            <li>Move 1 Space</li>
-            <li>Move 2 Spaces</li>
-            <li>Move 3 Spaces</li>
-            <li>Gravity Wave</li>
-            <li>Pulse Wave</li>
+            <li>3 movement actions</li>
+            <li>2 wave abilities</li>
           </ul>
-          <p style={{ marginTop: '8px' }}>Choose which 4 to play and which 1 to rest. Cards recharge every round!</p>
+          <p style={{ marginTop: '8px' }}>You only get 4 turns, so 1 of these actions will not be used. You get them all back at the start of the next round.</p>
         </>
       )
     },
@@ -37,12 +34,12 @@ export function RulesModal({ isOpen, onClose }) {
       color: "var(--accent-violet)",
       content: (
         <>
-          <p>Use waves to push and pull other players.</p>
+          <p>Waves are your primary weapons for manipulating the board.</p>
           <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
-            <li><strong>Gravity Wave:</strong> Pulls opponents and Asteroids towards you.</li>
-            <li><strong>Pulse Wave:</strong> Pushes opponents and Asteroids away.</li>
+            <li><strong>Gravity Wave:</strong> Pulls opponents and asteroids toward you.</li>
+            <li><strong>Pulse Wave:</strong> Pushes them away.</li>
           </ul>
-          <p style={{ marginTop: '8px' }}>Use movement and waves to force other players into hazards.</p>
+          <p style={{ marginTop: '8px' }}>Position yourself to fling other players into hazards!</p>
         </>
       )
     },
@@ -52,14 +49,19 @@ export function RulesModal({ isOpen, onClose }) {
       color: "#ff007f",
       content: (
         <>
-          <p>Eliminate your opponents to score points!</p>
-          <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
-            <li>Push opponents into the center <strong>Black Hole</strong>.</li>
-            <li>Smash them into <strong>Asteroids</strong>.</li>
-            <li>Push them <strong>off the map</strong> to destroy them!</li>
-            <li>Earn <strong>+1 point</strong> for every opponent you destroy.</li>
-          </ul>
-          <p style={{ marginTop: '8px', fontStyle: 'italic', opacity: 0.8 }}>Ready to play? You can check the Detailed Rules for more info.</p>
+          <p>Scoring is about survival and destruction. You earn 1 point for every opponent you eliminate (push them into the Black Hole or an asteroid, throw them off the map, or even collide with them).</p>
+          <p style={{ marginTop: '8px' }}>If you manage to stay alive until the end of the round, you get 1 point for surviving.</p>
+        </>
+      )
+    },
+    {
+      title: "4. Space Hazards",
+      icon: <ShieldCheck color="var(--accent-gold)" size={24} />,
+      color: "var(--accent-gold)",
+      content: (
+        <>
+          <p>Asteroids and Energy fields will randomly appear throughout the game. Use caution!</p>
+          <p style={{ marginTop: '16px', fontStyle: 'italic', opacity: 0.8 }}>Ready to play? You can check the Detailed Rules for more info.</p>
         </>
       )
     }
@@ -143,20 +145,16 @@ export function RulesModal({ isOpen, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--text-main)' }}>
               {/* Detailed Rules Content */}
               <div style={{ padding: '12px', background: 'rgba(157, 78, 221, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-violet)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 WAVE ATTENUATION</h4>
-                <p>Waves push/pull by <strong>1 space</strong> normally. If <strong>Supercharged</strong>, waves move targets by <strong>2 spaces</strong> within close range (1-2 spaces), but attenuate to <strong>1 space</strong> at medium range (3-4 spaces).</p>
+                <h4 style={{ fontWeight: 800, color: 'var(--accent-violet)', marginBottom: '4px' }}>🌊 HOW WAVES WORK</h4>
+                <p>Normally, your waves push and pull targets 1 space. However, if your piece is Supercharged, your waves become stronger. Supercharged waves will move nearby targets (within 2 spaces of you) a full 2 spaces. Targets further away (3-4 spaces) are still only moved 1 space.</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>TURN 4: BLACK HOLE PULL</h4>
-                <p>End of every turn: Cosmic Energy Fields rotate 1 space clockwise. <br/>End of Turn 4: The center Black Hole pulls <strong>all pieces across the entire map inward by 1 space</strong>.</p>
+                <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🌀 THE SINGULARITY</h4>
+                <p>At the end of every single turn, existing Energy Fields rotates 1 space clockwise around the center. At the end of Turn 4, the Black Hole drags everything on the map 1 space closer to the center and Energy Fields flow outward 1 space. Plan accordingly!</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>SUPERCHARGING</h4>
-                <p>Collect Cosmic Energy to become Supercharged (double wave power). Energy fields have no mass and aren't affected by waves. <strong>Warning:</strong> If you collect a second energy field while already supercharged, your piece will overload and explode!</p>
-              </div>
-              <div style={{ padding: '12px', background: 'rgba(255, 0, 127, 0.05)', borderRadius: '10px', borderLeft: '3px solid #ff007f' }}>
-                <h4 style={{ fontWeight: 800, color: '#ff007f', marginBottom: '4px' }}>COLLISIONS</h4>
-                <p>Crashing directly into another player destroys both pieces, but you still get a point for the elimination.</p>
+                <h4 style={{ fontWeight: 800, color: 'var(--accent-supercharge)', marginBottom: '4px' }}>⚡ GETTING SUPERCHARGED</h4>
+                <p>If you move into an Energy field, you become Supercharged, increasing your wave power. Energy can't be pushed or pulled by waves. If you're already Supercharged and you grab another energy field, your piece will overload and explode!</p>
               </div>
             </div>
           )}

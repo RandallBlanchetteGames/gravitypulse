@@ -189,7 +189,7 @@ export function executeBlackHoleSuction(board, rules) {
   const cx = (size - 1) / 2;
   const cy = (size - 1) / 2;
 
-  const logs = [`🕳️ Black Hole Singularity pulls all pieces, asteroids, and energy fields inward 1 space!`];
+  const logs = [`🕳️ Black Hole Singularity pulls mass inward and radiates energy outward!`];
   let allRespawns = [];
   let allEffects = [];
 
@@ -204,8 +204,15 @@ export function executeBlackHoleSuction(board, rules) {
   targets.forEach(entity => {
     const vec = getStepVector(entity.x, entity.y, cx, cy);
     if (vec.x !== 0 || vec.y !== 0) {
-      entity.x += vec.x;
-      entity.y += vec.y;
+      if (entity.type === ENTITY_TYPES.ENERGY) {
+        // Energy fields flow OUTWARD
+        entity.x -= vec.x;
+        entity.y -= vec.y;
+      } else {
+        // Mass (Players & Asteroids) is pulled INWARD
+        entity.x += vec.x;
+        entity.y += vec.y;
+      }
       moved = true;
     }
   });

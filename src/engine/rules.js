@@ -86,64 +86,108 @@ export class GameRules {
   spawnHazards(board, size) {
     if (!this.hazardsEnabled) return [];
     const newEntities = [];
-    const emptyCells = [];
+    
+    // 1. ASTEROID SPAWNING (Borders, Symmetrical)
+    const borderCells = [];
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (!board.some(e => e.x === x && e.y === y)) {
-          // Keep away from center 2x2 Black Hole
-          const mid = size / 2;
-          if (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1) {
-            emptyCells.push({ x, y });
+        if (x === 0 || x === size - 1 || y === 0 || y === size - 1) {
+          if (!board.some(e => e.x === x && e.y === y)) {
+            borderCells.push({ x, y });
           }
         }
       }
     }
-    if (emptyCells.length === 0) return [];
-
-    // Spawn 1 Asteroid and 1 Cosmic Energy Field
-    const randIdx1 = Math.floor(Math.random() * emptyCells.length);
-    const cell1 = emptyCells.splice(randIdx1, 1)[0];
-    newEntities.push({
-      id: `ast_${Date.now()}_1`,
-      type: ENTITY_TYPES.ASTEROID,
-      x: cell1.x,
-      y: cell1.y
+    
+    // Find valid symmetrical pairs
+    const validPairs = [];
+    borderCells.forEach(cell => {
+      const oppX = size - 1 - cell.x;
+      const oppY = size - 1 - cell.y;
+      // Ensure the opposite is also in borderCells and not the exact same cell
+      if ((oppX !== cell.x || oppY !== cell.y) && borderCells.some(c => c.x === oppX && c.y === oppY)) {
+        // Prevent duplicate pairs by ensuring x1 < x2 or y1 < y2
+        if (cell.x < oppX || (cell.x === oppX && cell.y < oppY)) {
+          validPairs.push([cell, { x: oppX, y: oppY }]);
+        }
+      }
     });
 
-    if (emptyCells.length > 0 && Math.random() < 0.7) {
-      const randIdx2 = Math.floor(Math.random() * emptyCells.length);
-      const cell2 = emptyCells.splice(randIdx2, 1)[0];
+    if (validPairs.length > 0) {
+      const randPair = validPairs[Math.floor(Math.random() * validPairs.length)];
       newEntities.push({
-        id: `eng_${Date.now()}_2`,
+        id: `ast_${Date.now()}_1`,
+        type: ENTITY_TYPES.ASTEROID,
+        x: randPair[0].x,
+        y: randPair[0].y
+      });
+      newEntities.push({
+        id: `ast_${Date.now()}_2`,
+        type: ENTITY_TYPES.ASTEROID,
+        x: randPair[1].x,
+        y: randPair[1].y
+      });
+    } else if (borderCells.length > 0) {
+      // Fallback: spawn 1 asteroid randomly on border if no pairs available
+      const randCell = borderCells[Math.floor(Math.random() * borderCells.length)];
+      newEntities.push({
+        id: `ast_${Date.now()}_1`,
+        type: ENTITY_TYPES.ASTEROID,
+        x: randCell.x,
+        y: randCell.y
+      });
+    }
+
+    // 2. ENERGY FIELD SPAWNING (Event Horizon, 100% chance)
+    const cx = (size - 1) / 2;
+    const cy = (size - 1) / 2;
+    const eventHorizonCells = [];
+    
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        // The event horizon perfectly rings the 2x2 core.
+        // For an even grid, these are cells where Chebyshev distance from center is exactly 1.5
+        const chebyshev = Math.max(Math.abs(x - cx), Math.abs(y - cy));
+        if (chebyshev === 1.5) {
+          // Verify it doesn't collide with existing entities OR newly spawned asteroids
+          if (!board.some(e => e.x === x && e.y === y) && !newEntities.some(e => e.x === x && e.y === y)) {
+            eventHorizonCells.push({ x, y });
+          }
+        }
+      }
+    }
+
+    if (eventHorizonCells.length > 0) {
+      const randEvent = eventHorizonCells[Math.floor(Math.random() * eventHorizonCells.length)];
+      newEntities.push({
+        id: `eng_${Date.now()}_3`,
         type: ENTITY_TYPES.ENERGY,
-        x: cell2.x,
-        y: cell2.y
+        x: randEvent.x,
+        y: randEvent.y
       });
     }
 
     return newEntities;
   }
 
-  /* Spawn initial random asteroids in vacant spaces after setup */
+  /* Spawn initial random asteroids in vacant spaces on the borders after setup */
   spawnInitialAsteroids(board, size, count = 2) {
     const newEntities = [];
-    const emptyCells = [];
-    const mid = size / 2;
+    const borderCells = [];
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (!board.some(e => e.x === x && e.y === y)) {
-          // Keep away from center 2x2 Black Hole
-          if (Math.abs(x - mid) > 1 || Math.abs(y - mid) > 1) {
-            emptyCells.push({ x, y });
+        if (x === 0 || x === size - 1 || y === 0 || y === size - 1) {
+          if (!board.some(e => e.x === x && e.y === y)) {
+            borderCells.push({ x, y });
           }
         }
       }
     }
 
     for (let i = 0; i < count; i++) {
-      if (emptyCells.length === 0) break;
-      const randIdx = Math.floor(Math.random() * emptyCells.length);
-      const cell = emptyCells.splice(randIdx, 1)[0];
+      if (borderCells.length === 0) break;
+      const randIdx = Math.floor(Math.random() * borderCells.length);
+      const cell = borderCells.splice(randIdx, 1)[0];
       newEntities.push({
         id: `ast_init_${Date.now()}_${i}`,
         type: ENTITY_TYPES.ASTEROID,
