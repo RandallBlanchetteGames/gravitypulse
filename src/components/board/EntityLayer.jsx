@@ -120,7 +120,7 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
           const cy = (boardSize - 1) / 2;
           const dx = entity.x - cx;
           const dy = entity.y - cy;
-          // Add 90 degrees because the Waves icon is horizontally drawn and we want it to point outward
+          // Add 90 degrees so the "top" of our SVG points outward away from the center
           const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
 
           return (
@@ -138,8 +138,15 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
                 className="energy-field"
                 title="ENERGY FIELD: Move here to become Supercharged and double your wave power."
               >
-                <div style={{ transform: `rotate(${angleDeg}deg)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Waves size={22} color="#fff" strokeWidth={2.5} style={{ filter: 'drop-shadow(0 0 8px #fff)' }} />
+                <div style={{ transform: `rotate(${angleDeg}deg)`, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  <svg width="32" height="32" viewBox="0 0 32 32" className="energy-waves-svg">
+                    {/* Inner wavy arc */}
+                    <path className="wave-path wave-1" d="M 8 24 Q 12 18 16 22 T 24 20" fill="none" stroke="#00ff66" strokeWidth="2.5" strokeLinecap="round" />
+                    {/* Middle wavy arc */}
+                    <path className="wave-path wave-2" d="M 4 16 Q 10 8 16 14 T 28 12" fill="none" stroke="#00ff66" strokeWidth="2.5" strokeLinecap="round" />
+                    {/* Outer wavy arc */}
+                    <path className="wave-path wave-3" d="M 0 8 Q 8 -2 16 6 T 32 4" fill="none" stroke="#00ff66" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
                 </div>
               </div>
             </div>
