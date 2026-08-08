@@ -149,7 +149,9 @@ export function RulesModal({ isOpen, onClose }) {
                 <p>Normally, your waves push and pull targets 1 space. However, if your piece is Supercharged, your waves become stronger. Supercharged waves will move nearby targets (within 2 spaces of you) a full 2 spaces. Targets further away (3-4 spaces) are still only moved 1 space.</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-gold)' }}>
-                <h4 style={{ fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>🌀 THE SINGULARITY</h4>
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, color: 'var(--accent-gold)', marginBottom: '4px' }}>
+                  <Orbit size={18} style={{ transform: 'scaleX(-1)' }} /> THE SINGULARITY
+                </h4>
                 <p>At the end of every single turn, existing Energy Fields rotates 1 space clockwise around the center. At the end of Turn 4, the Black Hole drags everything on the map 1 space closer to the center and Energy Fields flow outward 1 space. Plan accordingly!</p>
               </div>
               <div style={{ padding: '12px', background: 'rgba(0, 255, 102, 0.05)', borderRadius: '10px', borderLeft: '3px solid var(--accent-supercharge)' }}>

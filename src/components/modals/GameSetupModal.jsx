@@ -103,7 +103,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
                   color: movementStyle.id === style.id ? '#030508' : undefined
                 }}
               >
-                <Orbit size={16} /> {style.label}
+                <Orbit size={16} style={{ transform: 'scaleX(-1)' }} /> {style.label}
               </button>
             ))}
           </div>
