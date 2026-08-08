@@ -139,7 +139,7 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
                 title="ENERGY FIELD: Move here to become Supercharged and double your wave power."
               >
                 <div style={{ transform: `rotate(${angleDeg}deg)`, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                  <svg width="32" height="32" viewBox="0 0 32 32" className="energy-waves-svg">
+                  <svg width="32" height="32" viewBox="0 0 32 32" className="energy-waves-svg" style={{ overflow: 'visible' }}>
                     {/* Inner wavy arc */}
                     <path className="wave-path wave-1" d="M 8 24 Q 12 18 16 22 T 24 20" fill="none" stroke="#00ff66" strokeWidth="2.5" strokeLinecap="round" />
                     {/* Middle wavy arc */}
