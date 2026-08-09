@@ -155,6 +155,21 @@ export default function App() {
     };
   }, []);
 
+  /* Handle Tab Visibility to Pause/Resume Audio */
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        soundEngine.pauseBackground();
+      } else {
+        soundEngine.resumeBackground();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   /* Auto-save whenever board or turn changes during playing */
   useEffect(() => {
     if (phase === PHASES.PLAYING && board.length > 0) {

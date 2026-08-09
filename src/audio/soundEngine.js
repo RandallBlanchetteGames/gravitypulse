@@ -11,6 +11,14 @@ class SoundEngine {
     this.ambienceOsc2 = null;
     this.ambienceGain = null;
     this.isAmbiencePlaying = false;
+    this.isBackgroundPaused = false;
+
+    // HTML5 Audio for background music
+    if (typeof window !== 'undefined') {
+      this.bgMusic = new Audio('/background-music.mp3');
+      this.bgMusic.loop = true;
+      this.bgMusic.volume = 0.3; // Soft volume
+    }
   }
 
   /* Initialize AudioContext on first user interaction (click/touch) */
@@ -25,15 +33,41 @@ class SoundEngine {
       this.ctx.resume();
     }
     this.startAmbience();
+    
+    if (this.bgMusic && this.bgMusic.paused && !this.isMuted && !this.isBackgroundPaused) {
+      this.bgMusic.play().catch(e => console.warn('Audio play failed:', e));
+    }
   }
 
   toggleMute() {
     this.init();
     this.isMuted = !this.isMuted;
+    
+    if (this.bgMusic) {
+      this.bgMusic.muted = this.isMuted;
+      if (!this.isMuted && this.bgMusic.paused && !this.isBackgroundPaused) {
+        this.bgMusic.play().catch(e => console.warn('Audio play failed:', e));
+      }
+    }
+    
     if (this.ambienceGain && this.ctx) {
       this.ambienceGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.04, this.ctx.currentTime, 0.1);
     }
     return this.isMuted;
+  }
+
+  pauseBackground() {
+    this.isBackgroundPaused = true;
+    if (this.bgMusic && !this.bgMusic.paused) {
+      this.bgMusic.pause();
+    }
+  }
+
+  resumeBackground() {
+    this.isBackgroundPaused = false;
+    if (this.bgMusic && this.bgMusic.paused && !this.isMuted) {
+      this.bgMusic.play().catch(e => console.warn('Audio play failed:', e));
+    }
   }
 
   /* --- Subtle Deep Space Ambient Drone --- */
