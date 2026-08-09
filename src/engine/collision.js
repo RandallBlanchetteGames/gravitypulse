@@ -41,7 +41,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
         logs.push(`☄️ Asteroid sucked into the Singularity!`);
         effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
       }
-      soundEngine.playExplosion();
+      soundEngine.playBlackHole();
     }
   });
 
@@ -85,7 +85,7 @@ export function resolveCellCollisions(board, boardSize, logs = []) {
         logs.push(`💥 Player ${luckyCube.playerId} overloaded from excess energy and BLEW UP!`);
         respawnQueue.push(luckyCube.playerId);
         effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'OVERLOAD' });
-        soundEngine.playExplosion();
+        soundEngine.playOverload();
       } else {
         luckyCube.isSupercharged = true;
         energies.forEach(eng => destroyedIds.add(eng.id));
