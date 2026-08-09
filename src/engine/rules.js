@@ -197,4 +197,63 @@ export class GameRules {
     }
     return newEntities;
   }
+
+  /* Validates if a spawn location meets the 5x5 box and 4-space orthogonal constraints, with failsafes */
+  validateSpawnLocation(spawnX, spawnY, board) {
+    if (board.some(e => e.x === spawnX && e.y === spawnY)) return { valid: false, reason: 'Occupied' };
+
+    const playerCubes = board.filter(e => e.type === ENTITY_TYPES.CUBE);
+    if (playerCubes.length === 0) return { valid: true };
+
+    // Failsafe check: does ANY valid spawn exist?
+    const checkConstraints = (x, y, cubes, requiredChebyshev, requiredOrthogonal) => {
+      for (const cube of cubes) {
+        const dx = Math.abs(cube.x - x);
+        const dy = Math.abs(cube.y - y);
+        const chebyshev = Math.max(dx, dy);
+        if (chebyshev < requiredChebyshev) return false;
+        if ((dx === 0 || dy === 0) && chebyshev < requiredOrthogonal) return false;
+      }
+      return true;
+    };
+
+    const hasValidSpawnAt = (reqCheby, reqOrtho) => {
+      for (let i = 0; i < this.getBoardSize(); i++) {
+        for (let j = 0; j < this.getBoardSize(); j++) {
+          if (!board.some(e => e.x === i && e.y === j)) {
+            if (checkConstraints(i, j, playerCubes, reqCheby, reqOrtho)) return true;
+          }
+        }
+      }
+      return false;
+    };
+
+    // Determine the active constraints based on board crowding
+    let reqCheby = 3; // 5x5 box (Chebyshev distance > 2, meaning >= 3)
+    let reqOrtho = 4; // 4-space orthogonal
+    if (!hasValidSpawnAt(reqCheby, reqOrtho)) {
+      reqCheby = 2; // fallback to 3x3 box
+      reqOrtho = 2;
+      if (!hasValidSpawnAt(reqCheby, reqOrtho)) {
+        reqCheby = 0; // fallback to any empty cell
+        reqOrtho = 0;
+      }
+    }
+
+    // Now validate the requested spawn against the active constraints
+    for (const cube of playerCubes) {
+      const dx = Math.abs(cube.x - spawnX);
+      const dy = Math.abs(cube.y - spawnY);
+      const chebyshev = Math.max(dx, dy);
+
+      if (chebyshev < reqCheby) {
+        return { valid: false, reason: `Must be outside a ${reqCheby * 2 - 1}x${reqCheby * 2 - 1} box of any player.` };
+      }
+      if ((dx === 0 || dy === 0) && chebyshev < reqOrtho) {
+        return { valid: false, reason: `Must be at least ${reqOrtho} spaces away orthogonally.` };
+      }
+    }
+
+    return { valid: true };
+  }
 }

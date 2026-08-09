@@ -11,34 +11,34 @@ import { executeGravity, executePulse } from './gravityPulse.js';
 /* Get AI Setup or Respawn Placement (pick a safe region center or edge cell) */
 export function getAIPlacement(board, playerId, rules) {
   const size = rules.getBoardSize();
-  const regionCount = rules.getRegionCount();
-
-  // Try to pick a region center that is unoccupied
-  const safeRegions = [];
-  for (let ry = 0; ry < regionCount; ry++) {
-    for (let rx = 0; rx < regionCount; rx++) {
-      const center = getRegionCenter(rx, ry);
-      if (!isBlackHole(center.x, center.y, size) && !board.some(e => e.x === center.x && e.y === center.y)) {
-        safeRegions.push(center);
+  const validCells = [];
+  
+  for (let x = 0; x < size; x++) {
+    for (let y = 0; y < size; y++) {
+      const validation = rules.validateSpawnLocation(x, y, board);
+      if (validation.valid) {
+        const centerDist = getChebyshevDistance(x, y, size / 2, size / 2);
+        
+        // Prefer goldilocks zone (distance 3 to 4 from center), avoid edges, avoid event horizon
+        let score = 10;
+        if (centerDist < 2) score -= 100; // In Black Hole!
+        else if (centerDist === 2) score -= 5; // On Event Horizon
+        else if (centerDist >= 3 && centerDist <= 4) score += 20; // Goldilocks
+        if (x === 0 || x === size - 1 || y === 0 || y === size - 1) score -= 10; // Avoid literal edges
+        
+        validCells.push({ x, y, score });
       }
     }
   }
 
-  if (safeRegions.length > 0) {
-    const randIdx = Math.floor(Math.random() * safeRegions.length);
-    return safeRegions[randIdx];
-  }
-
-  // Fallback: pick any safe unoccupied cell
-  for (let y = 1; y < size - 1; y++) {
-    for (let x = 1; x < size - 1; x++) {
-      if (!isBlackHole(x, y, size) && !board.some(e => e.x === x && e.y === y)) {
-        return { x, y };
-      }
-    }
-  }
-
-  return { x: 0, y: 0 };
+  if (validCells.length === 0) return { x: 0, y: 0 };
+  
+  // Sort by highest score
+  validCells.sort((a, b) => b.score - a.score);
+  
+  // Pick one of the top 3 spots randomly to avoid predictable spawns
+  const topN = Math.min(3, validCells.length);
+  return validCells[Math.floor(Math.random() * topN)];
 }
 
 /* Get snappy AI action choice (<50ms evaluation) */

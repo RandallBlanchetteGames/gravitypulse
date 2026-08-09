@@ -202,15 +202,16 @@ export default function App() {
       };
     });
 
-    let nextIdx = activePlayerIdx + 1;
+    let nextIdx = (activePlayerIdx + 1) % updatedPlayers.length;
     let nextRound = currentRound;
     let nextTurn = turnInRound;
     let updatedBoard = [...nextBoard];
     let roundLogs = [];
 
+    const firstPlayerIdxForRound = (currentRound - 1) % updatedPlayers.length;
+
     // If all players have taken their turn for this step in the round
-    if (nextIdx >= updatedPlayers.length) {
-      nextIdx = 0;
+    if (nextIdx === firstPlayerIdxForRound) {
       nextTurn += 1;
 
       // Execute orbital rotation for massless Cosmic Energy Fields at the end of each Turn
@@ -287,7 +288,7 @@ export default function App() {
           }
           setSelectedAction(null);
           setSelectedDirection(null);
-          setActivePlayerIdx(0);
+          setActivePlayerIdx((nextRound - 1) % updatedPlayers.length);
           setCurrentRound(nextRound);
           setTurnInRound(1);
           if (roundLogs.length > 0) {
@@ -297,6 +298,9 @@ export default function App() {
           setPhase(PHASES.RESPAWN);
           return;
         }
+        
+        // If no one is missing, explicitly set the next player to be the first of the new round
+        nextIdx = (nextRound - 1) % updatedPlayers.length;
       }
     }
 
@@ -331,7 +335,15 @@ export default function App() {
   /* Handle Cell Tap (For Setup & Respawn placement) */
   const handleCellClickLogic = (x, y) => {
     if (phase === PHASES.SETUP) {
-      if (board.some(e => e.x === x && e.y === y)) return;
+      const validation = rules.validateSpawnLocation(x, y, board);
+      if (!validation.valid) {
+        if (validation.reason !== 'Occupied') {
+          setLogs(prev => [...prev, `❌ Invalid Spawn: ${validation.reason}`]);
+          soundEngine.playError();
+        }
+        return;
+      }
+
       const newCube = {
         id: `cube_p${activePlayer.id}`,
         type: ENTITY_TYPES.CUBE,
@@ -356,7 +368,14 @@ export default function App() {
       }
     } else if (phase === PHASES.RESPAWN) {
       if (respawnQueue.length === 0) return;
-      if (board.some(e => e.x === x && e.y === y)) return;
+      const validation = rules.validateSpawnLocation(x, y, board);
+      if (!validation.valid) {
+        if (validation.reason !== 'Occupied') {
+          setLogs(prev => [...prev, `❌ Invalid Spawn: ${validation.reason}`]);
+          soundEngine.playError();
+        }
+        return;
+      }
 
       const pid = respawnQueue[0];
       const newCube = {
@@ -625,8 +644,32 @@ export default function App() {
   );
 
   const centerBoardContent = (
-    <BoardContainer size={rules.getBoardSize()}>
-      <GridCells
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      {(phase === PHASES.SETUP || phase === PHASES.RESPAWN) && activePlayer?.isHuman && (
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 100,
+          background: 'rgba(0, 0, 0, 0.85)',
+          border: '1px solid var(--accent-cyan)',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          color: 'var(--accent-cyan)',
+          fontSize: '0.85rem',
+          fontWeight: 700,
+          textAlign: 'center',
+          boxShadow: '0 0 20px rgba(0, 240, 255, 0.3)',
+          backdropFilter: 'blur(4px)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap'
+        }}>
+          SELECT SPAWN: Must be 4+ spaces away orthogonally & outside the 5x5 zone of players.
+        </div>
+      )}
+      <BoardContainer size={rules.getBoardSize()}>
+        <GridCells
         boardSize={rules.getBoardSize()}
         phase={phase}
         onCellClick={handleCellClick}
@@ -659,7 +702,8 @@ export default function App() {
         boardSize={rules.getBoardSize()}
       />
     </BoardContainer>
-  );
+  </div>
+);
 
   const rightPanelContent = (
     <>
