@@ -7,7 +7,7 @@ import { isBlackHole } from '../../engine/boardGeometry.js';
 import { PHASES } from '../../engine/types.js';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-const SingleCell = React.memo(({ x, y, boardSize, phase, isTraj, stepNum, onClick }) => {
+const SingleCell = React.memo(({ x, y, boardSize, phase, isTraj, stepNum, onClick, isValidSpawn }) => {
   const isPlacementPhase = phase === PHASES.SETUP || phase === PHASES.RESPAWN;
   const cx = (boardSize - 1) / 2;
   const cy = (boardSize - 1) / 2;
@@ -37,6 +37,15 @@ const SingleCell = React.memo(({ x, y, boardSize, phase, isTraj, stepNum, onClic
 
   const interactiveClass = (isPlacementPhase && !isBH) ? 'cell-interactive' : '';
 
+  let spawnHighlightClass = '';
+  if (isPlacementPhase) {
+    if (isValidSpawn) {
+      spawnHighlightClass = 'cell-spawn-valid';
+    } else {
+      spawnHighlightClass = 'cell-spawn-invalid';
+    }
+  }
+
   // Round only the 4 outer corners of the board itself
   let borderTopLeftRadius = 0;
   let borderTopRightRadius = 0;
@@ -58,15 +67,15 @@ const SingleCell = React.memo(({ x, y, boardSize, phase, isTraj, stepNum, onClic
     <div
       onClick={handleClick}
       title={tooltip}
-      className={`grid-cell ${isTraj ? 'cell-highlight' : ''} ${neonClass} ${interactiveClass}`.trim()}
+      className={`grid-cell ${isTraj ? 'cell-highlight' : ''} ${neonClass} ${interactiveClass} ${spawnHighlightClass}`.trim()}
       style={{
         borderTopLeftRadius,
         borderTopRightRadius,
         borderBottomLeftRadius,
         borderBottomRightRadius,
         overflow: (borderTopLeftRadius || borderTopRightRadius || borderBottomLeftRadius || borderBottomRightRadius) ? 'hidden' : 'visible',
-        cursor: isPlacementPhase && !isBH ? 'pointer' : 'default',
-        background: isTraj ? 'rgba(0, 255, 102, 0.18)' : (isPlacementPhase && !isBH ? 'rgba(0, 240, 255, 0.02)' : '')
+        cursor: (isPlacementPhase && isValidSpawn && !isBH) ? 'pointer' : 'default',
+        background: isTraj ? 'rgba(0, 255, 102, 0.18)' : (isPlacementPhase && !isBH && !spawnHighlightClass ? 'rgba(0, 240, 255, 0.02)' : '')
       }}
     >
       {isTraj && (
@@ -86,7 +95,7 @@ const SingleCell = React.memo(({ x, y, boardSize, phase, isTraj, stepNum, onClic
   );
 });
 
-export const GridCells = React.memo(function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [] }) {
+export const GridCells = React.memo(function GridCells({ boardSize, phase, onCellClick, previewTrajectory = [], validSpawnCells = new Set() }) {
   const cells = [];
 
   // Build lookup map for trajectory preview highlights
@@ -110,6 +119,7 @@ export const GridCells = React.memo(function GridCells({ boardSize, phase, onCel
           isTraj={isTraj}
           stepNum={stepNum}
           onClick={onCellClick}
+          isValidSpawn={validSpawnCells.has(`${x},${y}`)}
         />
       );
     }

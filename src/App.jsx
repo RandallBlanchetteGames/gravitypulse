@@ -2,7 +2,7 @@
    GRAVITY PULSE 2026 - MAIN APPLICATION ENGINE ORCHESTRATOR
    ========================================================================== */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Zap } from 'lucide-react';
 import { PHASES, TURN_ACTIONS, ENTITY_TYPES, PLAYER_COLORS, MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from './engine/types.js';
 import { GameRules } from './engine/rules.js';
@@ -336,13 +336,7 @@ export default function App() {
   const handleCellClickLogic = (x, y) => {
     if (phase === PHASES.SETUP) {
       const validation = rules.validateSpawnLocation(x, y, board);
-      if (!validation.valid) {
-        if (validation.reason !== 'Occupied') {
-          setLogs(prev => [...prev, `❌ Invalid Spawn: ${validation.reason}`]);
-          soundEngine.playError();
-        }
-        return;
-      }
+      if (!validation.valid) return;
 
       const newCube = {
         id: `cube_p${activePlayer.id}`,
@@ -369,13 +363,7 @@ export default function App() {
     } else if (phase === PHASES.RESPAWN) {
       if (respawnQueue.length === 0) return;
       const validation = rules.validateSpawnLocation(x, y, board);
-      if (!validation.valid) {
-        if (validation.reason !== 'Occupied') {
-          setLogs(prev => [...prev, `❌ Invalid Spawn: ${validation.reason}`]);
-          soundEngine.playError();
-        }
-        return;
-      }
+      if (!validation.valid) return;
 
       const pid = respawnQueue[0];
       const newCube = {
@@ -605,6 +593,22 @@ export default function App() {
     initGame(newConfig);
   };
 
+  // Pre-calculate valid spawn coordinates for visual highlighting
+  const validSpawnCells = useMemo(() => {
+    const validSet = new Set();
+    if (phase === PHASES.SETUP || phase === PHASES.RESPAWN) {
+      const size = rules.getBoardSize();
+      for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+          if (rules.validateSpawnLocation(x, y, board).valid) {
+            validSet.add(`${x},${y}`);
+          }
+        }
+      }
+    }
+    return validSet;
+  }, [board, phase, rules]);
+
   // Compute dynamic UI states on render
   let trajectory = [];
   let waveDisplacements = [];
@@ -644,36 +648,13 @@ export default function App() {
   );
 
   const centerBoardContent = (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      {(phase === PHASES.SETUP || phase === PHASES.RESPAWN) && activePlayer?.isHuman && (
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 100,
-          background: 'rgba(0, 0, 0, 0.85)',
-          border: '1px solid var(--accent-cyan)',
-          padding: '8px 16px',
-          borderRadius: '20px',
-          color: 'var(--accent-cyan)',
-          fontSize: '0.85rem',
-          fontWeight: 700,
-          textAlign: 'center',
-          boxShadow: '0 0 20px rgba(0, 240, 255, 0.3)',
-          backdropFilter: 'blur(4px)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap'
-        }}>
-          SELECT SPAWN: Must be 4+ spaces away orthogonally & outside the 5x5 zone of players.
-        </div>
-      )}
-      <BoardContainer size={rules.getBoardSize()}>
-        <GridCells
+    <BoardContainer size={rules.getBoardSize()}>
+      <GridCells
         boardSize={rules.getBoardSize()}
         phase={phase}
         onCellClick={handleCellClick}
         previewTrajectory={trajectory}
+        validSpawnCells={validSpawnCells}
       />
       <RegionIndicatorLayer 
         rulesConfig={rulesConfig}
@@ -702,8 +683,7 @@ export default function App() {
         boardSize={rules.getBoardSize()}
       />
     </BoardContainer>
-  </div>
-);
+  );
 
   const rightPanelContent = (
     <>
