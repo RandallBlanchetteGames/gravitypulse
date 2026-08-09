@@ -719,11 +719,8 @@ export default function App() {
         rulesConfig={rulesConfig}
         onOpenSetup={() => setIsSetupOpen(true)}
         onOpenRules={() => setIsRulesOpen(true)}
-        onResetGame={() => {
-          if (window.confirm("Start a new game with current customization?")) {
-            initGame(rulesConfig);
-          }
-        }}
+        canUndo={historyStack.length > 0 && activePlayer?.isHuman}
+        onUndoMove={handleUndoMove}
       />
 
       <ResponsiveShell

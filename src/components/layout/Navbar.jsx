@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Volume2, VolumeX, Settings, BookOpen, RotateCcw, Orbit, Home } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
+export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, canUndo, onUndoMove }) {
   const [isMuted, setIsMuted] = useState(soundEngine.isMuted);
 
   const handleToggleMute = () => {
@@ -76,10 +76,21 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, onResetGame }) {
         </button>
 
         <button
-          onClick={() => { soundEngine.playClick(); onResetGame(); }}
-          className="neon-btn btn-danger"
-          style={{ padding: '8px 14px', fontSize: '0.85rem' }}
-          title="Start New Match"
+          onClick={() => { 
+            if (canUndo) {
+              soundEngine.playClick(); 
+              onUndoMove();
+            }
+          }}
+          className={`neon-btn btn-danger ${!canUndo ? 'disabled' : ''}`}
+          style={{ 
+            padding: '8px 14px', 
+            fontSize: '0.85rem',
+            opacity: canUndo ? 1 : 0.4,
+            cursor: canUndo ? 'pointer' : 'not-allowed'
+          }}
+          title={canUndo ? "Undo Last Move" : "No moves to undo"}
+          disabled={!canUndo}
         >
           <RotateCcw size={16} />
         </button>
