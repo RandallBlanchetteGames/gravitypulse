@@ -17,7 +17,7 @@ class SoundEngine {
     if (typeof window !== 'undefined') {
       this.bgMusic = new Audio('/background-music.mp3');
       this.bgMusic.loop = true;
-      this.bgMusic.volume = 0.3; // Soft volume
+      this.bgMusic.volume = 0.225; // Reduced volume
     }
   }
 
