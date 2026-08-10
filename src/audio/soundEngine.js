@@ -14,11 +14,22 @@ class SoundEngine {
     this.compressor = null;
     this.delayNode = null;
 
-    // HTML5 Audio for background music
+    // HTML5 Audio for background music playlist
+    this.playlist = ['/background-music.mp3', '/background-music-2.mp3'];
+    this.currentTrackIndex = 0;
+
     if (typeof window !== 'undefined') {
-      this.bgMusic = new Audio('/background-music.mp3');
-      this.bgMusic.loop = true;
+      this.bgMusic = new Audio(this.playlist[this.currentTrackIndex]);
       this.bgMusic.volume = 0.225;
+      
+      // Advance to next track when one ends
+      this.bgMusic.addEventListener('ended', () => {
+        this.currentTrackIndex = (this.currentTrackIndex + 1) % this.playlist.length;
+        this.bgMusic.src = this.playlist[this.currentTrackIndex];
+        if (!this.isMuted && !this.isBackgroundPaused) {
+          this.bgMusic.play().catch(e => console.warn('Audio play failed:', e));
+        }
+      });
     }
   }
 
