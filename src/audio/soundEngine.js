@@ -26,6 +26,7 @@ class SoundEngine {
       this.bgMusic.addEventListener('ended', () => {
         this.currentTrackIndex = (this.currentTrackIndex + 1) % this.playlist.length;
         this.bgMusic.src = this.playlist[this.currentTrackIndex];
+        this.bgMusic.load(); // Force the browser to load the new source
         if (!this.isMuted && !this.isBackgroundPaused) {
           this.bgMusic.play().catch(e => console.warn('Audio play failed:', e));
         }
