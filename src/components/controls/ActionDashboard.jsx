@@ -21,10 +21,26 @@ export function ActionDashboard({
   onExecuteAction,
   onUndoMove
 }) {
+  if (phase === PHASES.SETUP || phase === PHASES.RESPAWN) {
+    return (
+      <div className="glass-card" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <p style={{ fontWeight: 600 }}>Waiting for players to select spawn location...</p>
+      </div>
+    );
+  }
+
+  if (phase === PHASES.GAME_OVER) {
+    return (
+      <div className="glass-card" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <p style={{ fontWeight: 600 }}>Match Concluded.</p>
+      </div>
+    );
+  }
+
   if (!activePlayer || phase !== PHASES.PLAYING) {
     return (
       <div className="glass-card" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-        <p style={{ fontWeight: 600 }}>Waiting for action turn phase...</p>
+        <p style={{ fontWeight: 600 }}>Waiting for active player...</p>
       </div>
     );
   }
