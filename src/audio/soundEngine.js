@@ -20,7 +20,7 @@ class SoundEngine {
 
     if (typeof window !== 'undefined') {
       this.bgMusic = new Audio(this.playlist[this.currentTrackIndex]);
-      this.bgMusic.volume = 0.225;
+      this.bgMusic.volume = 0.15; // Lowered volume further
       
       // Advance to next track when one ends
       this.bgMusic.addEventListener('ended', () => {
