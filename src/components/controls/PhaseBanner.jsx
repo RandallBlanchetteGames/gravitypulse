@@ -12,7 +12,7 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turn
       case PHASES.SETUP:
         return {
           title: "SETUP PHASE",
-          text: "Tap an empty space to deploy your piece.",
+          text: "Tap a highlighted space to deploy your piece.",
           color: "var(--accent-cyan)",
           border: "rgba(0, 240, 255, 0.3)"
         };
@@ -26,7 +26,7 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turn
       case PHASES.RESPAWN:
         return {
           title: "RESPAWN PHASE",
-          text: "Tap an empty space to respawn.",
+          text: "Tap a highlighted space to respawn.",
           color: "var(--accent-supercharge)",
           border: "rgba(0, 255, 102, 0.3)"
         };
