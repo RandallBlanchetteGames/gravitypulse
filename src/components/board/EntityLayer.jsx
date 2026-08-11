@@ -155,6 +155,10 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
 
         // Render Metallic Obsidian Asteroid Hazards
         if (entity.type === ENTITY_TYPES.ASTEROID) {
+          const duration = 45 + (charCode % 5) * 15; // 45s, 60s, 75s, 90s, 105s
+          const direction = charCode % 2 === 0 ? 'normal' : 'reverse';
+          const delayOffset = -((charCode % 15) * 10); // wide range of start positions
+
           return (
             <div
               key={entity.id}
@@ -162,15 +166,21 @@ export const EntityLayer = React.memo(function EntityLayer({ board, boardSize, a
               style={{
                 transform: `translate3d(${xPct}%, ${yPct}%, 0)`,
                 zIndex,
-                '--anim-delay': animDelay
               }}
             >
               <div
                 onClick={() => onEntityClick && onEntityClick(entity)}
-                className="asteroid-hazard"
+                className="asteroid-wrapper"
                 title="ASTEROID HAZARD: Destroys any piece that collides with it!"
               >
-                {/* No icon needed for this rugged version, it's just a rock */}
+                <div 
+                  className="asteroid-hazard-rock"
+                  style={{
+                    '--anim-duration': `${duration}s`,
+                    '--anim-delay': `${delayOffset}s`,
+                    '--anim-direction': direction
+                  }}
+                />
                 
                 {/* Dynamic Lighting Overlay */}
                 {renderLighting(entity)}
