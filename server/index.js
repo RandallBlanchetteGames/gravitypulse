@@ -88,6 +88,21 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.post('/api/auth/nickname', authenticateToken, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'Database not configured' });
+  const { nickname } = req.body;
+  
+  if (!nickname) return res.status(400).json({ error: 'Nickname required' });
+  
+  try {
+    await pool.query('UPDATE users SET nickname = $1 WHERE id = $2', [nickname, req.user.id]);
+    res.json({ success: true, nickname });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error updating nickname' });
+  }
+});
+
 // --- STATS ROUTES ---
 
 app.post('/api/stats/update', authenticateToken, async (req, res) => {
@@ -145,7 +160,7 @@ app.get('/api/stats/profile/:id', async (req, res) => {
   
   try {
     const result = await pool.query(`
-      SELECT u.username, s.*
+      SELECT u.username, u.nickname, s.*
       FROM stats s
       JOIN users u ON u.id = s.user_id
       WHERE s.user_id = $1
@@ -169,7 +184,7 @@ app.get('/api/stats/leaderboard', async (req, res) => {
     // We'll return the full list of users and their stats.
     // The frontend can sort and determine the #1 spots for various categories.
     const result = await pool.query(`
-      SELECT u.username, u.id as user_id, s.*
+      SELECT u.username, u.nickname, u.id as user_id, s.*
       FROM stats s
       JOIN users u ON u.id = s.user_id
       WHERE s.total_games_played > 0

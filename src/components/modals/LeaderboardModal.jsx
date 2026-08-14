@@ -162,7 +162,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                       <th style={{ padding: '12px' }}>Rank</th>
-                      <th style={{ padding: '12px' }}>Operative</th>
+                      <th style={{ padding: '12px' }}>Player</th>
                       <th style={{ padding: '12px' }}>Games</th>
                       <th style={{ padding: '12px' }}>Wins</th>
                       <th style={{ padding: '12px' }}>Points</th>
@@ -174,7 +174,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
                     {[...leaderboard].sort((a,b) => (b.total_cumulative_points || 0) - (a.total_cumulative_points || 0)).map((p, idx) => (
                       <tr key={p.user_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
                         <td style={{ padding: '12px', color: idx < 3 ? 'var(--accent-gold)' : 'var(--text-muted)', fontWeight: 800 }}>#{idx + 1}</td>
-                        <td style={{ padding: '12px', color: '#fff', fontWeight: 700 }}>{p.username}</td>
+                        <td style={{ padding: '12px', color: '#fff', fontWeight: 700 }}>{p.nickname || p.username.split('@')[0]}</td>
                         <td style={{ padding: '12px' }}>{p.total_games_played}</td>
                         <td style={{ padding: '12px', color: '#00ff66' }}>{p.total_wins}</td>
                         <td style={{ padding: '12px', color: 'var(--accent-cyan)' }}>{p.total_cumulative_points}</td>
@@ -221,7 +221,7 @@ function HighlightCard({ title, player, value, icon, color }) {
         {icon} {title}
       </div>
       <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#fff', marginTop: '4px' }}>
-        {player.username}
+        {player.nickname || player.username.split('@')[0]}
       </div>
       <div style={{ fontSize: '1.5rem', fontWeight: 900, color }}>
         {value}

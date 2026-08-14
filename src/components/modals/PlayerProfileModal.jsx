@@ -7,6 +7,18 @@ export function PlayerProfileModal({ isOpen, onClose, user }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [editNicknameValue, setEditNicknameValue] = useState('');
+
+  const handleSaveNickname = () => {
+    if (!editNicknameValue.trim()) return;
+    api.updateNickname(editNicknameValue)
+      .then(res => {
+        setProfile(prev => ({ ...prev, nickname: res.nickname }));
+        setIsEditingNickname(false);
+      })
+      .catch(err => alert(err.message));
+  };
 
   useEffect(() => {
     if (isOpen && user) {
@@ -72,27 +84,35 @@ export function PlayerProfileModal({ isOpen, onClose, user }) {
           <X size={24} />
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '16px',
-            background: 'var(--glass-bg)',
-            border: '2px solid var(--accent-cyan)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(0, 240, 255, 0.3)'
-          }}>
-            <User color="var(--accent-cyan)" size={32} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0, textTransform: 'uppercase' }}>
-              {user?.username}
-            </h2>
-            <div style={{ fontSize: '0.9rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>
-              GRAVITY PULSE OPERATIVE
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
+          {isEditingNickname ? (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input 
+                type="text" 
+                value={editNicknameValue} 
+                onChange={e => setEditNicknameValue(e.target.value)} 
+                maxLength={24}
+                autoFocus
+                style={{
+                  background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-cyan)', borderRadius: '6px', 
+                  color: '#fff', padding: '8px 12px', fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase'
+                }}
+              />
+              <button onClick={() => { soundEngine.playClick(); handleSaveNickname(); }} className="neon-btn" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Save</button>
+              <button onClick={() => { soundEngine.playClick(); setIsEditingNickname(false); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
             </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0, textTransform: 'uppercase' }}>
+                {profile?.nickname || user?.username?.split('@')[0]}
+              </h2>
+              <button onClick={() => { soundEngine.playClick(); setIsEditingNickname(true); setEditNicknameValue(profile?.nickname || ''); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--accent-cyan)', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
+                Edit Name
+              </button>
+            </div>
+          )}
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            {user?.username}
           </div>
         </div>
 

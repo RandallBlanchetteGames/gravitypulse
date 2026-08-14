@@ -42,6 +42,17 @@ export const api = {
     return data;
   },
 
+  async updateNickname(nickname) {
+    const res = await fetch(`${API_BASE_URL}/auth/nickname`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ nickname })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update nickname');
+    return data;
+  },
+
   async getProfile(userId) {
     const res = await fetch(`${API_BASE_URL}/stats/profile/${userId}`, {
       headers: getAuthHeaders()

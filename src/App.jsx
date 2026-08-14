@@ -332,12 +332,12 @@ export default function App() {
             const finalPoints = humanPlayer ? humanPlayer.score : 0;
             const stats = matchStatsRef.current;
             api.updateStats({
-              kills: stats.kills,
+              rounds_played: rulesConfig.gameLength.rounds,
+              win: finalPoints > 0,
+              points: finalPoints,
               deaths: stats.deaths,
-              asteroids_destroyed: stats.asteroidsDestroyed,
-              games_played: 1,
-              total_points: finalPoints,
-              total_rounds: rulesConfig.gameLength.rounds
+              players_destroyed: stats.kills,
+              asteroids_destroyed: stats.asteroidsDestroyed
             }).catch(err => console.error("Failed to submit stats:", err));
           }
           
