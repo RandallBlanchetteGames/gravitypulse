@@ -65,7 +65,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ token, user: { id: user.id, email: user.email, displayName: user.display_name } });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error during registration' });
+    res.status(500).json({ error: 'Server error: ' + (err.message || 'Unknown error') });
   }
 });
 
