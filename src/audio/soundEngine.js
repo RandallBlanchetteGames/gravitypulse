@@ -16,10 +16,12 @@ class SoundEngine {
 
     // HTML5 Audio for background music playlist
     this.playlist = ['/background-music.mp3', '/background-music-2.mp3'];
-    this.currentTrackIndex = 0;
+    this.currentTrackIndex = Math.floor(Math.random() * this.playlist.length);
+    console.log(`[SoundEngine] Initialized! Starting track index: ${this.currentTrackIndex}, Song: ${this.playlist[this.currentTrackIndex]}`);
 
     if (typeof window !== 'undefined') {
-      this.bgMusic = new Audio(this.playlist[this.currentTrackIndex]);
+      // Add a cache-buster query param just in case the browser aggressively caches the audio blob
+      this.bgMusic = new Audio(this.playlist[this.currentTrackIndex] + '?cb=' + Date.now());
       this.bgMusic.volume = 0.15; // Lowered volume further
       
       // Advance to next track when one ends
