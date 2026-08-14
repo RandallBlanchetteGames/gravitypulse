@@ -31,24 +31,29 @@ const authenticateToken = (req, res, next) => {
 
 app.post('/api/auth/register', async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'Database not configured' });
-  const { username, password } = req.body;
+  const { email, password, displayName } = req.body;
   
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password required' });
+  if (!email || !password || !displayName) {
+    return res.status(400).json({ error: 'Email, password, and display name are required' });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Valid email address is required' });
   }
 
   try {
-    const existing = await pool.query('SELECT id FROM users WHERE username = $1', [username]);
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) {
-      return res.status(409).json({ error: 'Username already exists' });
+      return res.status(409).json({ error: 'Email already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
     const result = await pool.query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username, nickname',
-      [username, hash]
+      'INSERT INTO users (email, password_hash, display_name) VALUES ($1, $2, $3) RETURNING id, email, display_name',
+      [email, hash, displayName]
     );
 
     const user = result.rows[0];
@@ -56,8 +61,8 @@ app.post('/api/auth/register', async (req, res) => {
     // Initialize stats row for the new user
     await pool.query('INSERT INTO stats (user_id) VALUES ($1)', [user.id]);
 
-    const token = jwt.sign({ id: user.id, username: user.username, nickname: user.nickname }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username, nickname: user.nickname } });
+    const token = jwt.sign({ id: user.id, email: user.email, displayName: user.display_name }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, email: user.email, displayName: user.display_name } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error during registration' });
@@ -66,10 +71,15 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'Database not configured' });
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Valid email address is required' });
+  }
 
   try {
-    const result = await pool.query('SELECT id, username, nickname, password_hash FROM users WHERE username = $1', [username]);
+    const result = await pool.query('SELECT id, email, display_name, password_hash FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -80,26 +90,26 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username, nickname: user.nickname }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username, nickname: user.nickname } });
+    const token = jwt.sign({ id: user.id, email: user.email, displayName: user.display_name }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, email: user.email, displayName: user.display_name } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error during login' });
   }
 });
 
-app.post('/api/auth/nickname', authenticateToken, async (req, res) => {
+app.put('/api/user/name', authenticateToken, async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'Database not configured' });
-  const { nickname } = req.body;
+  const { displayName } = req.body;
   
-  if (!nickname) return res.status(400).json({ error: 'Nickname required' });
+  if (!displayName) return res.status(400).json({ error: 'Display name required' });
   
   try {
-    await pool.query('UPDATE users SET nickname = $1 WHERE id = $2', [nickname, req.user.id]);
-    res.json({ success: true, nickname });
+    await pool.query('UPDATE users SET display_name = $1 WHERE id = $2', [displayName, req.user.id]);
+    res.json({ success: true, displayName });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error updating nickname' });
+    res.status(500).json({ error: 'Server error updating display name' });
   }
 });
 
@@ -160,7 +170,7 @@ app.get('/api/stats/profile/:id', async (req, res) => {
   
   try {
     const result = await pool.query(`
-      SELECT u.username, u.nickname, s.*
+      SELECT u.email, u.display_name, s.*
       FROM stats s
       JOIN users u ON u.id = s.user_id
       WHERE s.user_id = $1
@@ -184,7 +194,7 @@ app.get('/api/stats/leaderboard', async (req, res) => {
     // We'll return the full list of users and their stats.
     // The frontend can sort and determine the #1 spots for various categories.
     const result = await pool.query(`
-      SELECT u.username, u.nickname, u.id as user_id, s.*
+      SELECT u.email, u.display_name, u.id as user_id, s.*
       FROM stats s
       JOIN users u ON u.id = s.user_id
       WHERE s.total_games_played > 0

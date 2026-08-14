@@ -5,7 +5,8 @@ import { api } from '../../api/client.js';
 
 export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login' }) {
   const [mode, setMode] = useState(initialMode);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,8 +18,14 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login
     soundEngine.playClick();
     setError('');
     
-    if (!username || !password) {
+    if (!email || !password || (mode === 'register' && !displayName)) {
       setError('Please fill in all fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
       return;
     }
 
@@ -26,9 +33,9 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login
     try {
       let data;
       if (mode === 'login') {
-        data = await api.login(username, password);
+        data = await api.login(email, password);
       } else {
-        data = await api.register(username, password);
+        data = await api.register(email, password, displayName);
       }
       
       onAuthSuccess(data.user, data.token);
@@ -93,13 +100,37 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {mode === 'register' && (
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>DISPLAY NAME</label>
+              <input 
+                type="text" 
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Enter your display name"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--accent-cyan)'}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              />
+            </div>
+          )}
+          
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>USERNAME</label>
+            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>EMAIL ADDRESS</label>
             <input 
-              type="text" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
               style={{
                 width: '100%',
                 padding: '12px',

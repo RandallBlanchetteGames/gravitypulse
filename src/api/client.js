@@ -9,22 +9,22 @@ const getAuthHeaders = () => {
 };
 
 export const api = {
-  async register(username, password) {
+  async register(email, password, displayName) {
     const res = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ email, password, displayName })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Registration failed');
     return data;
   },
 
-  async login(username, password) {
+  async login(email, password) {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ email, password })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
@@ -42,14 +42,14 @@ export const api = {
     return data;
   },
 
-  async updateNickname(nickname) {
-    const res = await fetch(`${API_BASE_URL}/auth/nickname`, {
-      method: 'POST',
+  async updateName(displayName) {
+    const res = await fetch(`${API_BASE_URL}/user/name`, {
+      method: 'PUT',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ nickname })
+      body: JSON.stringify({ displayName })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to update nickname');
+    if (!res.ok) throw new Error(data.error || 'Failed to update name');
     return data;
   },
 

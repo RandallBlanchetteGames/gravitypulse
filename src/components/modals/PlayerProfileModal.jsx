@@ -7,16 +7,16 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditingNickname, setIsEditingNickname] = useState(false);
-  const [editNicknameValue, setEditNicknameValue] = useState('');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editNameValue, setEditNameValue] = useState('');
 
-  const handleSaveNickname = () => {
-    if (!editNicknameValue.trim()) return;
-    api.updateNickname(editNicknameValue)
+  const handleSaveName = () => {
+    if (!editNameValue.trim()) return;
+    api.updateName(editNameValue)
       .then(res => {
-        setProfile(prev => ({ ...prev, nickname: res.nickname }));
-        setIsEditingNickname(false);
-        if (onUpdateUser) onUpdateUser({ nickname: res.nickname });
+        setProfile(prev => ({ ...prev, display_name: res.displayName }));
+        setIsEditingName(false);
+        if (onUpdateUser) onUpdateUser({ displayName: res.displayName });
       })
       .catch(err => alert(err.message));
   };
@@ -28,8 +28,8 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
         .then(data => {
           setProfile(data);
           setError(null);
-          if (data.nickname && data.nickname !== user.nickname) {
-            if (onUpdateUser) onUpdateUser({ nickname: data.nickname });
+          if (data.display_name && data.display_name !== user.displayName) {
+            if (onUpdateUser) onUpdateUser({ displayName: data.display_name });
           }
         })
         .catch(err => {
@@ -89,12 +89,12 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
         </button>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
-          {isEditingNickname ? (
+          {isEditingName ? (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <input 
                 type="text" 
-                value={editNicknameValue} 
-                onChange={e => setEditNicknameValue(e.target.value)} 
+                value={editNameValue} 
+                onChange={e => setEditNameValue(e.target.value)} 
                 maxLength={24}
                 autoFocus
                 style={{
@@ -102,21 +102,21 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
                   color: '#fff', padding: '8px 12px', fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase'
                 }}
               />
-              <button onClick={() => { soundEngine.playClick(); handleSaveNickname(); }} className="neon-btn" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Save</button>
-              <button onClick={() => { soundEngine.playClick(); setIsEditingNickname(false); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => { soundEngine.playClick(); handleSaveName(); }} className="neon-btn" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Save</button>
+              <button onClick={() => { soundEngine.playClick(); setIsEditingName(false); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0, textTransform: 'uppercase' }}>
-                {profile?.nickname || user?.username?.split('@')[0]}
+                {profile?.display_name || user?.email?.split('@')[0]}
               </h2>
-              <button onClick={() => { soundEngine.playClick(); setIsEditingNickname(true); setEditNicknameValue(profile?.nickname || ''); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--accent-cyan)', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
+              <button onClick={() => { soundEngine.playClick(); setIsEditingName(true); setEditNameValue(profile?.display_name || ''); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--accent-cyan)', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
                 Edit Name
               </button>
             </div>
           )}
           <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-            {user?.username}
+            {user?.email}
           </div>
         </div>
 

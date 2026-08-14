@@ -85,11 +85,11 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('gp_token');
-    const username = localStorage.getItem('gp_username');
+    const email = localStorage.getItem('gp_email');
     const userId = localStorage.getItem('gp_userId');
-    const nickname = localStorage.getItem('gp_nickname');
-    if (token && username && userId) {
-      setUser({ id: userId, username, nickname });
+    const displayName = localStorage.getItem('gp_displayName');
+    if (token && email && userId) {
+      setUser({ id: userId, email, displayName });
     }
   }, []);
 
@@ -814,8 +814,9 @@ export default function App() {
         onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
         onLogout={() => {
           localStorage.removeItem('gp_token');
-          localStorage.removeItem('gp_username');
+          localStorage.removeItem('gp_email');
           localStorage.removeItem('gp_userId');
+          localStorage.removeItem('gp_displayName');
           setUser(null);
         }}
       />
@@ -910,11 +911,11 @@ export default function App() {
           setUser(userData);
           localStorage.setItem('gp_token', token);
           localStorage.setItem('gp_userId', userData.id);
-          localStorage.setItem('gp_username', userData.username);
-          if (userData.nickname) {
-            localStorage.setItem('gp_nickname', userData.nickname);
+          localStorage.setItem('gp_email', userData.email);
+          if (userData.displayName) {
+            localStorage.setItem('gp_displayName', userData.displayName);
           } else {
-            localStorage.removeItem('gp_nickname');
+            localStorage.removeItem('gp_displayName');
           }
           setIsAuthOpen(false);
         }}
@@ -926,8 +927,8 @@ export default function App() {
         user={user}
         onUpdateUser={(updates) => {
           setUser(prev => ({ ...prev, ...updates }));
-          if (updates.nickname) {
-            localStorage.setItem('gp_nickname', updates.nickname);
+          if (updates.displayName) {
+            localStorage.setItem('gp_displayName', updates.displayName);
           }
         }}
       />

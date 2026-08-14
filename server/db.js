@@ -21,16 +21,16 @@ export async function initDB() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        nickname VARCHAR(255),
+        email VARCHAR(255) UNIQUE NOT NULL,
+        display_name VARCHAR(255),
         password_hash VARCHAR(255) NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Ensure existing tables are updated
+    // Ensure existing tables are updated if necessary (though we will drop it)
     await client.query(`
-      ALTER TABLE users ADD COLUMN IF NOT EXISTS nickname VARCHAR(255);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(255);
     `);
 
     // Create stats table

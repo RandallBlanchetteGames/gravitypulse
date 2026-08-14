@@ -200,7 +200,7 @@ function HighlightCard({ title, player, value, icon, color }) {
         {title}
       </div>
       <div className="highlight-card-player">
-        {player ? (player.nickname || player.username.split('@')[0]) : '---'}
+        {player ? (player.display_name || player.email.split('@')[0]) : '---'}
       </div>
       <div className="highlight-card-value" style={{ color: color, textShadow: `0 0 10px ${color}80` }}>
         {value !== undefined ? value : '---'}
