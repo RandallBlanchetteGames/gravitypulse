@@ -106,14 +106,9 @@ export function Navbar({
                   </button>
                 </>
               ) : (
-                <>
-                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenAuth('login'); }} className="menu-dropdown-btn">
-                    <LogIn size={16} /> Login
-                  </button>
-                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenAuth('register'); }} className="menu-dropdown-btn">
-                    <UserPlus size={16} /> Register
-                  </button>
-                </>
+                <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenAuth('login'); }} className="menu-dropdown-btn">
+                  <LogIn size={16} /> Login / Register
+                </button>
               )}
               
               <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenLeaderboard(); }} className="menu-dropdown-btn">
