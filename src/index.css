@@ -1134,7 +1134,7 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .bh-start-btn:hover {
-  background: rgba(0, 240, 255, 0.15) !important;
+  background: rgba(3, 25, 35, 0.98) !important;
   box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
   /* Force no transform to prevent moving and desyncing from the black hole */
   transform: none;
