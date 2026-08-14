@@ -347,6 +347,7 @@ export default function App() {
           setPlayers(updatedPlayers);
           setPhase(PHASES.GAME_OVER);
           setIsGameOverOpen(true);
+          soundEngine.playVictory();
           clearGameSession();
           
           if (rulesConfig.playerCount - rulesConfig.aiCount === 1 && user) {
