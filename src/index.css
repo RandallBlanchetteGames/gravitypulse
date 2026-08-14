@@ -1124,3 +1124,20 @@ h1, h2, h3, h4, .font-heading {
     font-size: 1.1rem;
   }
 }
+
+.bh-start-btn {
+  border: 1px solid var(--accent-cyan);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+.bh-start-btn:hover {
+  background: rgba(0, 240, 255, 0.15) !important;
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+  /* Force no transform to prevent moving and desyncing from the black hole */
+  transform: none;
+  /* Keep text white instead of turning dark */
+  color: #fff;
+}

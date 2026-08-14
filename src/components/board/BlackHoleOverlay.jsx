@@ -57,7 +57,7 @@ export function BlackHoleOverlay({ boardSize, phase, onStartNewGame }) {
         {showButton && (
           <button 
             onClick={onStartNewGame}
-            className="neon-btn" 
+            className="bh-start-btn" 
             style={{ 
               position: 'absolute',
               top: 0, left: 0, right: 0, bottom: 0,
