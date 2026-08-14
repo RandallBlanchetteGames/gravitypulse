@@ -42,8 +42,16 @@ export function PhaseBanner({ phase, currentRound, maxRounds, activePlayer, turn
 
   const info = getBannerContent();
 
+  const isAttentionRequired = 
+    phase === PHASES.SETUP || 
+    phase === PHASES.RESPAWN || 
+    (phase === PHASES.PLAYING && activePlayer?.isHuman !== false);
+
+  const glowColor = activePlayer?.color?.hex || 'var(--accent-cyan)';
+
   return (
-    <div className="glass-card" style={{
+    <div className={`glass-card ${isAttentionRequired ? 'banner-glow-active' : ''}`} style={{
+      '--glow-color': glowColor,
       padding: '14px 18px',
       borderLeft: `4px solid ${info.color}`,
       background: 'rgba(13, 16, 29, 0.85)',

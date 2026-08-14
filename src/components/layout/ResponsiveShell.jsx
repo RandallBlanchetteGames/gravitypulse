@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { ListFilter, Trophy } from 'lucide-react';
+import { ScrollIndicator } from './ScrollIndicator';
 
 export function ResponsiveShell({ leftPanel, centerHeader, centerBoard, rightPanel }) {
   const [mobileTab, setMobileTab] = useState('controls'); // 'controls', 'scores', 'log'
@@ -27,6 +28,8 @@ export function ResponsiveShell({ leftPanel, centerHeader, centerBoard, rightPan
       <section className="shell-right" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {rightPanel}
       </section>
+      
+      <ScrollIndicator />
     </main>
   );
 }
