@@ -876,8 +876,11 @@ export default function App() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         initialMode={authMode}
-        onSuccess={(userData) => {
+        onAuthSuccess={(userData, token) => {
           setUser(userData);
+          localStorage.setItem('gp_token', token);
+          localStorage.setItem('gp_userId', userData.id);
+          localStorage.setItem('gp_username', userData.username);
           setIsAuthOpen(false);
         }}
       />
