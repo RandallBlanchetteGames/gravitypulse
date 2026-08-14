@@ -199,8 +199,12 @@ app.get('*', (req, res) => {
 // Start server
 const PORT = process.env.PORT || 3001;
 
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Server] Gravity Pulse backend running on port ${PORT}`);
+});
+
 initDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`[Server] Gravity Pulse backend running on port ${PORT}`);
-  });
+  console.log('[Server] Database initialization completed');
+}).catch(err => {
+  console.error('[Server] Failed to initialize database:', err);
 });
