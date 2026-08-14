@@ -27,6 +27,15 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+app.get('/api/debug/db', async (req, res) => {
+  try {
+    const result = await pool.query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='users'");
+    res.json({ columns: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- AUTH ROUTES ---
 
 app.post('/api/auth/register', async (req, res) => {
