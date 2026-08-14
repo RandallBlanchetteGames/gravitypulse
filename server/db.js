@@ -17,7 +17,7 @@ export async function initDB() {
   try {
     const client = await pool.connect();
     
-    // Create users table
+    // Create users table (if it doesn't exist)
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -28,7 +28,22 @@ export async function initDB() {
       )
     `);
 
-    // Ensure existing tables are updated if necessary (though we will drop it)
+    // Migrate existing production databases from old schema to new schema
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='username') THEN
+            ALTER TABLE users RENAME COLUMN username TO email;
+        END IF;
+        
+        IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='nickname') THEN
+            ALTER TABLE users RENAME COLUMN nickname TO display_name;
+        END IF;
+      END
+      $$;
+    `);
+
+    // Ensure display_name exists just in case it was a fresh legacy table
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(255);
     `);
