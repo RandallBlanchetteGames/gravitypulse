@@ -910,6 +910,11 @@ export default function App() {
           localStorage.setItem('gp_token', token);
           localStorage.setItem('gp_userId', userData.id);
           localStorage.setItem('gp_username', userData.username);
+          if (userData.nickname) {
+            localStorage.setItem('gp_nickname', userData.nickname);
+          } else {
+            localStorage.removeItem('gp_nickname');
+          }
           setIsAuthOpen(false);
         }}
       />

@@ -28,6 +28,9 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
         .then(data => {
           setProfile(data);
           setError(null);
+          if (data.nickname && data.nickname !== user.nickname) {
+            if (onUpdateUser) onUpdateUser({ nickname: data.nickname });
+          }
         })
         .catch(err => {
           setError(err.message || 'Failed to load profile');
