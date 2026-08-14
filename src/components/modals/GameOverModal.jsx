@@ -3,10 +3,10 @@
    ========================================================================== */
 
 import React from 'react';
-import { Trophy, RotateCcw, Settings, Sparkles } from 'lucide-react';
+import { Trophy, RotateCcw, Settings, Sparkles, X } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-export function GameOverModal({ isOpen, players, onRematch, onOpenSetup }) {
+export function GameOverModal({ isOpen, players, onRematch, onClose }) {
   if (!isOpen) return null;
 
   const sorted = [...players].sort((a, b) => {
@@ -107,11 +107,11 @@ export function GameOverModal({ isOpen, players, onRematch, onOpenSetup }) {
 
         <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '8px' }}>
           <button
-            onClick={() => { soundEngine.playClick(); onOpenSetup(); }}
+            onClick={() => { soundEngine.playClick(); onClose(); }}
             className="neon-btn"
             style={{ flex: 1, padding: '14px', justifyContent: 'center' }}
           >
-            <Settings size={18} /> Setup
+            <X size={18} /> Close
           </button>
 
           <button

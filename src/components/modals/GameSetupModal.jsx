@@ -19,7 +19,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
     soundEngine.playClick();
     
     if (user && humanCount > 1) {
-      const confirm = window.confirm("You have selected multiple human players. Stat tracking will be disabled for this match. Proceed?");
+      const confirm = window.confirm("Stats Only Tracked for 1vAI. Proceed?");
       if (!confirm) return;
     }
 
@@ -203,9 +203,9 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
         </div>
 
         {user && humanCount > 1 && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 0 15px rgba(239, 68, 68, 0.2)' }}>
             <AlertTriangle color="#ef4444" size={20} />
-            <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>Stat tracking disabled for multiplayer games (1vAI only).</span>
+            <span style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.02em' }}>Stats Only Tracked for 1vAI</span>
           </div>
         )}
 

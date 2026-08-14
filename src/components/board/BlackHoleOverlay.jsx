@@ -3,9 +3,12 @@
    ========================================================================== */
 
 import React from 'react';
+import { PHASES } from '../../engine/types.js';
+import { Play } from 'lucide-react';
 
-export function BlackHoleOverlay({ boardSize }) {
+export function BlackHoleOverlay({ boardSize, phase, onStartNewGame }) {
   const is18 = boardSize === 18;
+  const showButton = phase === PHASES.SETUP || phase === PHASES.GAME_OVER;
 
   return (
     <>
@@ -42,13 +45,25 @@ export function BlackHoleOverlay({ boardSize }) {
       }} />
 
       {/* Center Singularity Core (2x2 area in center) */}
-      <div className={`black-hole-core ${is18 ? 'size-18' : ''}`}>
+      <div className={`black-hole-core ${is18 ? 'size-18' : ''}`} style={{ pointerEvents: showButton ? 'auto' : 'none' }}>
         <div className="bh-accretion-disk-2" />
         <div className="bh-accretion-disk-1" />
         <div className="bh-event-horizon" />
-        <span className="bh-text" style={{ fontSize: is18 ? '0.55rem' : '0.68rem' }}>
-          BLACK<br />HOLE
-        </span>
+        
+        <div style={{ zIndex: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          {showButton && (
+            <button 
+              onClick={onStartNewGame}
+              className="neon-btn" 
+              style={{ padding: '6px 12px', fontSize: '0.75rem' }}
+            >
+              <Play size={14} /> Start Game
+            </button>
+          )}
+          <span className="bh-text" style={{ fontSize: is18 ? '0.55rem' : '0.68rem' }}>
+            BLACK<br />HOLE
+          </span>
+        </div>
       </div>
     </>
   );

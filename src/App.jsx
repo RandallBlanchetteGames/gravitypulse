@@ -763,7 +763,7 @@ export default function App() {
         rules={rules}
         boardSize={rules.getBoardSize()}
       />
-      <BlackHoleOverlay boardSize={rules.getBoardSize()} />
+      <BlackHoleOverlay boardSize={rules.getBoardSize()} phase={phase} onStartNewGame={() => initGame(rulesConfig)} />
       <TrajectoryLines
         boardSize={rules.getBoardSize()}
         startPos={board.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer?.id)}
@@ -899,7 +899,7 @@ export default function App() {
         isOpen={isGameOverOpen}
         players={players}
         onRematch={() => initGame(rulesConfig)}
-        onOpenSetup={() => { setIsGameOverOpen(false); setIsSetupOpen(true); }}
+        onClose={() => setIsGameOverOpen(false)}
       />
       
       <AuthModal 
