@@ -30,6 +30,7 @@ export function executeMove(board, playerId, actionId, chosenDirection, rules) {
   const logs = [`Player ${playerId} moves ${steps} step(s) ${moveDir.label || ''}.`];
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   soundEngine.playMove();
 
@@ -39,13 +40,16 @@ export function executeMove(board, playerId, actionId, chosenDirection, rules) {
     playerPiece.y += moveDir.y;
 
     // Resolve collisions at this intermediate step
-    const result = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs);
+    const result = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs, playerId);
     currentBoard = result.finalBoard;
     if (result.respawnQueue.length > 0) {
       allRespawns.push(...result.respawnQueue);
     }
     if (result.effects && result.effects.length > 0) {
       allEffects.push(...result.effects);
+    }
+    if (result.statsEvents && result.statsEvents.length > 0) {
+      allStatsEvents.push(...result.statsEvents);
     }
 
     sequence.push(currentBoard.map(e => ({ ...e })));
@@ -56,7 +60,7 @@ export function executeMove(board, playerId, actionId, chosenDirection, rules) {
     }
   }
 
-  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
 
 /* Calculate hover trajectory points for SVG UI rendering */

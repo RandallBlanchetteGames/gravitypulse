@@ -1,13 +1,9 @@
-/* ==========================================================================
-   GRAVITY PULSE 2026 - GAME SETUP & CUSTOMIZATION MODAL
-   ========================================================================== */
-
 import React, { useState } from 'react';
 import { MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from '../../engine/types.js';
-import { Settings, Orbit, Sparkles, Check, X } from 'lucide-react';
+import { Settings, Orbit, Sparkles, Check, X, AlertTriangle } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup }) {
+export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, user }) {
   if (!isOpen) return null;
 
   const [mapSize, setMapSize] = useState(initialConfig.mapSize);
@@ -17,8 +13,16 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
   const [playerCount, setPlayerCount] = useState(initialConfig.playerCount);
   const [aiCount, setAiCount] = useState(initialConfig.aiCount);
 
+  const humanCount = playerCount - aiCount;
+
   const handleApply = () => {
     soundEngine.playClick();
+    
+    if (user && humanCount > 1) {
+      const confirm = window.confirm("You have selected multiple human players. Stat tracking will be disabled for this match. Proceed?");
+      if (!confirm) return;
+    }
+
     onApplySetup({
       mapSize,
       movementStyle,
@@ -41,7 +45,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
       zIndex: 1000,
       padding: '16px'
     }}>
-      <div className="glass-card" style={{
+      <div className="glass-card anim-pop" style={{
         width: '100%',
         maxWidth: '560px',
         maxHeight: '90vh',
@@ -59,7 +63,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
             <Settings color="var(--accent-cyan)" size={24} />
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>GAME SETTINGS</h2>
           </div>
-          <button onClick={onClose} className="neon-btn" style={{ padding: '6px 10px', minWidth: 'auto' }}>
+          <button onClick={() => { soundEngine.playClick(); onClose(); }} className="neon-btn" style={{ padding: '6px 10px', minWidth: 'auto' }}>
             <X size={18} />
           </button>
         </div>
@@ -197,6 +201,13 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup })
             </div>
           </div>
         </div>
+
+        {user && humanCount > 1 && (
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertTriangle color="#ef4444" size={20} />
+            <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>Stat tracking disabled for multiplayer games (1vAI only).</span>
+          </div>
+        )}
 
         {/* Apply Button */}
         <button

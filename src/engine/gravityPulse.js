@@ -34,6 +34,7 @@ export function executeGravity(board, playerId, rules, isSimulation = false) {
   const logs = [`🌊 Player ${playerId} triggers Gravity Wave (Power ${power})!`];
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   // Pre-calculate initial distance and max steps so wave attenuation is locked to start positions
   const initialMaxSteps = new Map();
@@ -60,14 +61,15 @@ export function executeGravity(board, playerId, rules, isSimulation = false) {
       }
     });
 
-    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs);
+    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs, playerId);
     currentBoard = res.finalBoard;
     if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
     if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
+    if (res.statsEvents && res.statsEvents.length > 0) allStatsEvents.push(...res.statsEvents);
     sequence.push(currentBoard.map(e => ({ ...e })));
   }
 
-  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
 
 /* Execute Pulse Wave: push opponents away from active player with distance attenuation */
@@ -87,6 +89,7 @@ export function executePulse(board, playerId, rules, isSimulation = false) {
   const logs = [`⚡ Player ${playerId} triggers Pulse Wave (Power ${power})!`];
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   // Pre-calculate initial distance and max steps so wave attenuation is locked to start positions
   const initialMaxSteps = new Map();
@@ -118,14 +121,15 @@ export function executePulse(board, playerId, rules, isSimulation = false) {
       }
     });
 
-    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs);
+    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs, playerId);
     currentBoard = res.finalBoard;
     if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
     if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
+    if (res.statsEvents && res.statsEvents.length > 0) allStatsEvents.push(...res.statsEvents);
     sequence.push(currentBoard.map(e => ({ ...e })));
   }
 
-  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
 
 /* Execute Localized Gravity Phase: regions pull toward region leader */
@@ -134,6 +138,7 @@ export function executeLocalizedGravity(board, rules) {
   const logs = [`💫 Localized Gravity checks regions...`];
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   const regionMap = new Map();
   currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE).forEach(c => {
@@ -144,6 +149,9 @@ export function executeLocalizedGravity(board, rules) {
   });
 
   let movedAny = false;
+  // Localized gravity doesn't have a single initiator, but we can say the region leader initiated it.
+  // We'll collect stats independently if possible, or pass null if multiple leaders pull simultaneously.
+  // For simplicity, we just pass null here, so hazard deaths are recorded but no specific player gets a kill.
   regionMap.forEach((cubes, rKey) => {
     if (cubes.length <= 1) return;
     const counts = {};
@@ -173,13 +181,14 @@ export function executeLocalizedGravity(board, rules) {
   });
 
   if (movedAny) {
-    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs);
+    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs, null); // passing null since it's environment/regional
     currentBoard = res.finalBoard;
     if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
     if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
+    if (res.statsEvents && res.statsEvents.length > 0) allStatsEvents.push(...res.statsEvents);
   }
 
-  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
 
 /* Execute Black Hole Suction Phase: pull all players, asteroids, and energy fields on the map inward 1 space */
@@ -192,6 +201,7 @@ export function executeBlackHoleSuction(board, rules) {
   const logs = [`🕳️ Black Hole Singularity pulls mass inward and radiates energy outward!`];
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   soundEngine.playGravityHum(true);
 
@@ -218,11 +228,12 @@ export function executeBlackHoleSuction(board, rules) {
   });
 
   if (moved) {
-    const res = resolveCellCollisions(currentBoard, size, logs);
+    const res = resolveCellCollisions(currentBoard, size, logs, null); // passing null since it's environmental
     currentBoard = res.finalBoard;
     if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
     if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
+    if (res.statsEvents && res.statsEvents.length > 0) allStatsEvents.push(...res.statsEvents);
   }
 
-  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }

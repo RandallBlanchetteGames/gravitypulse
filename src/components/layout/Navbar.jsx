@@ -2,18 +2,43 @@
    GRAVITY PULSE 2026 - NAVBAR COMPONENT
    ========================================================================== */
 
-import React, { useState } from 'react';
-import { Volume2, VolumeX, Settings, BookOpen, RotateCcw, Orbit, Home } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Volume2, VolumeX, Settings, BookOpen, RotateCcw, Orbit, Home, Menu, User, Trophy, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
-export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, canUndo, onUndoMove }) {
+export function Navbar({ 
+  rulesConfig, 
+  onOpenSetup, 
+  onOpenRules, 
+  canUndo, 
+  onUndoMove,
+  user,
+  onOpenAuth,
+  onOpenProfile,
+  onOpenLeaderboard,
+  onLogout
+}) {
   const [isMuted, setIsMuted] = useState(soundEngine.isMuted);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const handleToggleMute = () => {
     const muted = soundEngine.toggleMute();
     setIsMuted(muted);
     soundEngine.playClick();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="top-navbar">
@@ -38,17 +63,86 @@ export function Navbar({ rulesConfig, onOpenSetup, onOpenRules, canUndo, onUndoM
       </div>
 
       <div className="nav-buttons">
-        <button
-          onClick={() => {
-            soundEngine.playClick();
-            window.location.href = 'https://blanchettegames.com';
-          }}
-          className="neon-btn"
-          style={{ padding: '8px 14px', fontSize: '0.85rem' }}
-          title="Back to Blanchette Games Hub"
-        >
-          <Home size={16} /> <span className="nav-btn-text">Hub</span>
-        </button>
+        <div style={{ position: 'relative' }} ref={menuRef}>
+          <button
+            onClick={() => {
+              soundEngine.playClick();
+              setMenuOpen(!menuOpen);
+            }}
+            className="neon-btn"
+            style={{ padding: '8px 14px', fontSize: '0.85rem' }}
+          >
+            <Menu size={16} /> <span className="nav-btn-text">{user ? user.username : 'Menu'}</span>
+          </button>
+          
+          {menuOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '8px',
+              background: 'rgba(13, 16, 29, 0.95)',
+              border: '1px solid var(--border-neon)',
+              borderRadius: '8px',
+              padding: '8px 0',
+              minWidth: '200px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 240, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 1000,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px'
+            }}>
+              {user ? (
+                <>
+                  <div style={{ padding: '4px 16px', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                    LOGGED IN AS
+                  </div>
+                  <div style={{ padding: '4px 16px 8px', fontSize: '1rem', color: 'var(--accent-cyan)', fontWeight: 800, borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '4px' }}>
+                    {user.username}
+                  </div>
+                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenProfile(); }} className="menu-dropdown-btn">
+                    <User size={16} /> My Profile
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenAuth('login'); }} className="menu-dropdown-btn">
+                    <LogIn size={16} /> Login
+                  </button>
+                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenAuth('register'); }} className="menu-dropdown-btn">
+                    <UserPlus size={16} /> Register
+                  </button>
+                </>
+              )}
+              
+              <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenLeaderboard(); }} className="menu-dropdown-btn">
+                <Trophy size={16} /> Global Leaderboard
+              </button>
+              
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }} />
+              
+              <button
+                onClick={() => {
+                  soundEngine.playClick();
+                  window.location.href = 'https://blanchettegames.com';
+                }}
+                className="menu-dropdown-btn"
+              >
+                <Home size={16} /> Back to Hub
+              </button>
+              
+              {user && (
+                <>
+                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }} />
+                  <button onClick={() => { soundEngine.playClick(); closeMenu(); onLogout(); }} className="menu-dropdown-btn" style={{ color: '#ef4444' }}>
+                    <LogOut size={16} color="#ef4444" /> Logout
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         <button
           onClick={handleToggleMute}

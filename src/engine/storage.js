@@ -23,6 +23,7 @@ export function saveGameSession(state) {
         aiCount: state.rulesConfig.aiCount
       },
       logs: state.logs ? state.logs.slice(-20) : [],
+      matchStats: state.matchStats || null,
       timestamp: Date.now()
     });
     window.localStorage.setItem(STORAGE_KEY, serialized);

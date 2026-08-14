@@ -31,6 +31,10 @@ import { GameLog } from './components/status/GameLog.jsx';
 import { GameSetupModal } from './components/modals/GameSetupModal.jsx';
 import { RulesModal } from './components/modals/RulesModal.jsx';
 import { GameOverModal } from './components/modals/GameOverModal.jsx';
+import { AuthModal } from './components/modals/AuthModal.jsx';
+import { PlayerProfileModal } from './components/modals/PlayerProfileModal.jsx';
+import { LeaderboardModal } from './components/modals/LeaderboardModal.jsx';
+import { api } from './api/client.js';
 
 export default function App() {
   // Rules & Configuration
@@ -61,13 +65,41 @@ export default function App() {
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [waveAura, setWaveAura] = useState(null);
 
-  // Modals
+  // Modals & Auth State
+  const [user, setUser] = useState(null);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [isRulesOpen, setIsRulesOpen] = useState(false);
   const [isGameOverOpen, setIsGameOverOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [hasLoadedPrompt, setHasLoadedPrompt] = useState(false);
 
+  const matchStatsRef = useRef({ kills: 0, deaths: 0, asteroidsDestroyed: 0 });
   const aiTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('gp_token');
+    const username = localStorage.getItem('gp_username');
+    const userId = localStorage.getItem('gp_userId');
+    if (token && username && userId) {
+      setUser({ id: userId, username });
+    }
+  }, []);
+
+  const processStatsEvents = useCallback((events) => {
+    if (rulesConfig.playerCount - rulesConfig.aiCount !== 1) return;
+    const stats = matchStatsRef.current;
+    events.forEach(ev => {
+      if (ev.type.startsWith('DEATH_')) {
+        if (ev.victimId === 1) stats.deaths += 1;
+        else if (ev.initiatorId === 1) stats.kills += 1;
+      } else if (ev.type === 'ASTEROID_DESTROYED') {
+        if (ev.initiatorId === 1) stats.asteroidsDestroyed += 1;
+      }
+    });
+  }, [rulesConfig]);
 
   /* Initialize Players & Start New Game */
   const initGame = useCallback((config = rulesConfig) => {
@@ -108,6 +140,7 @@ export default function App() {
     setSelectedDirection(null);
     setIsGameOverOpen(false);
     clearGameSession();
+    matchStatsRef.current = { kills: 0, deaths: 0, asteroidsDestroyed: 0 };
   }, [rulesConfig]);
 
   /* Check LocalStorage on Mount */
@@ -127,6 +160,9 @@ export default function App() {
           if (saved.rulesConfig) {
             setRulesConfig(saved.rulesConfig);
             setRules(new GameRules(saved.rulesConfig));
+          }
+          if (saved.matchStats) {
+            matchStatsRef.current = saved.matchStats;
           }
           return;
         } else {
@@ -181,7 +217,8 @@ export default function App() {
         turnInRound,
         phase,
         rulesConfig,
-        logs
+        logs,
+        matchStats: matchStatsRef.current
       });
     }
   }, [board, players, activePlayerIdx, currentRound, turnInRound, phase, rulesConfig, logs]);
@@ -246,12 +283,14 @@ export default function App() {
         updatedBoard = locRes.finalBoard;
         if (locRes.respawnQueue.length > 0) newRespawns.push(...locRes.respawnQueue);
         if (locRes.effects) dispatchEffects(locRes.effects);
+        if (locRes.statsEvents) processStatsEvents(locRes.statsEvents);
 
         // 2. Turn 4 Black Hole Suction Phase
         const bhRes = executeBlackHoleSuction(updatedBoard, rules);
         updatedBoard = bhRes.finalBoard;
         if (bhRes.respawnQueue.length > 0) newRespawns.push(...bhRes.respawnQueue);
         if (bhRes.effects) dispatchEffects(bhRes.effects);
+        if (bhRes.statsEvents) processStatsEvents(bhRes.statsEvents);
 
         // 3. Spawn Asteroids / Energy for next round
         const hazards = rules.spawnHazards(updatedBoard, rules.getBoardSize());
@@ -287,6 +326,21 @@ export default function App() {
           setPhase(PHASES.GAME_OVER);
           setIsGameOverOpen(true);
           clearGameSession();
+          
+          if (rulesConfig.playerCount - rulesConfig.aiCount === 1 && user) {
+            const humanPlayer = updatedPlayers.find(p => p.id === 1);
+            const finalPoints = humanPlayer ? humanPlayer.score : 0;
+            const stats = matchStatsRef.current;
+            api.updateStats({
+              kills: stats.kills,
+              deaths: stats.deaths,
+              asteroids_destroyed: stats.asteroidsDestroyed,
+              games_played: 1,
+              total_points: finalPoints,
+              total_rounds: rulesConfig.gameLength.rounds
+            }).catch(err => console.error("Failed to submit stats:", err));
+          }
+          
           return;
         }
 
@@ -526,6 +580,9 @@ export default function App() {
     if (result.effects) {
       dispatchEffects(result.effects);
     }
+    if (result.statsEvents) {
+      processStatsEvents(result.statsEvents);
+    }
 
     // Mark action as used
     const nextPlayers = players.map(p => {
@@ -721,6 +778,16 @@ export default function App() {
         onOpenRules={() => setIsRulesOpen(true)}
         canUndo={historyStack.length > 0 && activePlayer?.isHuman}
         onUndoMove={handleUndoMove}
+        user={user}
+        onOpenAuth={(mode) => { setAuthMode(mode); setIsAuthOpen(true); }}
+        onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
+        onLogout={() => {
+          localStorage.removeItem('gp_token');
+          localStorage.removeItem('gp_username');
+          localStorage.removeItem('gp_userId');
+          setUser(null);
+        }}
       />
 
       <ResponsiveShell
@@ -803,6 +870,27 @@ export default function App() {
         players={players}
         onRematch={() => initGame(rulesConfig)}
         onOpenSetup={() => { setIsGameOverOpen(false); setIsSetupOpen(true); }}
+      />
+      
+      <AuthModal 
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        initialMode={authMode}
+        onSuccess={(userData) => {
+          setUser(userData);
+          setIsAuthOpen(false);
+        }}
+      />
+
+      <PlayerProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={user}
+      />
+
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
       />
     </div>
   );
