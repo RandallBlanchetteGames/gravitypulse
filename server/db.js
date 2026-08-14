@@ -33,11 +33,18 @@ export async function initDB() {
       DO $$
       BEGIN
         IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='username') THEN
-            ALTER TABLE users RENAME COLUMN username TO email;
+            IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='email') THEN
+                ALTER TABLE users RENAME COLUMN username TO email;
+            END IF;
         END IF;
         
         IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='nickname') THEN
-            ALTER TABLE users RENAME COLUMN nickname TO display_name;
+            IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='users' and column_name='display_name') THEN
+                UPDATE users SET display_name = nickname WHERE display_name IS NULL;
+                ALTER TABLE users DROP COLUMN nickname;
+            ELSE
+                ALTER TABLE users RENAME COLUMN nickname TO display_name;
+            END IF;
         END IF;
       END
       $$;
