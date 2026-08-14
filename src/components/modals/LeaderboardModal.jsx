@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Trophy, Skull, Crosshair, Star, Zap, Activity } from 'lucide-react';
+import { X, Trophy, Skull, Crosshair, Star, Zap, Activity, Gamepad2 } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 import { api } from '../../api/client.js';
 
@@ -40,6 +40,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
   const topKamikazes = getTopPlayer((a, b) => (b.kamikazes || 0) - (a.kamikazes || 0));
   const topAsteroids = getTopPlayer((a, b) => (b.asteroids_destroyed || 0) - (a.asteroids_destroyed || 0));
   const topSupercharged = getTopPlayer((a, b) => (b.times_supercharged || 0) - (a.times_supercharged || 0));
+  const topMatches = getTopPlayer((a, b) => (b.total_games_played || 0) - (a.total_games_played || 0));
   
   const getKdRatio = (p) => {
     const kills = p.players_destroyed || 0;
@@ -105,7 +106,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
           <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No ranked players yet. Be the first!</div>
         ) : (
           <div style={{ marginTop: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div className="highlights-grid">
               <HighlightCard 
                 title="Most Wins" 
                 player={topWins} 
@@ -162,6 +163,13 @@ export function LeaderboardModal({ isOpen, onClose }) {
                 icon={<Zap size={24} color="#eab308" />} 
                 color="#eab308" 
               />
+              <HighlightCard 
+                title="Most Matches Played" 
+                player={topMatches} 
+                value={topMatches?.total_games_played} 
+                icon={<Gamepad2 size={24} color="#3b82f6" />} 
+                color="#3b82f6" 
+              />
             </div>
           </div>
         )}
@@ -181,27 +189,21 @@ function HighlightCard({ title, player, value, icon, color }) {
   }
 
   return (
-    <div style={{
-      background: `linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(20,20,20,0.8) 100%)`,
-      border: `1px solid ${color}`,
-      boxShadow: `inset 0 0 20px ${color}20`,
-      borderRadius: '12px',
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '8px',
-      transition: 'transform 0.2s ease',
-      cursor: 'default'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>
-        {icon} {title}
+    <div className="glass-card anim-pop highlight-card">
+      <div className="highlight-card-icon-bg">
+        {icon}
       </div>
-      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#fff', marginTop: '4px' }}>
-        {player.nickname || player.username.split('@')[0]}
+      <div className="highlight-card-icon" style={{ boxShadow: `0 0 15px ${color}40` }}>
+        {icon}
       </div>
-      <div style={{ fontSize: '1.5rem', fontWeight: 900, color }}>
-        {value}
+      <div className="highlight-card-title">
+        {title}
+      </div>
+      <div className="highlight-card-player">
+        {player ? (player.nickname || player.username.split('@')[0]) : '---'}
+      </div>
+      <div className="highlight-card-value" style={{ color: color, textShadow: `0 0 10px ${color}80` }}>
+        {value !== undefined ? value : '---'}
       </div>
     </div>
   );
