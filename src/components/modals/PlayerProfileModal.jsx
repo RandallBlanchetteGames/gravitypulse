@@ -3,7 +3,7 @@ import { X, User, Activity, Target, ShieldAlert, Crosshair, Zap } from 'lucide-r
 import { soundEngine } from '../../audio/soundEngine.js';
 import { api } from '../../api/client.js';
 
-export function PlayerProfileModal({ isOpen, onClose, user }) {
+export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +16,7 @@ export function PlayerProfileModal({ isOpen, onClose, user }) {
       .then(res => {
         setProfile(prev => ({ ...prev, nickname: res.nickname }));
         setIsEditingNickname(false);
+        if (onUpdateUser) onUpdateUser({ nickname: res.nickname });
       })
       .catch(err => alert(err.message));
   };

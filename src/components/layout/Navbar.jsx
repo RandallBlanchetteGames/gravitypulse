@@ -72,7 +72,7 @@ export function Navbar({
             className="neon-btn"
             style={{ padding: '8px 14px', fontSize: '0.85rem' }}
           >
-            <Menu size={16} /> <span className="nav-btn-text">{user ? user.username : 'Menu'}</span>
+            <Menu size={16} /> <span className="nav-btn-text">{user ? (user.nickname || user.username.split('@')[0]) : 'Menu'}</span>
           </button>
           
           {menuOpen && (
@@ -99,7 +99,7 @@ export function Navbar({
                     LOGGED IN AS
                   </div>
                   <div style={{ padding: '4px 16px 8px', fontSize: '1rem', color: 'var(--accent-cyan)', fontWeight: 800, borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '4px' }}>
-                    {user.username}
+                    {user.nickname || user.username.split('@')[0]}
                   </div>
                   <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenProfile(); }} className="menu-dropdown-btn">
                     <User size={16} /> My Profile

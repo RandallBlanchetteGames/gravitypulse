@@ -7,7 +7,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('highlights'); // 'highlights' or 'full_table'
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,14 +39,25 @@ export function LeaderboardModal({ isOpen, onClose }) {
   const topPoints = getTopPlayer((a, b) => (b.total_cumulative_points || 0) - (a.total_cumulative_points || 0));
   const topKills = getTopPlayer((a, b) => (b.players_destroyed || 0) - (a.players_destroyed || 0));
   const topKamikazes = getTopPlayer((a, b) => (b.kamikazes || 0) - (a.kamikazes || 0));
+  const topAsteroids = getTopPlayer((a, b) => (b.asteroids_destroyed || 0) - (a.asteroids_destroyed || 0));
+  const topSupercharged = getTopPlayer((a, b) => (b.times_supercharged || 0) - (a.times_supercharged || 0));
   
   const getKdRatio = (p) => {
+    const kills = p.players_destroyed || 0;
+    const dts = p.total_cumulative_deaths || 0;
+    if (dts === 0) return kills;
+    return kills / dts;
+  };
+
+  const getPdRatio = (p) => {
     const pts = p.total_cumulative_points || 0;
     const dts = p.total_cumulative_deaths || 0;
     if (dts === 0) return pts;
     return pts / dts;
   };
+  
   const topKd = getTopPlayer((a, b) => getKdRatio(b) - getKdRatio(a));
+  const topPd = getTopPlayer((a, b) => getPdRatio(b) - getPdRatio(a));
 
   return (
     <div style={{
@@ -85,30 +96,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
           </h2>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-          <button 
-            onClick={() => { soundEngine.playClick(); setActiveTab('highlights'); }}
-            className={`neon-btn ${activeTab === 'highlights' ? '' : 'btn-outline'}`}
-            style={{ 
-              background: activeTab === 'highlights' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeTab === 'highlights' ? '#000' : 'var(--text-main)',
-              border: '1px solid var(--accent-cyan)'
-            }}
-          >
-            Top Highlights
-          </button>
-          <button 
-            onClick={() => { soundEngine.playClick(); setActiveTab('full_table'); }}
-            className={`neon-btn ${activeTab === 'full_table' ? '' : 'btn-outline'}`}
-            style={{ 
-              background: activeTab === 'full_table' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeTab === 'full_table' ? '#000' : 'var(--text-main)',
-              border: '1px solid var(--accent-cyan)'
-            }}
-          >
-            Full Rankings
-          </button>
-        </div>
+
 
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--accent-cyan)' }}>Loading global data...</div>
@@ -118,74 +106,64 @@ export function LeaderboardModal({ isOpen, onClose }) {
           <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No ranked players yet. Be the first!</div>
         ) : (
           <div style={{ marginTop: '16px' }}>
-            {activeTab === 'highlights' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-                <HighlightCard 
-                  title="Most Wins" 
-                  player={topWins} 
-                  value={topWins?.total_wins} 
-                  icon={<Trophy size={24} color="var(--accent-gold)" />} 
-                  color="var(--accent-gold)" 
-                />
-                <HighlightCard 
-                  title="Highest KD Ratio" 
-                  player={topKd} 
-                  value={topKd ? getKdRatio(topKd).toFixed(2) : 0} 
-                  icon={<Activity size={24} color="var(--accent-cyan)" />} 
-                  color="var(--accent-cyan)" 
-                />
-                <HighlightCard 
-                  title="Most Kills" 
-                  player={topKills} 
-                  value={topKills?.players_destroyed} 
-                  icon={<Crosshair size={24} color="#ff007f" />} 
-                  color="#ff007f" 
-                />
-                <HighlightCard 
-                  title="Highest Total Points" 
-                  player={topPoints} 
-                  value={topPoints?.total_cumulative_points} 
-                  icon={<Star size={24} color="#00ff66" />} 
-                  color="#00ff66" 
-                />
-                <HighlightCard 
-                  title="Most Kamikazes" 
-                  player={topKamikazes} 
-                  value={topKamikazes?.kamikazes} 
-                  icon={<Skull size={24} color="#ef4444" />} 
-                  color="#ef4444" 
-                />
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto', background: 'rgba(0,0,0,0.4)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                  <thead>
-                    <tr style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '12px' }}>Rank</th>
-                      <th style={{ padding: '12px' }}>Player</th>
-                      <th style={{ padding: '12px' }}>Games</th>
-                      <th style={{ padding: '12px' }}>Wins</th>
-                      <th style={{ padding: '12px' }}>Points</th>
-                      <th style={{ padding: '12px' }}>Kills</th>
-                      <th style={{ padding: '12px' }}>P/D Ratio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...leaderboard].sort((a,b) => (b.total_cumulative_points || 0) - (a.total_cumulative_points || 0)).map((p, idx) => (
-                      <tr key={p.user_id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                        <td style={{ padding: '12px', color: idx < 3 ? 'var(--accent-gold)' : 'var(--text-muted)', fontWeight: 800 }}>#{idx + 1}</td>
-                        <td style={{ padding: '12px', color: '#fff', fontWeight: 700 }}>{p.nickname || p.username.split('@')[0]}</td>
-                        <td style={{ padding: '12px' }}>{p.total_games_played}</td>
-                        <td style={{ padding: '12px', color: '#00ff66' }}>{p.total_wins}</td>
-                        <td style={{ padding: '12px', color: 'var(--accent-cyan)' }}>{p.total_cumulative_points}</td>
-                        <td style={{ padding: '12px' }}>{p.players_destroyed}</td>
-                        <td style={{ padding: '12px' }}>{getKdRatio(p).toFixed(2)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+              <HighlightCard 
+                title="Most Wins" 
+                player={topWins} 
+                value={topWins?.total_wins} 
+                icon={<Trophy size={24} color="var(--accent-gold)" />} 
+                color="var(--accent-gold)" 
+              />
+              <HighlightCard 
+                title="Highest P/D Ratio" 
+                player={topPd} 
+                value={topPd ? getPdRatio(topPd).toFixed(2) : 0} 
+                icon={<Activity size={24} color="var(--accent-cyan)" />} 
+                color="var(--accent-cyan)" 
+              />
+              <HighlightCard 
+                title="Highest Total Points" 
+                player={topPoints} 
+                value={topPoints?.total_cumulative_points} 
+                icon={<Star size={24} color="#00ff66" />} 
+                color="#00ff66" 
+              />
+              <HighlightCard 
+                title="Highest K/D Ratio" 
+                player={topKd} 
+                value={topKd ? getKdRatio(topKd).toFixed(2) : 0} 
+                icon={<Crosshair size={24} color="#ff007f" />} 
+                color="#ff007f" 
+              />
+              <HighlightCard 
+                title="Most Kills" 
+                player={topKills} 
+                value={topKills?.players_destroyed} 
+                icon={<Crosshair size={24} color="#ff007f" />} 
+                color="#ff007f" 
+              />
+              <HighlightCard 
+                title="Most Kamikazes" 
+                player={topKamikazes} 
+                value={topKamikazes?.kamikazes} 
+                icon={<Skull size={24} color="#ef4444" />} 
+                color="#ef4444" 
+              />
+              <HighlightCard 
+                title="Most Asteroids Crushed" 
+                player={topAsteroids} 
+                value={topAsteroids?.asteroids_destroyed} 
+                icon={<Trophy size={24} color="#a855f7" />} 
+                color="#a855f7" 
+              />
+              <HighlightCard 
+                title="Most Times Supercharged" 
+                player={topSupercharged} 
+                value={topSupercharged?.times_supercharged} 
+                icon={<Zap size={24} color="#eab308" />} 
+                color="#eab308" 
+              />
+            </div>
           </div>
         )}
       </div>

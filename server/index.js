@@ -47,7 +47,7 @@ app.post('/api/auth/register', async (req, res) => {
     const hash = await bcrypt.hash(password, salt);
 
     const result = await pool.query(
-      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username',
+      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username, nickname',
       [username, hash]
     );
 
@@ -56,8 +56,8 @@ app.post('/api/auth/register', async (req, res) => {
     // Initialize stats row for the new user
     await pool.query('INSERT INTO stats (user_id) VALUES ($1)', [user.id]);
 
-    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username } });
+    const token = jwt.sign({ id: user.id, username: user.username, nickname: user.nickname }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, username: user.username, nickname: user.nickname } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error during registration' });
@@ -69,7 +69,7 @@ app.post('/api/auth/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const result = await pool.query('SELECT id, username, password_hash FROM users WHERE username = $1', [username]);
+    const result = await pool.query('SELECT id, username, nickname, password_hash FROM users WHERE username = $1', [username]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -80,8 +80,8 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username } });
+    const token = jwt.sign({ id: user.id, username: user.username, nickname: user.nickname }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, username: user.username, nickname: user.nickname } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error during login' });

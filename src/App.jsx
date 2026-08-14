@@ -76,15 +76,20 @@ export default function App() {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [hasLoadedPrompt, setHasLoadedPrompt] = useState(false);
 
-  const matchStatsRef = useRef({ kills: 0, deaths: 0, asteroidsDestroyed: 0 });
+  const matchStatsRef = useRef({ 
+    kills: 0, deaths: 0, asteroidsDestroyed: 0,
+    kamikazes: 0, times_drifted_into_void: 0, times_crushed_by_asteroid: 0, 
+    times_sucked_into_black_hole: 0, times_overloaded: 0, times_cube_crashed: 0, times_supercharged: 0
+  });
   const aiTimeoutRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem('gp_token');
     const username = localStorage.getItem('gp_username');
     const userId = localStorage.getItem('gp_userId');
+    const nickname = localStorage.getItem('gp_nickname');
     if (token && username && userId) {
-      setUser({ id: userId, username });
+      setUser({ id: userId, username, nickname });
     }
   }, []);
 
@@ -93,10 +98,23 @@ export default function App() {
     const stats = matchStatsRef.current;
     events.forEach(ev => {
       if (ev.type.startsWith('DEATH_')) {
-        if (ev.victimId === 1) stats.deaths += 1;
-        else if (ev.initiatorId === 1) stats.kills += 1;
+        if (ev.victimId === 1) {
+          stats.deaths += 1;
+          if (ev.type === 'DEATH_VOID') stats.times_drifted_into_void += 1;
+          if (ev.type === 'DEATH_ASTEROID') stats.times_crushed_by_asteroid += 1;
+          if (ev.type === 'DEATH_BLACKHOLE') stats.times_sucked_into_black_hole += 1;
+          if (ev.type === 'DEATH_OVERLOAD') stats.times_overloaded += 1;
+          if (ev.type === 'DEATH_CUBE_CRASH') {
+            stats.times_cube_crashed += 1;
+            if (ev.initiatorId === 1) stats.kamikazes += 1;
+          }
+        } else if (ev.initiatorId === 1) {
+          stats.kills += 1;
+        }
       } else if (ev.type === 'ASTEROID_DESTROYED') {
         if (ev.initiatorId === 1) stats.asteroidsDestroyed += 1;
+      } else if (ev.type === 'SUPERCHARGE') {
+        if (ev.victimId === 1) stats.times_supercharged += 1;
       }
     });
   }, [rulesConfig]);
@@ -140,7 +158,11 @@ export default function App() {
     setSelectedDirection(null);
     setIsGameOverOpen(false);
     clearGameSession();
-    matchStatsRef.current = { kills: 0, deaths: 0, asteroidsDestroyed: 0 };
+    matchStatsRef.current = { 
+      kills: 0, deaths: 0, asteroidsDestroyed: 0,
+      kamikazes: 0, times_drifted_into_void: 0, times_crushed_by_asteroid: 0, 
+      times_sucked_into_black_hole: 0, times_overloaded: 0, times_cube_crashed: 0, times_supercharged: 0
+    };
   }, [rulesConfig]);
 
   /* Check LocalStorage on Mount */
@@ -337,7 +359,14 @@ export default function App() {
               points: finalPoints,
               deaths: stats.deaths,
               players_destroyed: stats.kills,
-              asteroids_destroyed: stats.asteroidsDestroyed
+              asteroids_destroyed: stats.asteroidsDestroyed,
+              kamikazes: stats.kamikazes,
+              times_drifted_into_void: stats.times_drifted_into_void,
+              times_crushed_by_asteroid: stats.times_crushed_by_asteroid,
+              times_sucked_into_black_hole: stats.times_sucked_into_black_hole,
+              times_overloaded: stats.times_overloaded,
+              times_cube_crashed: stats.times_cube_crashed,
+              times_supercharged: stats.times_supercharged
             }).catch(err => console.error("Failed to submit stats:", err));
           }
           
@@ -889,6 +918,12 @@ export default function App() {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         user={user}
+        onUpdateUser={(updates) => {
+          setUser(prev => ({ ...prev, ...updates }));
+          if (updates.nickname) {
+            localStorage.setItem('gp_nickname', updates.nickname);
+          }
+        }}
       />
 
       <LeaderboardModal
