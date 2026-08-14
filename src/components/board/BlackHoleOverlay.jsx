@@ -8,7 +8,7 @@ import { Play } from 'lucide-react';
 
 export function BlackHoleOverlay({ boardSize, phase, onStartNewGame }) {
   const is18 = boardSize === 18;
-  const showButton = phase === PHASES.SETUP || phase === PHASES.GAME_OVER;
+  const showButton = phase === PHASES.GAME_OVER;
 
   return (
     <>
@@ -50,20 +50,33 @@ export function BlackHoleOverlay({ boardSize, phase, onStartNewGame }) {
         <div className="bh-accretion-disk-1" />
         <div className="bh-event-horizon" />
         
-        <div style={{ zIndex: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          {showButton && (
-            <button 
-              onClick={onStartNewGame}
-              className="neon-btn" 
-              style={{ padding: '6px 12px', fontSize: '0.75rem' }}
-            >
-              <Play size={14} /> Start Game
-            </button>
-          )}
-          <span className="bh-text" style={{ fontSize: is18 ? '0.55rem' : '0.68rem' }}>
-            BLACK<br />HOLE
-          </span>
-        </div>
+        <span className="bh-text" style={{ fontSize: is18 ? '0.55rem' : '0.68rem' }}>
+          BLACK<br />HOLE
+        </span>
+
+        {showButton && (
+          <button 
+            onClick={onStartNewGame}
+            className="neon-btn" 
+            style={{ 
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              width: '100%', height: '100%',
+              borderRadius: '50%',
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(3, 5, 8, 0.95)',
+              padding: 0,
+              gap: '2px'
+            }}
+          >
+            <Play size={16} />
+            <span style={{ fontSize: '0.6rem', fontWeight: 800, textAlign: 'center', lineHeight: 1 }}>START<br/>GAME</span>
+          </button>
+        )}
       </div>
     </>
   );
