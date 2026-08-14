@@ -134,7 +134,7 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
                 <StatCard label="Win Rate" value={winPercent} />
-                <StatCard label="Points / Death" value={kdRatio} highlight />
+                <StatCard label="Points / Death" value={kdRatio} />
                 <StatCard label="Points / Round" value={pointsPerRound} />
                 <StatCard label="Kills / Game" value={killsPerGame} />
               </div>
