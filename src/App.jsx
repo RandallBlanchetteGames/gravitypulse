@@ -770,11 +770,12 @@ export default function App() {
             <span style={{
               fontSize: '0.7rem',
               fontWeight: 700,
-              background: activePlayer?.isHuman ? 'rgba(0, 240, 255, 0.15)' : 'rgba(148, 163, 184, 0.15)',
-              color: activePlayer?.isHuman ? 'var(--accent-cyan)' : 'var(--text-muted)',
+              background: activePlayer?.isHuman ? 'rgba(13, 16, 29, 0.85)' : 'rgba(148, 163, 184, 0.15)',
+              color: activePlayer?.isHuman ? activePlayer.color.hex : 'var(--text-muted)',
               padding: '4px 8px',
               borderRadius: '12px',
-              border: `1px solid ${activePlayer?.isHuman ? 'var(--accent-cyan)' : 'rgba(255,255,255,0.1)'}`
+              border: `1px solid ${activePlayer?.isHuman ? activePlayer.color.hex : 'rgba(255,255,255,0.1)'}`,
+              boxShadow: activePlayer?.isHuman ? `0 0 10px ${activePlayer.color.hex}, inset 0 0 5px ${activePlayer.color.hex}` : 'none'
             }}>
               {activePlayer?.isHuman ? 'YOUR TURN' : 'AI OPPONENT'}
             </span>

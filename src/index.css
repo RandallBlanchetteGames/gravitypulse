@@ -987,8 +987,7 @@ h1, h2, h3, h4, .font-heading {
 .scroll-indicator-wrapper {
   position: fixed;
   bottom: 80px; /* Above the bottom action bar on mobile */
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px;
   z-index: 50;
   display: flex;
   flex-direction: column;
