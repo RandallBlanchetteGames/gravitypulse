@@ -111,7 +111,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
       cubes.forEach(c => {
         if (!destroyedIds.has(c.id)) {
           destroyedIds.add(c.id);
-          logs.push(`💥 Player ${c.playerId} destroyed in Cube Crash!`);
+          logs.push(`💥 Player ${c.playerId} destroyed in a Head-on Collision!`);
           respawnQueue.push(c.playerId);
           statsEvents.push({ type: 'DEATH_CUBE_CRASH', victimId: c.playerId, initiatorId });
           effects.push({ id: Math.random() + c.id, x: c.x, y: c.y, type: 'COLLISION' });

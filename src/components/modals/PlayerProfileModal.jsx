@@ -177,7 +177,7 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
                 <ShieldAlert size={18} color="#ef4444" /> HAZARD ANALYSIS (CAUSE OF DEATH)
               </h3>
               <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px', padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                <StatRow label="Cube Crash" value={getStat('times_cube_crashed')} />
+                <StatRow label="Head-on Collision" value={getStat('times_cube_crashed')} />
                 <StatRow label="Asteroid Impact" value={getStat('times_crushed_by_asteroid')} />
                 <StatRow label="Void Drift" value={getStat('times_drifted_into_void')} />
                 <StatRow label="Black Hole" value={getStat('times_sucked_into_black_hole')} />
