@@ -184,24 +184,27 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
             </select>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', marginTop: '4px' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>AI Opponents: {aiCount}</span>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>AI Opponents:</span>
+            <select
+              value={aiCount}
+              onChange={(e) => {
+                soundEngine.playClick();
+                setAiCount(parseInt(e.target.value, 10));
+              }}
+              style={{
+                background: 'rgba(157, 78, 221, 0.1)',
+                border: '1px solid var(--accent-violet)',
+                color: '#fff',
+                padding: '6px 10px',
+                borderRadius: '4px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
               {Array.from({ length: playerCount }, (_, i) => i).map(c => (
-                <button
-                  key={c}
-                  onClick={() => { soundEngine.playClick(); setAiCount(c); }}
-                  className="neon-btn"
-                  style={{
-                    padding: '6px 10px',
-                    fontSize: '0.8rem',
-                    background: aiCount === c ? 'var(--accent-violet)' : undefined,
-                    color: aiCount === c ? '#fff' : undefined
-                  }}
-                >
-                  {c} AI
-                </button>
+                <option key={c} value={c} style={{ background: '#030508' }}>{c} AI</option>
               ))}
-            </div>
+            </select>
           </div>
         </div>
 

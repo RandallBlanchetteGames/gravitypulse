@@ -46,7 +46,7 @@ export default function App() {
     gameLength: GAME_LENGTHS.STANDARD_5,
     playerCount: 4,
     aiCount: 3,
-    aiDifficulty: 'Standard'
+    aiDifficulty: 'STANDARD'
   });
 
   // Game State
