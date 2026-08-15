@@ -67,3 +67,8 @@ export const ENTITY_TYPES = {
   ASTEROID: 'ASTEROID',
   ENERGY: 'ENERGY'
 };
+
+export const AI_DIFFICULTY = {
+  STANDARD: { id: 'STANDARD', label: 'Standard' },
+  HARD: { id: 'HARD', label: 'Hard' }
+};

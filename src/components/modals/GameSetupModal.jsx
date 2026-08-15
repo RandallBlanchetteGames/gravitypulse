@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from '../../engine/types.js';
+import { MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS, AI_DIFFICULTY } from '../../engine/types.js';
 import { Settings, Orbit, Sparkles, Check, X, AlertTriangle } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 
@@ -12,6 +12,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
   const [gameLength, setGameLength] = useState(initialConfig.gameLength);
   const [playerCount, setPlayerCount] = useState(initialConfig.playerCount);
   const [aiCount, setAiCount] = useState(initialConfig.aiCount);
+  const [aiDifficulty, setAiDifficulty] = useState(initialConfig.aiDifficulty || AI_DIFFICULTY.STANDARD.id);
 
   const humanCount = playerCount - aiCount;
 
@@ -29,7 +30,8 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
       hazardsEnabled,
       gameLength,
       playerCount,
-      aiCount
+      aiCount,
+      aiDifficulty
     });
   };
 
@@ -157,28 +159,29 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>TOTAL PLAYERS (UP TO 12)</label>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.9rem', color: '#fff' }}>Total Players: {playerCount}</span>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <span style={{ fontSize: '0.9rem', color: '#fff' }}>Total Players:</span>
+            <select
+              value={playerCount}
+              onChange={(e) => {
+                soundEngine.playClick();
+                const newCount = parseInt(e.target.value, 10);
+                setPlayerCount(newCount);
+                setAiCount(newCount - 1); // Default to max AI
+              }}
+              style={{
+                background: 'rgba(0, 240, 255, 0.1)',
+                border: '1px solid var(--accent-cyan)',
+                color: '#fff',
+                padding: '6px 10px',
+                borderRadius: '4px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
               {[2, 4, 6, 8, 12].map(c => (
-                <button
-                  key={c}
-                  onClick={() => {
-                    soundEngine.playClick();
-                    setPlayerCount(c);
-                    if (aiCount >= c) setAiCount(c - 1);
-                  }}
-                  className="neon-btn"
-                  style={{
-                    padding: '8px 12px',
-                    minWidth: '40px',
-                    background: playerCount === c ? 'var(--accent-cyan)' : undefined,
-                    color: playerCount === c ? '#030508' : undefined
-                  }}
-                >
-                  {c}
-                </button>
+                <option key={c} value={c} style={{ background: '#030508' }}>{c}</option>
               ))}
-            </div>
+            </select>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', marginTop: '4px' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>AI Opponents: {aiCount}</span>
@@ -199,6 +202,28 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* 6. AI Difficulty */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>AI DIFFICULTY</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            {Object.values(AI_DIFFICULTY).map(diff => (
+              <button
+                key={diff.id}
+                onClick={() => { soundEngine.playClick(); setAiDifficulty(diff.id); }}
+                className="neon-btn"
+                style={{
+                  padding: '12px',
+                  fontSize: '0.85rem',
+                  background: aiDifficulty === diff.id ? 'var(--accent-violet)' : undefined,
+                  color: aiDifficulty === diff.id ? '#fff' : undefined
+                }}
+              >
+                {diff.label}
+              </button>
+            ))}
           </div>
         </div>
 

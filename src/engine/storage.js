@@ -20,7 +20,8 @@ export function saveGameSession(state) {
         hazardsEnabled: state.rulesConfig.hazardsEnabled,
         gameLength: state.rulesConfig.gameLength,
         playerCount: state.rulesConfig.playerCount,
-        aiCount: state.rulesConfig.aiCount
+        aiCount: state.rulesConfig.aiCount,
+        aiDifficulty: state.rulesConfig.aiDifficulty
       },
       logs: state.logs ? state.logs.slice(-20) : [],
       matchStats: state.matchStats || null,

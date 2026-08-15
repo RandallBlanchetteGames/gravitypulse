@@ -12,6 +12,7 @@ export class GameRules {
     this.gameLength = config.gameLength || GAME_LENGTHS.STANDARD_5;
     this.playerCount = config.playerCount || 4;
     this.aiCount = config.aiCount !== undefined ? config.aiCount : 3;
+    this.aiDifficulty = config.aiDifficulty || 'Standard';
   }
 
   getBoardSize() {

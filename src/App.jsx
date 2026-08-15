@@ -45,7 +45,8 @@ export default function App() {
     hazardsEnabled: true,
     gameLength: GAME_LENGTHS.STANDARD_5,
     playerCount: 4,
-    aiCount: 3
+    aiCount: 3,
+    aiDifficulty: 'Standard'
   });
 
   // Game State
@@ -522,14 +523,14 @@ export default function App() {
       const hasPiece = board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
       if (!hasPiece) return;
       aiTimeoutRef.current = setTimeout(() => {
-        const decision = getAITurnDecision(board, activePlayer, rules);
+        const decision = getAITurnDecision(board, activePlayer, rules, players, turnInRound);
         const legalActs = rules.getLegalActions(activePlayer);
         const actObj = legalActs.find(a => a.id === decision.actionId) || legalActs[0];
         handleExecuteAction(actObj, decision.direction);
       }, 600);
     }
     return () => clearTimeout(aiTimeoutRef.current);
-  }, [phase, activePlayerIdx, board, players, rules]);
+  }, [phase, activePlayerIdx, board, players, rules, turnInRound]);
 
   /* Auto-skip turn if active player is currently destroyed (awaiting round-end respawn) */
   useEffect(() => {
