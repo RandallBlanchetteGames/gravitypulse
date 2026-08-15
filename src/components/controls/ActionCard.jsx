@@ -8,10 +8,18 @@ import { DIRECTIONS, TURN_ACTIONS } from '../../engine/types.js';
 
 export function ActionCard({ action, isSelected, isUsed, disabled, onSelectAction }) {
   const getIcon = () => {
-    const iconColor = isSelected ? '#030508' : (action.id === TURN_ACTIONS.GRAVITY ? 'var(--accent-cyan)' : (action.id === TURN_ACTIONS.PULSE ? 'var(--accent-violet)' : '#fff'));
-    if (action.id === TURN_ACTIONS.GRAVITY) return <Waves className="action-icon" color={iconColor} />;
-    if (action.id === TURN_ACTIONS.PULSE) return <Zap className="action-icon" color={iconColor} />;
-    return <ArrowRight className="action-icon" color={iconColor} />;
+    // If selected, we force '#030508' using inline color so it always stays dark over cyan.
+    // If not selected, we don't supply 'color', but instead attach the appropriate CSS class
+    // so it naturally takes the default color and properly inverts on CSS hover.
+    if (isSelected) {
+      if (action.id === TURN_ACTIONS.GRAVITY) return <Waves className="action-icon" color="#030508" />;
+      if (action.id === TURN_ACTIONS.PULSE) return <Zap className="action-icon" color="#030508" />;
+      return <ArrowRight className="action-icon" color="#030508" />;
+    }
+
+    if (action.id === TURN_ACTIONS.GRAVITY) return <Waves className="action-icon icon-cyan" />;
+    if (action.id === TURN_ACTIONS.PULSE) return <Zap className="action-icon icon-violet" />;
+    return <ArrowRight className="action-icon" color="#fff" />;
   };
 
   // Only apply the violet hover styling if it is specifically the Pulse action AND not currently selected

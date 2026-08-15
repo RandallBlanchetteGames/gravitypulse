@@ -702,11 +702,13 @@ h1, h2, h3, h4, .font-heading {
   }
 }
 
-.neon-btn:hover:not(:disabled) {
-  background: var(--accent-cyan);
-  color: #030508;
-  box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .neon-btn:hover:not(:disabled) {
+    background: var(--accent-cyan);
+    color: #030508;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+    transform: translateY(-2px);
+  }
 }
 
 .neon-btn:disabled {
@@ -720,10 +722,32 @@ h1, h2, h3, h4, .font-heading {
   border-color: var(--accent-violet);
   box-shadow: 0 4px 15px rgba(157, 78, 221, 0.2);
 }
-.neon-btn.btn-violet:hover:not(:disabled) {
-  background: var(--accent-violet);
-  color: #fff;
-  box-shadow: 0 0 25px rgba(157, 78, 221, 0.6);
+
+@media (hover: hover) {
+  .neon-btn.btn-violet:hover:not(:disabled) {
+    background: var(--accent-violet);
+    color: #fff;
+    box-shadow: 0 0 25px rgba(157, 78, 221, 0.6);
+  }
+}
+
+/* Icon Color Classes to prevent wash-out on hover */
+.icon-cyan {
+  color: var(--accent-cyan);
+}
+@media (hover: hover) {
+  .neon-btn:hover:not(:disabled) .icon-cyan {
+    color: #030508;
+  }
+}
+
+.icon-violet {
+  color: var(--accent-violet);
+}
+@media (hover: hover) {
+  .neon-btn.btn-violet:hover:not(:disabled) .icon-violet {
+    color: #fff;
+  }
 }
 
 .neon-btn.btn-danger {

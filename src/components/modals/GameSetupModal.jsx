@@ -52,10 +52,10 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
         maxWidth: '560px',
         maxHeight: '90vh',
         overflowY: 'auto',
-        padding: '24px',
+        padding: '18px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
+        gap: '12px',
         border: '1px solid var(--accent-cyan)',
         boxShadow: '0 0 50px rgba(0, 240, 255, 0.2)'
       }}>
@@ -133,58 +133,35 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
           </button>
         </div>
 
-        {/* 4. Game Length (With Blitz Mode!) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>GAME LENGTH</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-            {Object.values(GAME_LENGTHS).map(len => (
-              <button
-                key={len.id}
-                onClick={() => { soundEngine.playClick(); setGameLength(len); }}
-                className="neon-btn"
-                style={{
-                  padding: '12px 6px',
-                  fontSize: '0.8rem',
-                  background: gameLength.id === len.id ? 'var(--accent-cyan)' : undefined,
-                  color: gameLength.id === len.id ? '#030508' : undefined
-                }}
-              >
-                {len.label.split(' ')[0]} {len.label.split(' ')[1]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 5. Player & AI Count */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>TOTAL PLAYERS (UP TO 12)</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.9rem', color: '#fff' }}>Total Players:</span>
+        {/* 4 & 5. Player Count & AI Opponents */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>TOTAL PLAYERS (UP TO 12)</label>
             <select
               value={playerCount}
               onChange={(e) => {
                 soundEngine.playClick();
                 const newCount = parseInt(e.target.value, 10);
                 setPlayerCount(newCount);
-                setAiCount(newCount - 1); // Default to max AI
+                setAiCount(newCount - 1);
               }}
               style={{
                 background: 'rgba(0, 240, 255, 0.1)',
                 border: '1px solid var(--accent-cyan)',
                 color: '#fff',
-                padding: '6px 10px',
+                padding: '8px 10px',
                 borderRadius: '4px',
                 outline: 'none',
                 cursor: 'pointer'
               }}
             >
               {[2, 4, 6, 8, 12].map(c => (
-                <option key={c} value={c} style={{ background: '#030508' }}>{c}</option>
+                <option key={c} value={c} style={{ background: '#030508' }}>{c} Players</option>
               ))}
             </select>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', marginTop: '4px' }}>
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>AI Opponents:</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-violet)' }}>AI OPPONENTS</label>
             <select
               value={aiCount}
               onChange={(e) => {
@@ -195,7 +172,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
                 background: 'rgba(157, 78, 221, 0.1)',
                 border: '1px solid var(--accent-violet)',
                 color: '#fff',
-                padding: '6px 10px',
+                padding: '8px 10px',
                 borderRadius: '4px',
                 outline: 'none',
                 cursor: 'pointer'
@@ -208,25 +185,54 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
           </div>
         </div>
 
-        {/* 6. AI Difficulty */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>AI DIFFICULTY</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            {Object.values(AI_DIFFICULTY).map(diff => (
-              <button
-                key={diff.id}
-                onClick={() => { soundEngine.playClick(); setAiDifficulty(diff.id); }}
-                className="neon-btn"
-                style={{
-                  padding: '12px',
-                  fontSize: '0.85rem',
-                  background: aiDifficulty === diff.id ? 'var(--accent-violet)' : undefined,
-                  color: aiDifficulty === diff.id ? '#fff' : undefined
-                }}
-              >
-                {diff.label}
-              </button>
-            ))}
+        {/* 6 & 7. Game Length & AI Difficulty */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>GAME LENGTH</label>
+            <select
+              value={gameLength.id}
+              onChange={(e) => {
+                soundEngine.playClick();
+                const selected = Object.values(GAME_LENGTHS).find(l => l.id === e.target.value);
+                setGameLength(selected);
+              }}
+              style={{
+                background: 'rgba(0, 240, 255, 0.1)',
+                border: '1px solid var(--accent-cyan)',
+                color: '#fff',
+                padding: '8px 10px',
+                borderRadius: '4px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {Object.values(GAME_LENGTHS).map(len => (
+                <option key={len.id} value={len.id} style={{ background: '#030508' }}>{len.label}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-violet)' }}>AI DIFFICULTY</label>
+            <select
+              value={aiDifficulty}
+              onChange={(e) => {
+                soundEngine.playClick();
+                setAiDifficulty(e.target.value);
+              }}
+              style={{
+                background: 'rgba(157, 78, 221, 0.1)',
+                border: '1px solid var(--accent-violet)',
+                color: '#fff',
+                padding: '8px 10px',
+                borderRadius: '4px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {Object.values(AI_DIFFICULTY).map(diff => (
+                <option key={diff.id} value={diff.id} style={{ background: '#030508' }}>{diff.label}</option>
+              ))}
+            </select>
           </div>
         </div>
 
