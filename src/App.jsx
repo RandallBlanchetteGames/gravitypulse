@@ -266,13 +266,13 @@ export default function App() {
 
   /* Advance Turn or Trigger Round End Phases (4-Turn Cadence) */
   const advanceTurn = useCallback((nextBoard, nextPlayers, newRespawns = []) => {
-    // Sync player supercharged status with board entities and increment deaths
+    // Sync player supercharged status with board entities
     let updatedPlayers = nextPlayers.map(p => {
       const isDestroyed = newRespawns.includes(p.id);
       const cube = nextBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
       return {
         ...p,
-        deaths: isDestroyed ? (p.deaths || 0) + 1 : (p.deaths || 0),
+        // We will increment deaths at the end of the turn/round sequencing to capture all hazard deaths
         isSupercharged: isDestroyed ? false : (cube ? !!cube.isSupercharged : false)
       };
     });
@@ -294,6 +294,7 @@ export default function App() {
       updatedBoard = orbRes.finalBoard;
       if (orbRes.respawnQueue && orbRes.respawnQueue.length > 0) newRespawns.push(...orbRes.respawnQueue);
       if (orbRes.effects) dispatchEffects(orbRes.effects);
+      if (orbRes.statsEvents) processStatsEvents(orbRes.statsEvents);
 
       if (nextTurn <= 4) {
         roundLogs.push(`--- Round ${currentRound} | Turn ${nextTurn} of 4 ---`);
@@ -410,11 +411,13 @@ export default function App() {
       roundLogs.push(`Player ${targetPlayer.id} rested and recharged all action cards.`);
     }
 
-    // Final sync of supercharge state with final round-end board
+    // Final sync of supercharge state and deaths with final round-end board
     updatedPlayers = updatedPlayers.map(p => {
+      const deathsThisTurn = newRespawns.filter(id => id === p.id).length;
       const cube = updatedBoard.find(e => e.type === ENTITY_TYPES.CUBE && e.playerId === p.id);
       return {
         ...p,
+        deaths: (p.deaths || 0) + deathsThisTurn,
         isSupercharged: cube ? !!cube.isSupercharged : false
       };
     });

@@ -53,6 +53,7 @@ export function executeOrbitalMovement(board, boardSize, logs = []) {
 
   let allRespawns = [];
   let allEffects = [];
+  let allStatsEvents = [];
 
   if (moved) {
     logs.push(`🌀 Cosmic Energy Fields rotate 1 cell clockwise along their orbital rings.`);
@@ -64,7 +65,10 @@ export function executeOrbitalMovement(board, boardSize, logs = []) {
     if (res.effects && res.effects.length > 0) {
       allEffects.push(...res.effects);
     }
+    if (res.statsEvents && res.statsEvents.length > 0) {
+      allStatsEvents.push(...res.statsEvents);
+    }
   }
 
-  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects };
+  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
