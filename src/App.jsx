@@ -36,6 +36,15 @@ import { PlayerProfileModal } from './components/modals/PlayerProfileModal.jsx';
 import { LeaderboardModal } from './components/modals/LeaderboardModal.jsx';
 import { api } from './api/client.js';
 
+function shuffleArray(array) {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
+
 export default function App() {
   // Rules & Configuration
   const [rules, setRules] = useState(new GameRules());
@@ -60,6 +69,8 @@ export default function App() {
   const [historyStack, setHistoryStack] = useState([]); // For casual Undo Move
   const [explosions, setExplosions] = useState([]);
   const [respawnQueue, setRespawnQueue] = useState([]);
+  const [setupQueue, setSetupQueue] = useState([]);
+  const [firstPlayerIdx, setFirstPlayerIdx] = useState(0);
 
   // UI Selection State
   const [selectedAction, setSelectedAction] = useState(null);
@@ -147,7 +158,14 @@ export default function App() {
     setPlayers(newPlayers);
     const initAsteroids = rules.spawnInitialAsteroids([], rules.getBoardSize(), 2);
     setBoard(initAsteroids);
-    setActivePlayerIdx(0);
+    
+    const initialFirstPlayer = Math.floor(Math.random() * config.playerCount);
+    setFirstPlayerIdx(initialFirstPlayer);
+    
+    const shuffledSetup = shuffleArray([...Array(config.playerCount).keys()]);
+    setActivePlayerIdx(shuffledSetup[0]);
+    setSetupQueue(shuffledSetup.slice(1));
+    
     setCurrentRound(1);
     setTurnInRound(1);
     setPhase(PHASES.SETUP);
@@ -180,6 +198,8 @@ export default function App() {
           setTurnInRound(saved.turnInRound || 1);
           setPhase(saved.phase || PHASES.PLAYING);
           setLogs(saved.logs || ["Restored saved game session!"]);
+          if (saved.firstPlayerIdx !== undefined) setFirstPlayerIdx(saved.firstPlayerIdx);
+          if (saved.setupQueue) setSetupQueue(saved.setupQueue);
           if (saved.rulesConfig) {
             setRulesConfig(saved.rulesConfig);
             setRules(new GameRules(saved.rulesConfig));
@@ -241,10 +261,12 @@ export default function App() {
         phase,
         rulesConfig,
         logs,
+        firstPlayerIdx,
+        setupQueue,
         matchStats: matchStatsRef.current
       });
     }
-  }, [board, players, activePlayerIdx, currentRound, turnInRound, phase, rulesConfig, logs]);
+  }, [board, players, activePlayerIdx, currentRound, turnInRound, phase, rulesConfig, logs, firstPlayerIdx, setupQueue]);
 
   const activePlayer = players[activePlayerIdx] || players[0];
 
@@ -283,7 +305,7 @@ export default function App() {
     let updatedBoard = [...nextBoard];
     let roundLogs = [];
 
-    const firstPlayerIdxForRound = (currentRound - 1) % updatedPlayers.length;
+    const firstPlayerIdxForRound = firstPlayerIdx;
 
     // If all players have taken their turn for this step in the round
     if (nextIdx === firstPlayerIdxForRound) {
@@ -338,6 +360,8 @@ export default function App() {
 
         nextRound += 1;
         nextTurn = 1;
+        const nextFirstPlayer = Math.floor(Math.random() * updatedPlayers.length);
+        setFirstPlayerIdx(nextFirstPlayer);
 
         // Reset & recharge action cards for all players at start of new round!
         updatedPlayers.forEach(p => rules.resetActions(p));
@@ -389,19 +413,19 @@ export default function App() {
           }
           setSelectedAction(null);
           setSelectedDirection(null);
-          setActivePlayerIdx((nextRound - 1) % updatedPlayers.length);
+          setActivePlayerIdx(nextFirstPlayer);
           setCurrentRound(nextRound);
           setTurnInRound(1);
           if (roundLogs.length > 0) {
             setLogs(prev => [...prev, ...roundLogs, `Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
           }
-          setRespawnQueue(missingPlayerIds);
+          setRespawnQueue(shuffleArray(missingPlayerIds));
           setPhase(PHASES.RESPAWN);
           return;
         }
         
         // If no one is missing, explicitly set the next player to be the first of the new round
-        nextIdx = (nextRound - 1) % updatedPlayers.length;
+        nextIdx = nextFirstPlayer;
       }
     }
 
@@ -453,15 +477,16 @@ export default function App() {
       triggerExplosion(x, y, 'SPAWN', activePlayer.id);
       soundEngine.playSupercharge();
 
-      if (activePlayerIdx + 1 >= players.length) {
+      if (setupQueue.length === 0) {
         // Setup done! Transition to Playing
         setBoard(nextBoard);
-        setActivePlayerIdx(0);
+        setActivePlayerIdx(firstPlayerIdx);
         setPhase(PHASES.PLAYING);
         setLogs(prev => [...prev, `All players deployed! Turn 1 initiated.`]);
       } else {
         setBoard(nextBoard);
-        setActivePlayerIdx(activePlayerIdx + 1);
+        setActivePlayerIdx(setupQueue[0]);
+        setSetupQueue(setupQueue.slice(1));
       }
     } else if (phase === PHASES.RESPAWN) {
       if (respawnQueue.length === 0) return;
