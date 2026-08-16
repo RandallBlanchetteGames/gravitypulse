@@ -15,7 +15,7 @@ class SoundEngine {
     this.delayNode = null;
 
     // HTML5 Audio for background music playlist
-    this.playlist = ['/background-music.mp3', '/background-music-2.mp3'];
+    this.playlist = ['/background-music.mp3', '/background-music-2.mp3', '/background-music-3.mp3'];
     this.currentTrackIndex = Math.floor(Math.random() * this.playlist.length);
 
     if (typeof window !== 'undefined') {
@@ -24,7 +24,13 @@ class SoundEngine {
       
       // Advance to next track when one ends
       this.bgMusic.addEventListener('ended', () => {
-        this.currentTrackIndex = (this.currentTrackIndex + 1) % this.playlist.length;
+        // Select a random track, ensuring it's not the exact same track consecutively
+        let nextIndex;
+        do {
+          nextIndex = Math.floor(Math.random() * this.playlist.length);
+        } while (nextIndex === this.currentTrackIndex);
+        
+        this.currentTrackIndex = nextIndex;
         this.bgMusic.src = this.playlist[this.currentTrackIndex];
         this.bgMusic.load(); // Force the browser to load the new source
         if (!this.isMuted && !this.isBackgroundPaused) {
