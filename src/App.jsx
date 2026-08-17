@@ -11,6 +11,7 @@ import { executeGravity, executePulse, executeLocalizedGravity, executeBlackHole
 import { executeOrbitalMovement } from './engine/orbitalMovement.js';
 import { getAIPlacement, getAITurnDecision } from './engine/aiDecision.js';
 import { saveGameSession, loadGameSession, clearGameSession } from './engine/storage.js';
+import { getWinners } from './engine/scoring.js';
 import { soundEngine } from './audio/soundEngine.js';
 
 // Layout & Components
@@ -380,9 +381,14 @@ export default function App() {
             const humanPlayer = updatedPlayers.find(p => p.id === 1);
             const finalPoints = humanPlayer ? humanPlayer.score : 0;
             const stats = matchStatsRef.current;
+
+            const winners = getWinners(updatedPlayers);
+            const isWinner = winners.some(w => w.id === 1);
+            const winValue = isWinner ? (1.0 / winners.length) : 0;
+
             api.updateStats({
               rounds_played: rulesConfig.gameLength.rounds,
-              win: finalPoints > 0,
+              win: winValue,
               points: finalPoints,
               deaths: stats.deaths,
               players_destroyed: stats.kills,

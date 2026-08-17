@@ -151,7 +151,7 @@ app.post('/api/stats/update', authenticateToken, async (req, res) => {
       WHERE user_id = $14
     `, [
       matchStats.rounds_played || 0,
-      matchStats.win ? 1 : 0,
+      typeof matchStats.win === 'number' ? matchStats.win : (matchStats.win ? 1 : 0),
       matchStats.points || 0,
       matchStats.deaths || 0,
       matchStats.players_destroyed || 0,

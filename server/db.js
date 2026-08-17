@@ -61,7 +61,7 @@ export async function initDB() {
         user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
         total_games_played INTEGER DEFAULT 0,
         total_rounds_played INTEGER DEFAULT 0,
-        total_wins INTEGER DEFAULT 0,
+        total_wins REAL DEFAULT 0,
         total_cumulative_points INTEGER DEFAULT 0,
         total_cumulative_deaths INTEGER DEFAULT 0,
         players_destroyed INTEGER DEFAULT 0,
@@ -75,6 +75,11 @@ export async function initDB() {
         times_supercharged INTEGER DEFAULT 0,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+
+    // Ensure total_wins is REAL to support fractional wins
+    await client.query(`
+      ALTER TABLE stats ALTER COLUMN total_wins TYPE REAL;
     `);
 
     // Create a trigger function to auto-update updated_at on stats

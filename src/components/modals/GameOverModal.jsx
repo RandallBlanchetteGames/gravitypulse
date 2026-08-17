@@ -5,6 +5,7 @@
 import React from 'react';
 import { Trophy, RotateCcw, Settings, Sparkles, X } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
+import { getWinners } from '../../engine/scoring.js';
 
 export function GameOverModal({ isOpen, players, onRematch, onClose }) {
   if (!isOpen) return null;
@@ -15,8 +16,7 @@ export function GameOverModal({ isOpen, players, onRematch, onClose }) {
   });
 
   const topScore = sorted[0]?.score || 0;
-  const topDeaths = sorted[0]?.deaths || 0;
-  const winners = sorted.filter(p => (p.score || 0) === topScore && (p.deaths || 0) === topDeaths);
+  const winners = getWinners(players);
   const isTrueTie = winners.length > 1;
   const runnerUp = sorted[1];
   const isTiedScoreOnly = !isTrueTie && runnerUp && (runnerUp.score || 0) === topScore;
