@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, User, Activity, Target, ShieldAlert, Crosshair, Zap } from 'lucide-react';
 import { soundEngine } from '../../audio/soundEngine.js';
 import { api } from '../../api/client.js';
+import { calculateAverages, formatPercent, formatDecimalOne, formatDecimal } from '../../utils/statCalculators.js';
 
 export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const [profile, setProfile] = useState(null);
@@ -53,10 +54,12 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const roundsPlayed = getStat('total_rounds_played');
   const kills = getStat('players_destroyed');
 
-  const kdRatio = deaths > 0 ? (points / deaths).toFixed(2) : (points > 0 ? 'Perfect' : '0.00');
-  const winPercent = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(1) + '%' : '0.0%';
-  const pointsPerRound = roundsPlayed > 0 ? (points / roundsPlayed).toFixed(1) : '0.0';
-  const killsPerGame = gamesPlayed > 0 ? (kills / gamesPlayed).toFixed(1) : '0.0';
+  const { pdRatio, winRate, pointsPerRound, killsPerGame } = calculateAverages(profile);
+
+  const kdRatioStr = deaths > 0 ? formatDecimal(pdRatio) : (points > 0 ? 'Perfect' : '0.00');
+  const winPercentStr = formatPercent(winRate);
+  const pointsPerRoundStr = formatDecimalOne(pointsPerRound);
+  const killsPerGameStr = formatDecimalOne(killsPerGame);
 
   return (
     <div style={{
@@ -133,10 +136,10 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
                 <Activity size={18} color="var(--accent-cyan)" /> COMBAT AVERAGES
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-                <StatCard label="Win Rate" value={winPercent} />
-                <StatCard label="Points / Death" value={kdRatio} />
-                <StatCard label="Points / Round" value={pointsPerRound} />
-                <StatCard label="Kills / Game" value={killsPerGame} />
+                <StatCard label="Win Rate" value={winPercentStr} />
+                <StatCard label="Points / Death" value={kdRatioStr} />
+                <StatCard label="Points / Round" value={pointsPerRoundStr} />
+                <StatCard label="Kills / Game" value={killsPerGameStr} />
               </div>
             </div>
 
