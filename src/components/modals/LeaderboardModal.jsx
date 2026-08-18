@@ -213,7 +213,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
                 <HighlightCard title="Highest Total Points" player={topPoints} value={topPoints?.total_cumulative_points} icon={<Star size={24} color="#00ff66" />} color="#00ff66" />
                 <HighlightCard title="Most Matches Played" player={topMatches} value={topMatches?.total_games_played} icon={<Gamepad2 size={24} color="#3b82f6" />} color="#3b82f6" />
                 <HighlightCard title="Most Rounds Survived" player={topRounds} value={topRounds?.total_rounds_played} icon={<Activity size={24} color="var(--accent-cyan)" />} color="var(--accent-cyan)" />
-                <HighlightCard title="Most Total Deaths" player={topDeaths} value={topDeaths?.total_cumulative_deaths} icon={<Skull size={24} color="#ef4444" />} color="#ef4444" />
+                <HighlightCard title="Most Times Supercharged" player={topSupercharged} value={topSupercharged?.times_supercharged} icon={<Zap size={24} color="#eab308" />} color="#eab308" />
               </div>
             )}
 
@@ -222,12 +222,12 @@ export function LeaderboardModal({ isOpen, onClose }) {
                 <HighlightCard title="Most Opponents Destroyed" player={topKills} value={topKills?.players_destroyed} icon={<Crosshair size={24} color="#ff007f" />} color="#ff007f" />
                 <HighlightCard title="Most Kamikaze Attacks" player={topKamikazes} value={topKamikazes?.kamikazes} icon={<Skull size={24} color="#ef4444" />} color="#ef4444" />
                 <HighlightCard title="Most Asteroids Crushed" player={topAsteroids} value={topAsteroids?.asteroids_destroyed} icon={<Trophy size={24} color="#a855f7" />} color="#a855f7" />
-                <HighlightCard title="Most Times Supercharged" player={topSupercharged} value={topSupercharged?.times_supercharged} icon={<Zap size={24} color="#eab308" />} color="#eab308" />
               </div>
             )}
 
             {activeTab === 'HAZARDS' && (
               <div className="highlights-grid">
+                <HighlightCard title="Most Total Deaths" player={topDeaths} value={topDeaths?.total_cumulative_deaths} icon={<Skull size={24} color="#ef4444" />} color="#ef4444" />
                 <HighlightCard title="Most Head-on Collisions" player={topCubeCrashed} value={topCubeCrashed?.times_cube_crashed} icon={<ShieldAlert size={24} color="#ef4444" />} color="#ef4444" />
                 <HighlightCard title="Most Asteroid Impacts" player={topAsteroidCrushed} value={topAsteroidCrushed?.times_crushed_by_asteroid} icon={<ShieldAlert size={24} color="#ef4444" />} color="#ef4444" />
                 <HighlightCard title="Most Void Drifts" player={topVoidDrift} value={topVoidDrift?.times_drifted_into_void} icon={<ShieldAlert size={24} color="#ef4444" />} color="#ef4444" />
