@@ -632,6 +632,14 @@ h1, h2, h3, h4, .font-heading {
   height: 16px;
 }
 
+.label-desktop { display: inline; }
+.label-mobile { display: none; }
+
+@media (max-width: 767px) {
+  .label-desktop { display: none; }
+  .label-mobile { display: inline; }
+}
+
 /* --- Mobile Responsiveness --- */
 .top-navbar {
   display: flex;

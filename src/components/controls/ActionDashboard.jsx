@@ -2,7 +2,7 @@
    GRAVITY PULSE 2026 - ACTION DASHBOARD & UNDO CONTROLS
    ========================================================================== */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { ActionCard } from './ActionCard.jsx';
 import { DIRECTIONS, MOVEMENT_STYLES, PHASES } from '../../engine/types.js';
 import { RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ShieldAlert, Zap, Rocket } from 'lucide-react';
@@ -21,6 +21,7 @@ export function ActionDashboard({
   onExecuteAction,
   onUndoMove
 }) {
+  const lastSelectTimeRef = useRef(0);
   if (phase === PHASES.SETUP || phase === PHASES.RESPAWN) {
     return (
       <div className="glass-card" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -66,11 +67,16 @@ export function ActionDashboard({
               isUsed={activePlayer.usedActions[act.id]}
               disabled={!isHuman}
               onSelectAction={(a) => { 
+                const now = Date.now();
                 soundEngine.playClick(); 
                 if (selectedAction?.id === a.id) {
-                  onExecuteAction(a, selectedDirection);
+                  if (now - lastSelectTimeRef.current > 300) {
+                    onExecuteAction(a, selectedDirection);
+                    lastSelectTimeRef.current = 0;
+                  }
                 } else {
                   onSelectAction(a); 
+                  lastSelectTimeRef.current = now;
                 }
               }}
             />
@@ -116,11 +122,16 @@ export function ActionDashboard({
               isUsed={activePlayer.usedActions[act.id]}
               disabled={!isHuman}
               onSelectAction={(a) => { 
+                const now = Date.now();
                 soundEngine.playClick(); 
                 if (selectedAction?.id === a.id) {
-                  onExecuteAction(a, selectedDirection);
+                  if (now - lastSelectTimeRef.current > 300) {
+                    onExecuteAction(a, selectedDirection);
+                    lastSelectTimeRef.current = 0;
+                  }
                 } else {
                   onSelectAction(a); 
+                  lastSelectTimeRef.current = now;
                 }
               }}
             />

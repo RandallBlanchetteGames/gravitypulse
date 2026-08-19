@@ -41,7 +41,16 @@ export function ActionCard({ action, isSelected, isUsed, disabled, onSelectActio
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
         {getIcon()}
-        <span className="action-label" style={{ fontWeight: 700 }}>{action.label}</span>
+        <span className="action-label" style={{ fontWeight: 700 }}>
+          {isSelected ? (
+            <>
+              <span className="label-desktop">CONFIRM {action.label}</span>
+              <span className="label-mobile">{action.label}</span>
+            </>
+          ) : (
+            action.label
+          )}
+        </span>
       </div>
 
       {isUsed && (
