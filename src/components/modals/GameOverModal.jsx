@@ -16,6 +16,7 @@ export function GameOverModal({ isOpen, players, onRematch, onClose }) {
   });
 
   const topScore = sorted[0]?.score || 0;
+  const topDeaths = sorted[0]?.deaths || 0;
   const winners = getWinners(players);
   const isTrueTie = winners.length > 1;
   const runnerUp = sorted[1];
