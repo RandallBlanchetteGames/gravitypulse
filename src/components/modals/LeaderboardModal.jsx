@@ -259,8 +259,15 @@ function HighlightCard({ title, player, value, icon, color }) {
       <div className="highlight-card-title" style={{ fontSize: '0.85rem' }}>
         {title}
       </div>
-      <div className="highlight-card-player">
+      <div className="highlight-card-player" style={{ 
+        whiteSpace: 'nowrap', 
+        overflow: 'hidden', 
+        textOverflow: 'ellipsis', 
+        width: '100%', 
+        textAlign: 'center' 
+      }}>
         {player ? (player.display_name || player.email.split('@')[0]) : '---'}
+        {player?.user_id && <span style={{ color: 'var(--text-muted)', fontSize: '0.85em', marginLeft: '4px' }}>#{player.user_id.substring(0,4).toUpperCase()}</span>}
       </div>
       <div className="highlight-card-value" style={{ color: color, textShadow: `0 0 10px ${color}80` }}>
         {value !== undefined ? value : '---'}

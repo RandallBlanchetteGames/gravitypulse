@@ -109,11 +109,21 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
               <button onClick={() => { soundEngine.playClick(); setIsEditingName(false); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0, textTransform: 'uppercase' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+              <h2 style={{ 
+                fontSize: '1.8rem', 
+                fontWeight: 800, 
+                color: '#fff', 
+                margin: 0, 
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
                 {profile?.display_name || user?.email?.split('@')[0]}
+                {user?.id && <span style={{ color: 'var(--text-muted)', fontSize: '1rem', marginLeft: '6px' }}>#{user.id.substring(0,4).toUpperCase()}</span>}
               </h2>
-              <button onClick={() => { soundEngine.playClick(); setIsEditingName(true); setEditNameValue(profile?.display_name || ''); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--accent-cyan)', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
+              <button onClick={() => { soundEngine.playClick(); setIsEditingName(true); setEditNameValue(profile?.display_name || ''); }} style={{ flexShrink: 0, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--accent-cyan)', fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
                 Edit Name
               </button>
             </div>

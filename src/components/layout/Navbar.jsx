@@ -98,8 +98,19 @@ export function Navbar({
                   <div style={{ padding: '4px 16px', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>
                     LOGGED IN AS
                   </div>
-                  <div style={{ padding: '4px 16px 8px', fontSize: '1rem', color: 'var(--accent-cyan)', fontWeight: 800, borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '4px' }}>
+                  <div style={{ 
+                    padding: '4px 16px 8px', 
+                    fontSize: '1rem', 
+                    color: 'var(--accent-cyan)', 
+                    fontWeight: 800, 
+                    borderBottom: '1px solid rgba(255,255,255,0.1)', 
+                    marginBottom: '4px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
                     {user.displayName || user.email.split('@')[0]}
+                    {user?.id && <span style={{ color: 'var(--text-muted)', fontSize: '0.85em', marginLeft: '4px' }}>#{user.id.substring(0,4).toUpperCase()}</span>}
                   </div>
                   <button onClick={() => { soundEngine.playClick(); closeMenu(); onOpenProfile(); }} className="menu-dropdown-btn">
                     <User size={16} /> My Profile
