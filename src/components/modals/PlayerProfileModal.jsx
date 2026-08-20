@@ -55,12 +55,13 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const roundsSurvived = Math.max(0, roundsPlayedRaw - deaths);
   const kills = getStat('players_destroyed');
 
-  const { pdRatio, winRate, pointsPerRound, killsPerGame } = calculateAverages(profile);
+  const { pdRatio, winRate, pointsPerRound, killsPerGame, superchargesPerGame } = calculateAverages(profile);
 
   const kdRatioStr = deaths > 0 ? formatDecimal(pdRatio) : (points > 0 ? 'Perfect' : '0.00');
   const winPercentStr = formatPercent(winRate);
   const pointsPerRoundStr = formatDecimalOne(pointsPerRound);
   const killsPerGameStr = formatDecimalOne(killsPerGame);
+  const superchargesPerGameStr = formatDecimalOne(superchargesPerGame);
 
   return (
     <div style={{
@@ -151,6 +152,7 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
                 <StatCard label="Points / Death" value={kdRatioStr} />
                 <StatCard label="Points / Round" value={pointsPerRoundStr} />
                 <StatCard label="Kills / Game" value={killsPerGameStr} />
+                <StatCard label="Supercharges / Game" value={superchargesPerGameStr} />
               </div>
             </div>
 

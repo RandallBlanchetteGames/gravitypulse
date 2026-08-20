@@ -7,6 +7,7 @@ export const calculateAverages = (p) => {
   const wins = p.total_wins || 0;
   const roundsPlayed = p.total_rounds_played || 0;
   const kills = p.players_destroyed || 0;
+  const supercharges = p.times_supercharged || 0;
 
   // Points / Death (In profile modal, this was labeled as kdRatio or Points / Death)
   const pdRatio = deaths > 0 ? (points / deaths) : points;
@@ -19,6 +20,9 @@ export const calculateAverages = (p) => {
   
   // Kills / Game
   const killsPerGame = gamesPlayed > 0 ? (kills / gamesPlayed) : 0;
+
+  // Supercharges / Game
+  const superchargesPerGame = gamesPlayed > 0 ? (supercharges / gamesPlayed) : 0;
   
   // True K/D Ratio
   const kdRatio = deaths > 0 ? (kills / deaths) : kills;
@@ -28,6 +32,7 @@ export const calculateAverages = (p) => {
     winRate,
     pointsPerRound,
     killsPerGame,
+    superchargesPerGame,
     kdRatio,
   };
 };

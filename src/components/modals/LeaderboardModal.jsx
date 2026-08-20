@@ -92,6 +92,9 @@ export function LeaderboardModal({ isOpen, onClose }) {
   const topKillsPerGameUnder20 = getTopAverage('killsPerGame', 1, 20);
   const topKillsPerGameOver20 = getTopAverage('killsPerGame', 20);
 
+  const topSuperchargesPerGameUnder20 = getTopAverage('superchargesPerGame', 1, 20);
+  const topSuperchargesPerGameOver20 = getTopAverage('superchargesPerGame', 20);
+
   const renderAverageCard = (title, pUnder20, pOver20, metric, formatFn, icon, color) => {
     const renderCard = (p, labelSuffix) => {
       if (!p) return null;
@@ -205,6 +208,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
                 {renderAverageCard('Kills / Death', topKdUnder20, topKdOver20, 'kdRatio', formatDecimal, <Crosshair size={24} color="#ff007f" />, '#ff007f')}
                 {renderAverageCard('Points / Round', topPointsPerRoundUnder20, topPointsPerRoundOver20, 'pointsPerRound', formatDecimalOne, <Star size={24} color="#00ff66" />, '#00ff66')}
                 {renderAverageCard('Kills / Game', topKillsPerGameUnder20, topKillsPerGameOver20, 'killsPerGame', formatDecimalOne, <Crosshair size={24} color="#ff007f" />, '#ff007f')}
+                {renderAverageCard('Supercharges / Game', topSuperchargesPerGameUnder20, topSuperchargesPerGameOver20, 'superchargesPerGame', formatDecimalOne, <Zap size={24} color="#eab308" />, '#eab308')}
               </div>
             )}
 
