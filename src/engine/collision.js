@@ -20,12 +20,12 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
     if (entity.x < 0 || entity.x >= boardSize || entity.y < 0 || entity.y >= boardSize) {
       destroyedIds.add(entity.id);
       if (entity.type === ENTITY_TYPES.CUBE) {
-        logs.push(`🚀 Player ${entity.playerId} drifted into deep void!`);
+        logs.push(`Player ${entity.playerId} drifted off into the void!`);
         respawnQueue.push(entity.playerId);
         statsEvents.push({ type: 'DEATH_VOID', victimId: entity.playerId, initiatorId });
         effects.push({ id: Math.random() + entity.id, x: Math.max(0, Math.min(boardSize - 1, entity.x)), y: Math.max(0, Math.min(boardSize - 1, entity.y)), type: 'COLLISION' });
       } else if (entity.type === ENTITY_TYPES.ASTEROID) {
-        logs.push(`☄️ Asteroid drifted off into deep void!`);
+        logs.push(`Asteroid drifted off into the void.`);
         statsEvents.push({ type: 'ASTEROID_DESTROYED', initiatorId });
         effects.push({ id: Math.random() + entity.id, x: Math.max(0, Math.min(boardSize - 1, entity.x)), y: Math.max(0, Math.min(boardSize - 1, entity.y)), type: 'COLLISION' });
       }
@@ -37,12 +37,12 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
     if (isBlackHole(entity.x, entity.y, boardSize)) {
       destroyedIds.add(entity.id);
       if (entity.type === ENTITY_TYPES.CUBE) {
-        logs.push(`🕳️ Player ${entity.playerId} sucked into the Singularity (Destroyed)!`);
+        logs.push(`Player ${entity.playerId} sucked into the Black Hole!`);
         respawnQueue.push(entity.playerId);
         statsEvents.push({ type: 'DEATH_BLACKHOLE', victimId: entity.playerId, initiatorId });
         effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
       } else if (entity.type === ENTITY_TYPES.ASTEROID) {
-        logs.push(`☄️ Asteroid sucked into the Singularity!`);
+        logs.push(`Asteroid sucked into the Black Hole.`);
         statsEvents.push({ type: 'ASTEROID_DESTROYED', initiatorId });
         effects.push({ id: Math.random() + entity.id, x: entity.x, y: entity.y, type: 'IMPLOSION' });
       }
@@ -72,7 +72,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
     if (cubes.length > 0 && asteroids.length > 0) {
       cubes.forEach(c => {
         destroyedIds.add(c.id);
-        logs.push(`☄️ Player ${c.playerId} crushed by Asteroid!`);
+        logs.push(`Player ${c.playerId} crushed by an Asteroid!`);
         respawnQueue.push(c.playerId);
         statsEvents.push({ type: 'DEATH_ASTEROID', victimId: c.playerId, initiatorId });
         effects.push({ id: Math.random() + c.id, x: c.x, y: c.y, type: 'COLLISION' });
@@ -91,7 +91,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
         // OVERLOAD BLOW UP!
         destroyedIds.add(luckyCube.id);
         energies.forEach(eng => destroyedIds.add(eng.id));
-        logs.push(`💥 Player ${luckyCube.playerId} overloaded from excess energy and BLEW UP!`);
+        logs.push(`Player ${luckyCube.playerId} overloaded and blew up!`);
         respawnQueue.push(luckyCube.playerId);
         statsEvents.push({ type: 'DEATH_OVERLOAD', victimId: luckyCube.playerId, initiatorId });
         effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'OVERLOAD' });
@@ -99,7 +99,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
       } else {
         luckyCube.isSupercharged = true;
         energies.forEach(eng => destroyedIds.add(eng.id));
-        logs.push(`⚡ Player ${luckyCube.playerId} entered a Cosmic Energy Field (Supercharged)!`);
+        logs.push(`Player ${luckyCube.playerId} absorbed an Energy Field (Supercharged)!`);
         statsEvents.push({ type: 'SUPERCHARGE', victimId: luckyCube.playerId });
         effects.push({ id: Math.random() + luckyCube.id, x: luckyCube.x, y: luckyCube.y, type: 'SUPERCHARGE' });
         soundEngine.playSupercharge();
@@ -111,7 +111,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
       cubes.forEach(c => {
         if (!destroyedIds.has(c.id)) {
           destroyedIds.add(c.id);
-          logs.push(`💥 Player ${c.playerId} destroyed in a Head-on Collision!`);
+          logs.push(`Player ${c.playerId} destroyed in a collision!`);
           respawnQueue.push(c.playerId);
           statsEvents.push({ type: 'DEATH_CUBE_CRASH', victimId: c.playerId, initiatorId });
           effects.push({ id: Math.random() + c.id, x: c.x, y: c.y, type: 'COLLISION' });
@@ -127,7 +127,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
           destroyedIds.add(a.id);
         }
       });
-      logs.push(`☄️ Two Asteroids collided and shattered in deep space!`);
+      logs.push(`Two Asteroids collided.`);
       effects.push({ id: Math.random() + asteroids[0].id, x: asteroids[0].x, y: asteroids[0].y, type: 'COLLISION' });
       soundEngine.playExplosion();
     }
@@ -137,7 +137,7 @@ export function resolveCellCollisions(board, boardSize, logs = [], initiatorId =
       energies.forEach(eng => {
         if (!destroyedIds.has(eng.id)) {
           destroyedIds.add(eng.id);
-          logs.push(`☄️ Asteroid dissipated a Cosmic Energy Field!`);
+          logs.push(`Asteroid dissipated a Cosmic Energy Field.`);
           effects.push({ id: Math.random() + eng.id, x: eng.x, y: eng.y, type: 'COLLISION' });
         }
       });

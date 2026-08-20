@@ -7,7 +7,7 @@ import { Zap } from 'lucide-react';
 import { PHASES, TURN_ACTIONS, ENTITY_TYPES, PLAYER_COLORS, MAP_SIZES, MOVEMENT_STYLES, GAME_LENGTHS } from './engine/types.js';
 import { GameRules } from './engine/rules.js';
 import { executeMove, previewTrajectory, previewWaveDisplacements } from './engine/movementResolver.js';
-import { executeGravity, executePulse, executeLocalizedGravity, executeBlackHoleSuction } from './engine/gravityPulse.js';
+import { executeGravity, executePulse, executeBlackHoleSuction } from './engine/gravityPulse.js';
 import { executeOrbitalMovement } from './engine/orbitalMovement.js';
 import { getAIPlacement, getAITurnDecision } from './engine/aiDecision.js';
 import { saveGameSession, loadGameSession, clearGameSession } from './engine/storage.js';
@@ -170,7 +170,7 @@ export default function App() {
     setCurrentRound(1);
     setTurnInRound(1);
     setPhase(PHASES.SETUP);
-    setLogs([`☄️ 2 initial asteroids deployed in outer space.`, `🚀 Welcome to Gravity Pulse 2026! Setup phase initiated (${config.mapSize.label}).`]);
+    setLogs([`Welcome to Gravity Pulse! Go to Setup to adjust settings.`, `2 initial asteroids arrive from deep space.`, `Setup phase.`]);
     setHistoryStack([]);
     setExplosions([]);
     setRespawnQueue([]);
@@ -325,12 +325,7 @@ export default function App() {
         // Turn 4 Completed: End of Round Climax!
         roundLogs.push(`--- End of Round ${currentRound}: Singularity Event ---`);
 
-        // 1. Turn 4 Localized Gravity Phase
-        const locRes = executeLocalizedGravity(updatedBoard, rules);
-        updatedBoard = locRes.finalBoard;
-        if (locRes.respawnQueue.length > 0) newRespawns.push(...locRes.respawnQueue);
-        if (locRes.effects) dispatchEffects(locRes.effects);
-        if (locRes.statsEvents) processStatsEvents(locRes.statsEvents);
+
 
         // 2. Turn 4 Black Hole Suction Phase
         const bhRes = executeBlackHoleSuction(updatedBoard, rules);
@@ -423,7 +418,7 @@ export default function App() {
           setCurrentRound(nextRound);
           setTurnInRound(1);
           if (roundLogs.length > 0) {
-            setLogs(prev => [...prev, ...roundLogs, `Destroyed pieces awaiting re-deployment for Round ${nextRound}!`]);
+            setLogs(prev => [...prev, ...roundLogs, `Destroyed players awaiting re-deployment for Round ${nextRound}!`]);
           }
           setRespawnQueue(shuffleArray(missingPlayerIds));
           setPhase(PHASES.RESPAWN);
@@ -518,7 +513,7 @@ export default function App() {
 
       if (remainingQueue.length === 0) {
         setPhase(PHASES.PLAYING);
-        setLogs(prev => [...prev, `All destroyed pieces re-deployed!`]);
+        setLogs(prev => [...prev, `All destroyed players re-deployed!`]);
       }
     }
   };
@@ -572,7 +567,7 @@ export default function App() {
       const hasPiece = board.some(e => e.type === ENTITY_TYPES.CUBE && e.playerId === activePlayer.id);
       if (!hasPiece) {
         const skipTimer = setTimeout(() => {
-          setLogs(prev => [...prev, `⏳ Player ${activePlayer.id} is destroyed (awaiting round-end respawn) - turn skipped.`]);
+          setLogs(prev => [...prev, `Player ${activePlayer.id} is destroyed (awaiting round-end respawn) - turn skipped.`]);
           advanceTurn(board, players, []);
         }, 500);
         return () => clearTimeout(skipTimer);
@@ -717,7 +712,7 @@ export default function App() {
     setPlayers(lastState.players);
     setActivePlayerIdx(lastState.activePlayerIdx);
     setCurrentRound(lastState.currentRound);
-    setLogs(prev => [...prev, `↩️ Player ${activePlayer.id} rewound time (Undo Move triggered).`]);
+    setLogs(prev => [...prev, `Player ${activePlayer.id} rewound time (Undo Move triggered).`]);
     setHistoryStack(prev => prev.slice(0, -1));
     setSelectedAction(null);
     setSelectedDirection(null);

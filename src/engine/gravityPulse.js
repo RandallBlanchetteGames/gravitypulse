@@ -31,7 +31,8 @@ export function executeGravity(board, playerId, rules, isSimulation = false) {
   }
   const power = activeCube.isSupercharged ? 2 : 1;
   const sequence = [];
-  const logs = [`🌊 Player ${playerId} triggers Gravity Wave (Power ${power})!`];
+  const powerText = activeCube.isSupercharged ? " (Supercharged)" : "";
+  const logs = [`Player ${playerId} triggers Gravity Wave${powerText}!`];
   let allRespawns = [];
   let allEffects = [];
   let allStatsEvents = [];
@@ -86,7 +87,8 @@ export function executePulse(board, playerId, rules, isSimulation = false) {
   }
   const power = activeCube.isSupercharged ? 2 : 1;
   const sequence = [];
-  const logs = [`⚡ Player ${playerId} triggers Pulse Wave (Power ${power})!`];
+  const powerText = activeCube.isSupercharged ? " (Supercharged)" : "";
+  const logs = [`Player ${playerId} triggers Pulse Wave${powerText}!`];
   let allRespawns = [];
   let allEffects = [];
   let allStatsEvents = [];
@@ -132,64 +134,7 @@ export function executePulse(board, playerId, rules, isSimulation = false) {
   return { sequence, finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
 }
 
-/* Execute Localized Gravity Phase: regions pull toward region leader */
-export function executeLocalizedGravity(board, rules) {
-  let currentBoard = board.map(e => ({ ...e }));
-  const logs = [`💫 Localized Gravity checks regions...`];
-  let allRespawns = [];
-  let allEffects = [];
-  let allStatsEvents = [];
 
-  const regionMap = new Map();
-  currentBoard.filter(e => e.type === ENTITY_TYPES.CUBE).forEach(c => {
-    const { rx, ry } = getRegionCoords(c.x, c.y);
-    const key = `${rx},${ry}`;
-    if (!regionMap.has(key)) regionMap.set(key, []);
-    regionMap.get(key).push(c);
-  });
-
-  let movedAny = false;
-  // Localized gravity doesn't have a single initiator, but we can say the region leader initiated it.
-  // We'll collect stats independently if possible, or pass null if multiple leaders pull simultaneously.
-  // For simplicity, we just pass null here, so hazard deaths are recorded but no specific player gets a kill.
-  regionMap.forEach((cubes, rKey) => {
-    if (cubes.length <= 1) return;
-    const counts = {};
-    cubes.forEach(c => counts[c.playerId] = (counts[c.playerId] || 0) + 1);
-    let maxCount = 0;
-    let leaderId = null;
-    let tie = false;
-    Object.entries(counts).forEach(([pid, count]) => {
-      if (count > maxCount) {
-        maxCount = count;
-        leaderId = Number(pid);
-        tie = false;
-      } else if (count === maxCount) {
-        tie = true;
-      }
-    });
-
-    if (!tie && leaderId !== null) {
-      const leaderCube = cubes.find(c => c.playerId === leaderId);
-      cubes.filter(c => c.playerId !== leaderId).forEach(target => {
-        const vec = getStepVector(target.x, target.y, leaderCube.x, leaderCube.y);
-        target.x += vec.x;
-        target.y += vec.y;
-        movedAny = true;
-      });
-    }
-  });
-
-  if (movedAny) {
-    const res = resolveCellCollisions(currentBoard, rules.getBoardSize(), logs, null); // passing null since it's environment/regional
-    currentBoard = res.finalBoard;
-    if (res.respawnQueue.length > 0) allRespawns.push(...res.respawnQueue);
-    if (res.effects && res.effects.length > 0) allEffects.push(...res.effects);
-    if (res.statsEvents && res.statsEvents.length > 0) allStatsEvents.push(...res.statsEvents);
-  }
-
-  return { finalBoard: currentBoard, respawnQueue: allRespawns, logs, effects: allEffects, statsEvents: allStatsEvents };
-}
 
 /* Execute Black Hole Suction Phase: pull all players, asteroids, and energy fields on the map inward 1 space */
 export function executeBlackHoleSuction(board, rules) {
@@ -198,7 +143,7 @@ export function executeBlackHoleSuction(board, rules) {
   const cx = (size - 1) / 2;
   const cy = (size - 1) / 2;
 
-  const logs = [`🕳️ Black Hole Singularity pulls mass inward and radiates energy outward!`];
+  const logs = [`Black Hole pulls mass inward and radiates energy outward.`];
   let allRespawns = [];
   let allEffects = [];
   let allStatsEvents = [];
