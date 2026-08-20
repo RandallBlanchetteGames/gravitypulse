@@ -51,7 +51,8 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const points = getStat('total_cumulative_points');
   const deaths = getStat('total_cumulative_deaths');
   const wins = getStat('total_wins');
-  const roundsPlayed = getStat('total_rounds_played');
+  const roundsPlayedRaw = getStat('total_rounds_played');
+  const roundsSurvived = Math.max(0, roundsPlayedRaw - deaths);
   const kills = getStat('players_destroyed');
 
   const { pdRatio, winRate, pointsPerRound, killsPerGame } = calculateAverages(profile);
@@ -163,7 +164,7 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
                 <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <StatRow label="Games Played (1vAI)" value={gamesPlayed} />
                   <StatRow label="Matches Won" value={wins} color="#00ff66" />
-                  <StatRow label="Rounds Survived" value={roundsPlayed} />
+                  <StatRow label="Rounds Survived" value={roundsSurvived} />
                   <StatRow label="Total Score" value={points} color="var(--accent-cyan)" />
                   <StatRow label="Total Deaths" value={deaths} color="#ef4444" />
                 </div>

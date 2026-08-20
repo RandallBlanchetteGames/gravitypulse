@@ -59,7 +59,8 @@ export function LeaderboardModal({ isOpen, onClose }) {
   const topWins = getTopPlayer(leaderboard, (a, b) => (b.total_wins || 0) - (a.total_wins || 0));
   const topPoints = getTopPlayer(leaderboard, (a, b) => (b.total_cumulative_points || 0) - (a.total_cumulative_points || 0));
   const topMatches = getTopPlayer(leaderboard, (a, b) => (b.total_games_played || 0) - (a.total_games_played || 0));
-  const topRounds = getTopPlayer(leaderboard, (a, b) => (b.total_rounds_played || 0) - (a.total_rounds_played || 0));
+  const getSurvived = (p) => Math.max(0, (p.total_rounds_played || 0) - (p.total_cumulative_deaths || 0));
+  const topRounds = getTopPlayer(leaderboard, (a, b) => getSurvived(b) - getSurvived(a));
   const topDeaths = getTopPlayer(leaderboard, (a, b) => (b.total_cumulative_deaths || 0) - (a.total_cumulative_deaths || 0));
 
   // Eliminations
@@ -212,7 +213,7 @@ export function LeaderboardModal({ isOpen, onClose }) {
                 <HighlightCard title="Most Wins" player={topWins} value={topWins?.total_wins} icon={<Trophy size={24} color="var(--accent-gold)" />} color="var(--accent-gold)" />
                 <HighlightCard title="Highest Total Points" player={topPoints} value={topPoints?.total_cumulative_points} icon={<Star size={24} color="#00ff66" />} color="#00ff66" />
                 <HighlightCard title="Most Matches Played" player={topMatches} value={topMatches?.total_games_played} icon={<Gamepad2 size={24} color="#3b82f6" />} color="#3b82f6" />
-                <HighlightCard title="Most Rounds Survived" player={topRounds} value={topRounds?.total_rounds_played} icon={<Activity size={24} color="var(--accent-cyan)" />} color="var(--accent-cyan)" />
+                <HighlightCard title="Most Rounds Survived" player={topRounds} value={topRounds ? Math.max(0, (topRounds.total_rounds_played || 0) - (topRounds.total_cumulative_deaths || 0)) : 0} icon={<Activity size={24} color="var(--accent-cyan)" />} color="var(--accent-cyan)" />
                 <HighlightCard title="Most Times Supercharged" player={topSupercharged} value={topSupercharged?.times_supercharged} icon={<Zap size={24} color="#eab308" />} color="#eab308" />
               </div>
             )}
