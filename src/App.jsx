@@ -338,7 +338,7 @@ export default function App() {
         const hazards = rules.spawnHazards(updatedBoard, rules.getBoardSize());
         updatedBoard = [...updatedBoard, ...hazards];
         if (hazards.length > 0) {
-          roundLogs.push(`Space hazards spawned in outer sector.`);
+          roundLogs.push(`Space hazards appear.`);
         }
 
         // Award +1 Survival Point to players who survived the round
