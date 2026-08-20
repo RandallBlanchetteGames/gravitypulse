@@ -338,7 +338,7 @@ export default function App() {
         const hazards = rules.spawnHazards(updatedBoard, rules.getBoardSize());
         updatedBoard = [...updatedBoard, ...hazards];
         if (hazards.length > 0) {
-          roundLogs.push(`☄️ Space hazards spawned in outer sector.`);
+          roundLogs.push(`Space hazards spawned in outer sector.`);
         }
 
         // Award +1 Survival Point to players who survived the round
@@ -351,7 +351,7 @@ export default function App() {
           }
         });
         if (survivorCount > 0) {
-          roundLogs.push(`🛡️ +1 Survival Point awarded to ${survivorCount} surviving player(s)!`);
+          roundLogs.push(`+1 Survival Point awarded to ${survivorCount} surviving player(s)!`);
         }
 
         nextRound += 1;
@@ -361,7 +361,7 @@ export default function App() {
 
         // Reset & recharge action cards for all players at start of new round!
         updatedPlayers.forEach(p => rules.resetActions(p));
-        roundLogs.push(`🔄 All action cards recharged for Round ${nextRound}!`);
+        roundLogs.push(`All action cards recharged for Round ${nextRound}!`);
 
         // Check Match End Condition
         if (nextRound > rules.gameLength.rounds) {
@@ -662,7 +662,7 @@ export default function App() {
         const pObj = nextPlayers.find(p => p.id === activePlayer.id);
         if (pObj) {
           pObj.score = (pObj.score || 0) + opponentsDestroyed.length;
-          result.logs.push(`🎯 Player ${activePlayer.id} eliminated ${opponentsDestroyed.length} opponent(s)! (+${opponentsDestroyed.length} Elimination Point${opponentsDestroyed.length > 1 ? 's' : ''})`);
+          result.logs.push(`Player ${activePlayer.id} eliminated ${opponentsDestroyed.length} opponent(s)! (+${opponentsDestroyed.length} Elimination Point${opponentsDestroyed.length > 1 ? 's' : ''})`);
         }
       }
     }

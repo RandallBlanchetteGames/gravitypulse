@@ -56,7 +56,7 @@ export function executeOrbitalMovement(board, boardSize, logs = []) {
   let allStatsEvents = [];
 
   if (moved) {
-    logs.push(`🌀 Cosmic Energy Fields rotate 1 cell clockwise along their orbital rings.`);
+    logs.push(`Cosmic Energy Fields rotate 1 cell clockwise along their orbital rings.`);
     const res = resolveCellCollisions(currentBoard, boardSize, logs);
     currentBoard = res.finalBoard;
     if (res.respawnQueue && res.respawnQueue.length > 0) {
