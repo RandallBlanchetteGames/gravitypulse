@@ -1074,8 +1074,14 @@ h1, h2, h3, h4, .font-heading {
 /* --- Leaderboard Highlight Cards --- */
 .highlights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .highlights-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .highlight-card {

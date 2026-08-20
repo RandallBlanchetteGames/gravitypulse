@@ -136,18 +136,18 @@ export function LeaderboardModal({ isOpen, onClose }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      padding: '16px',
       zIndex: 9999
     }}>
       <div className="glass-card anim-pop" style={{
         width: '100%',
-        maxWidth: '800px',
-        maxHeight: '90vh',
+        maxWidth: '1000px',
+        maxHeight: '100%',
         overflowY: 'auto',
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
         gap: '20px',
-        margin: '16px',
         position: 'relative'
       }}>
         <button 
@@ -157,14 +157,14 @@ export function LeaderboardModal({ isOpen, onClose }) {
           <X size={24} />
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginBottom: '8px', flexShrink: 0 }}>
           <Trophy color="var(--accent-gold)" size={32} />
           <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', margin: 0 }}>
             GLOBAL LEADERBOARD
           </h2>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
           {tabs.map(t => (
             <button
               key={t.id}
