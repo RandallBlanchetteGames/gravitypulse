@@ -35,6 +35,17 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
     });
   };
 
+  const handleReset = () => {
+    soundEngine.playClick();
+    setMapSize(MAP_SIZES.REGIONS_4X4);
+    setMovementStyle(MOVEMENT_STYLES.REGIONAL_LOCKED);
+    setHazardsEnabled(true);
+    setGameLength(GAME_LENGTHS.STANDARD_5);
+    setPlayerCount(4);
+    setAiCount(3);
+    setAiDifficulty(AI_DIFFICULTY.STANDARD.id);
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -65,9 +76,14 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
             <Settings color="var(--accent-cyan)" size={24} />
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>GAME SETTINGS</h2>
           </div>
-          <button onClick={() => { soundEngine.playClick(); onClose(); }} className="neon-btn" style={{ padding: '6px 10px', minWidth: 'auto' }}>
-            <X size={18} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button onClick={handleReset} className="neon-btn btn-violet" style={{ padding: '6px 10px', fontSize: '0.8rem' }}>
+              RESET
+            </button>
+            <button onClick={() => { soundEngine.playClick(); onClose(); }} className="neon-btn" style={{ padding: '6px 10px', minWidth: 'auto' }}>
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* 1. Map Size */}
@@ -95,7 +111,7 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
         {/* 2. Movement Style */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>MOVEMENT RULES</label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {Object.values(MOVEMENT_STYLES).map(style => (
               <button
                 key={style.id}
@@ -104,12 +120,13 @@ export function GameSetupModal({ isOpen, initialConfig, onClose, onApplySetup, u
                 style={{
                   padding: '12px',
                   fontSize: '0.85rem',
-                  justifyContent: 'flex-start',
+                  justifyContent: 'center',
                   background: movementStyle.id === style.id ? 'var(--accent-cyan)' : undefined,
                   color: movementStyle.id === style.id ? '#030508' : undefined
                 }}
               >
-                <Orbit size={16} style={{ transform: 'scaleX(-1)' }} /> {style.label}
+                <Orbit size={16} style={{ transform: 'scaleX(-1)' }} /> 
+                <span style={{ marginLeft: '6px' }}>{style.label}</span>
               </button>
             ))}
           </div>

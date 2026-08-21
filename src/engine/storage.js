@@ -57,3 +57,26 @@ export function clearGameSession() {
     window.localStorage.removeItem(STORAGE_KEY);
   } catch (e) {}
 }
+
+const SETUP_STORAGE_KEY = 'gravity_pulse_setup_2026';
+
+export function saveSetupSettings(config) {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify(config));
+  } catch (e) {
+    console.warn("Failed to auto-save setup config:", e);
+  }
+}
+
+export function loadSetupSettings() {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  try {
+    const raw = window.localStorage.getItem(SETUP_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn("Failed to load saved setup config:", e);
+    return null;
+  }
+}

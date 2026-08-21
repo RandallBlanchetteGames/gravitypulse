@@ -10,7 +10,7 @@ import { executeMove, previewTrajectory, previewWaveDisplacements } from './engi
 import { executeGravity, executePulse, executeBlackHoleSuction } from './engine/gravityPulse.js';
 import { executeOrbitalMovement } from './engine/orbitalMovement.js';
 import { getAIPlacement, getAITurnDecision } from './engine/aiDecision.js';
-import { saveGameSession, loadGameSession, clearGameSession } from './engine/storage.js';
+import { saveGameSession, loadGameSession, clearGameSession, loadSetupSettings, saveSetupSettings } from './engine/storage.js';
 import { getWinners } from './engine/scoring.js';
 import { soundEngine } from './audio/soundEngine.js';
 
@@ -49,14 +49,28 @@ function shuffleArray(array) {
 export default function App() {
   // Rules & Configuration
   const [rules, setRules] = useState(new GameRules());
-  const [rulesConfig, setRulesConfig] = useState({
-    mapSize: MAP_SIZES.REGIONS_4X4,
-    movementStyle: MOVEMENT_STYLES.REGIONAL_LOCKED,
-    hazardsEnabled: true,
-    gameLength: GAME_LENGTHS.STANDARD_5,
-    playerCount: 4,
-    aiCount: 3,
-    aiDifficulty: 'STANDARD'
+  const [rulesConfig, setRulesConfig] = useState(() => {
+    const saved = loadSetupSettings();
+    if (saved) {
+      return {
+        mapSize: MAP_SIZES[saved.mapSize?.id] || MAP_SIZES.REGIONS_4X4,
+        movementStyle: MOVEMENT_STYLES[saved.movementStyle?.id] || MOVEMENT_STYLES.REGIONAL_LOCKED,
+        hazardsEnabled: saved.hazardsEnabled ?? true,
+        gameLength: GAME_LENGTHS[saved.gameLength?.id] || GAME_LENGTHS.STANDARD_5,
+        playerCount: saved.playerCount ?? 4,
+        aiCount: saved.aiCount ?? 3,
+        aiDifficulty: saved.aiDifficulty || 'STANDARD'
+      };
+    }
+    return {
+      mapSize: MAP_SIZES.REGIONS_4X4,
+      movementStyle: MOVEMENT_STYLES.REGIONAL_LOCKED,
+      hazardsEnabled: true,
+      gameLength: GAME_LENGTHS.STANDARD_5,
+      playerCount: 4,
+      aiCount: 3,
+      aiDifficulty: 'STANDARD'
+    };
   });
 
   // Game State
@@ -133,11 +147,12 @@ export default function App() {
   }, [rulesConfig]);
 
   /* Initialize Players & Start New Game */
-  const initGame = useCallback((config = rulesConfig) => {
+  const initGame = useCallback((config = rulesConfig, isStartup = false) => {
     clearTimeout(aiTimeoutRef.current);
     const newRules = new GameRules(config);
     setRules(newRules);
     setRulesConfig(config);
+    saveSetupSettings(config);
 
     const newPlayers = Array.from({ length: config.playerCount }, (_, i) => ({
       id: i + 1,
@@ -170,7 +185,12 @@ export default function App() {
     setCurrentRound(1);
     setTurnInRound(1);
     setPhase(PHASES.SETUP);
-    setLogs([`Welcome to Gravity Pulse! Go to Setup to adjust settings.`, `2 initial asteroids arrive from deep space.`, `Setup phase.`]);
+    
+    let initialLogs = [`Welcome to Gravity Pulse! Go to Setup to adjust settings.`, `2 initial asteroids arrive from deep space.`, `Setup phase.`];
+    if (isStartup && loadSetupSettings()) {
+      initialLogs.push(`Restored previous setup preferences.`);
+    }
+    setLogs(initialLogs);
     setHistoryStack([]);
     setExplosions([]);
     setRespawnQueue([]);
@@ -213,7 +233,7 @@ export default function App() {
           clearGameSession();
         }
       }
-      initGame(rulesConfig);
+      initGame(rulesConfig, true);
     }
   }, [hasLoadedPrompt, initGame, rulesConfig]);
 

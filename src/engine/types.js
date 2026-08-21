@@ -37,8 +37,8 @@ export const MAP_SIZES = {
 };
 
 export const MOVEMENT_STYLES = {
-  REGIONAL_LOCKED: { id: 'REGIONAL_LOCKED', label: 'Regional Direction Locked' },
-  FREE_DIRECTIONAL: { id: 'FREE_DIRECTIONAL', label: 'Free Directional (Up/Down/Left/Right)' }
+  REGIONAL_LOCKED: { id: 'REGIONAL_LOCKED', label: 'Regional Locked' },
+  FREE_DIRECTIONAL: { id: 'FREE_DIRECTIONAL', label: 'Free Directional' }
 };
 
 export const GAME_LENGTHS = {
