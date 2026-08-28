@@ -12,5 +12,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      (function() {
+        const gameId = 'gravitypulse';
+        const today = new Date().toISOString().split('T')[0];
+        const lastVisit = localStorage.getItem('bg_last_visit_' + gameId);
+        if (lastVisit !== today) {
+          fetch('https://blanchettegames.com/api/track-play?game=' + gameId, { method: 'POST' })
+            .then(res => { if (res.ok) localStorage.setItem('bg_last_visit_' + gameId, today); })
+            .catch(() => {});
+        }
+      })();
+    </script>
   </body>
 </html>
