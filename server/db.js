@@ -55,6 +55,11 @@ export async function initDB() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(255);
     `);
 
+    // Migrate all existing emails to lowercase
+    await client.query(`
+      UPDATE users SET email = LOWER(email);
+    `);
+
     // Create stats table
     await client.query(`
       CREATE TABLE IF NOT EXISTS stats (

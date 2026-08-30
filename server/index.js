@@ -40,7 +40,8 @@ app.get('/api/debug/db', async (req, res) => {
 
 app.post('/api/auth/register', async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'Database not configured' });
-  const { email, password, displayName } = req.body;
+  const { password, displayName } = req.body;
+  const email = req.body.email ? req.body.email.trim().toLowerCase() : null;
   
   if (!email || !password || !displayName) {
     return res.status(400).json({ error: 'Email, password, and display name are required' });
@@ -52,7 +53,7 @@ app.post('/api/auth/register', async (req, res) => {
   }
 
   try {
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const existing = await pool.query('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [email]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'Email already exists' });
     }
@@ -80,7 +81,8 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'Database not configured' });
-  const { email, password } = req.body;
+  const { password } = req.body;
+  const email = req.body.email ? req.body.email.trim().toLowerCase() : null;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
@@ -88,7 +90,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
-    const result = await pool.query('SELECT id, email, display_name, password_hash FROM users WHERE email = $1', [email]);
+    const result = await pool.query('SELECT id, email, display_name, password_hash FROM users WHERE LOWER(email) = LOWER($1)', [email]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }

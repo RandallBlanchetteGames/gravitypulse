@@ -18,13 +18,14 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login
     soundEngine.playClick();
     setError('');
     
-    if (!email || !password || (mode === 'register' && !displayName)) {
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !password || (mode === 'register' && !displayName)) {
       setError('Please fill in all fields.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(cleanEmail)) {
       setError('Please enter a valid email address.');
       return;
     }
@@ -33,9 +34,9 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode = 'login
     try {
       let data;
       if (mode === 'login') {
-        data = await api.login(email, password);
+        data = await api.login(cleanEmail, password);
       } else {
-        data = await api.register(email, password, displayName);
+        data = await api.register(cleanEmail, password, displayName);
       }
       
       onAuthSuccess(data.user, data.token);
