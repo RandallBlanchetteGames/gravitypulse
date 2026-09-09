@@ -44,23 +44,31 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
 
   if (!isOpen) return null;
 
-  const getStat = (key) => profile ? (profile[key] || 0) : 0;
+  const getStat = (key) => profile ? (profile[key] ?? 0) : 0;
 
-  // Calculated Averages
-  const gamesPlayed = getStat('total_games_played');
-  const points = getStat('total_cumulative_points');
-  const deaths = getStat('total_cumulative_deaths');
-  const wins = getStat('total_wins');
+  // Calculated Averages — all derived from profile (null-safe via getStat + calculateAverages)
+  const gamesPlayed     = getStat('total_games_played');
+  const points          = getStat('total_cumulative_points');
+  const deaths          = getStat('total_cumulative_deaths');
+  const wins            = getStat('total_wins');
   const roundsPlayedRaw = getStat('total_rounds_played');
-  const roundsSurvived = Math.max(0, roundsPlayedRaw - deaths);
-  const kills = getStat('players_destroyed');
+  const roundsSurvived  = Math.max(0, roundsPlayedRaw - deaths);
+  const kills           = getStat('players_destroyed');
 
-  const { pdRatio, winRate, pointsPerRound, killsPerGame, superchargesPerGame } = calculateAverages(profile);
+  // Destructure with default fallbacks as a third safety layer
+  const {
+    pdRatio             = 0,
+    winRate             = 0,
+    pointsPerRound      = 0,
+    killsPerGame        = 0,
+    superchargesPerGame = 0,
+  } = calculateAverages(profile);
 
-  const kdRatioStr = deaths > 0 ? formatDecimal(pdRatio) : (points > 0 ? 'Perfect' : '0.00');
-  const winPercentStr = formatPercent(winRate);
-  const pointsPerRoundStr = formatDecimalOne(pointsPerRound);
-  const killsPerGameStr = formatDecimalOne(killsPerGame);
+  // kdRatioStr: deaths>0 uses pdRatio; no deaths + has points = "Perfect"; else "0.00"
+  const kdRatioStr         = deaths > 0 ? formatDecimal(pdRatio) : (points > 0 ? 'Perfect' : '0.00');
+  const winPercentStr      = formatPercent(winRate);
+  const pointsPerRoundStr  = formatDecimalOne(pointsPerRound);
+  const killsPerGameStr    = formatDecimalOne(killsPerGame);
   const superchargesPerGameStr = formatDecimalOne(superchargesPerGame);
 
   return (
@@ -138,69 +146,88 @@ export function PlayerProfileModal({ isOpen, onClose, user, onUpdateUser }) {
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--accent-cyan)' }}>Loading telemetry...</div>
         ) : error ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#ef4444' }}>{error}</div>
+          <div style={{ padding: '32px 16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ef4444', marginBottom: '6px', letterSpacing: '0.05em' }}>
+              DATABASE UNAVAILABLE
+            </div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{error}</div>
+          </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            
-            {/* Highlight Averages */}
-            <div>
-              <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Activity size={18} color="var(--accent-cyan)" /> COMBAT AVERAGES
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-                <StatCard label="Win Rate" value={winPercentStr} />
-                <StatCard label="Points / Death" value={kdRatioStr} />
-                <StatCard label="Points / Round" value={pointsPerRoundStr} />
-                <StatCard label="Kills / Game" value={killsPerGameStr} />
-                <StatCard label="Supercharges / Game" value={superchargesPerGameStr} />
+            {gamesPlayed === 0 ? (
+            /* ── Zero-games state ─────────────────────────────────────── */
+            <div style={{ textAlign: 'center', padding: '40px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+              <Zap size={48} color="var(--accent-cyan)" style={{ opacity: 0.7 }} />
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', letterSpacing: '0.03em' }}>
+                Finish a Game to Start Tracking Stats!
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '280px' }}>
+                Complete a 1v AI match to begin building your combat telemetry.
               </div>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-              
-              {/* Overall Match Stats */}
+          ) : (
+            /* ── Full stat grids ──────────────────────────────────────── */
+            <>
+              {/* Combat Averages */}
               <div>
                 <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Target size={18} color="#f59e0b" /> LIFETIME RECORD
+                  <Activity size={18} color="var(--accent-cyan)" /> COMBAT AVERAGES
                 </h3>
-                <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <StatRow label="Games Played (1vAI)" value={gamesPlayed} />
-                  <StatRow label="Matches Won" value={wins} color="#00ff66" />
-                  <StatRow label="Rounds Survived" value={roundsSurvived} />
-                  <StatRow label="Total Score" value={points} color="var(--accent-cyan)" />
-                  <StatRow label="Total Deaths" value={deaths} color="#ef4444" />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+                  <StatCard label="Win Rate" value={winPercentStr} />
+                  <StatCard label="Points / Death" value={kdRatioStr} />
+                  <StatCard label="Points / Round" value={pointsPerRoundStr} />
+                  <StatCard label="Kills / Game" value={killsPerGameStr} />
+                  <StatCard label="Supercharges / Game" value={superchargesPerGameStr} />
                 </div>
               </div>
 
-              {/* Combat & Eliminations */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+
+                {/* Overall Match Stats */}
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Target size={18} color="#f59e0b" /> LIFETIME RECORD
+                  </h3>
+                  <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <StatRow label="Games Played (1vAI)" value={gamesPlayed} />
+                    <StatRow label="Matches Won" value={wins} color="#00ff66" />
+                    <StatRow label="Rounds Survived" value={roundsSurvived} />
+                    <StatRow label="Total Score" value={points} color="var(--accent-cyan)" />
+                    <StatRow label="Total Deaths" value={deaths} color="#ef4444" />
+                  </div>
+                </div>
+
+                {/* Combat & Eliminations */}
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Crosshair size={18} color="#ff007f" /> ELIMINATIONS
+                  </h3>
+                  <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <StatRow label="Opponents Destroyed" value={kills} color="#ff007f" />
+                    <StatRow label="Kamikaze Attacks" value={getStat('kamikazes')} />
+                    <StatRow label="Asteroids Crushed" value={getStat('asteroids_destroyed')} />
+                    <StatRow label="Times Supercharged" value={getStat('times_supercharged')} color="#00ff66" />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Hazard Deaths */}
               <div>
                 <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Crosshair size={18} color="#ff007f" /> ELIMINATIONS
+                  <ShieldAlert size={18} color="#ef4444" /> HAZARD ANALYSIS (CAUSE OF DEATH)
                 </h3>
-                <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <StatRow label="Opponents Destroyed" value={kills} color="#ff007f" />
-                  <StatRow label="Kamikaze Attacks" value={getStat('kamikazes')} />
-                  <StatRow label="Asteroids Crushed" value={getStat('asteroids_destroyed')} />
-                  <StatRow label="Times Supercharged" value={getStat('times_supercharged')} color="#00ff66" />
+                <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px', padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                  <StatRow label="Head-on Collision" value={getStat('times_cube_crashed')} />
+                  <StatRow label="Asteroid Impact" value={getStat('times_crushed_by_asteroid')} />
+                  <StatRow label="Void Drift" value={getStat('times_drifted_into_void')} />
+                  <StatRow label="Black Hole" value={getStat('times_sucked_into_black_hole')} />
+                  <StatRow label="Energy Overload" value={getStat('times_overloaded')} />
                 </div>
               </div>
-
-            </div>
-
-            {/* Hazard Deaths */}
-            <div>
-              <h3 style={{ fontSize: '1.1rem', color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ShieldAlert size={18} color="#ef4444" /> HAZARD ANALYSIS (CAUSE OF DEATH)
-              </h3>
-              <div style={{ background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '12px', padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                <StatRow label="Head-on Collision" value={getStat('times_cube_crashed')} />
-                <StatRow label="Asteroid Impact" value={getStat('times_crushed_by_asteroid')} />
-                <StatRow label="Void Drift" value={getStat('times_drifted_into_void')} />
-                <StatRow label="Black Hole" value={getStat('times_sucked_into_black_hole')} />
-                <StatRow label="Energy Overload" value={getStat('times_overloaded')} />
-              </div>
-            </div>
-
+            </>
+          )}
           </div>
         )}
       </div>
