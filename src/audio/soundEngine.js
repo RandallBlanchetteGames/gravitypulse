@@ -383,23 +383,31 @@ class SoundEngine {
       osc.stop(t0 + dur);
     } catch (e) {}
   }
-  /* --- Victory: Cinematic Space Swell --- */
+  /* --- Victory: Deep Ambient Pad Swell --- */
   playVictory() {
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
     try {
       const t0 = this.ctx.currentTime;
-      const dur = 4.0;
+      const dur = 5.0; // Longer, gentle swell
       
-      // Triumphant space chord (C major add 9)
+      // Triumphant, open chord (C major add 9)
       const notes = [130.81, 196.00, 261.63, 329.63, 392.00, 587.33];
       
       const masterVictoryGain = this.ctx.createGain();
       masterVictoryGain.gain.setValueAtTime(0.0, t0);
-      masterVictoryGain.gain.linearRampToValueAtTime(0.5, t0 + 0.5);
+      masterVictoryGain.gain.linearRampToValueAtTime(0.4, t0 + 1.5); // Very soft attack
       masterVictoryGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
       
+      // Warm lowpass filter to remove harshness
+      const padFilter = this.ctx.createBiquadFilter();
+      padFilter.type = 'lowpass';
+      padFilter.frequency.setValueAtTime(300, t0);
+      padFilter.frequency.linearRampToValueAtTime(1000, t0 + 1.5); // Opens up slightly
+      padFilter.frequency.exponentialRampToValueAtTime(300, t0 + dur); // Closes softly
+      
+      padFilter.connect(masterVictoryGain);
       masterVictoryGain.connect(this.masterGain);
       masterVictoryGain.connect(this.delayNode);
 
@@ -407,29 +415,21 @@ class SoundEngine {
         const osc = this.ctx.createOscillator();
         const oscGain = this.ctx.createGain();
         
-        osc.type = i < 2 ? 'sawtooth' : 'sine';
+        // Pure sine waves for a deep, soft pad
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, t0);
         
-        const detune = (Math.random() - 0.5) * 10;
+        // Very gentle detuning for chorus effect without dissonance
+        const detune = (i % 2 === 0 ? 1 : -1) * 2.5; 
         osc.detune.setValueAtTime(detune, t0);
 
-        oscGain.gain.value = i < 2 ? 0.3 : 0.15;
+        oscGain.gain.value = i < 2 ? 0.25 : 0.15; // Slightly lower volume on high notes
         
-        osc.connect(oscGain).connect(masterVictoryGain);
+        osc.connect(oscGain).connect(padFilter);
         osc.start(t0);
-        osc.stop(t0 + dur);
+        osc.stop(t0 + dur + 0.1);
       });
       
-      const sub = this.ctx.createOscillator();
-      sub.type = 'sine';
-      sub.frequency.setValueAtTime(60, t0);
-      sub.frequency.exponentialRampToValueAtTime(20, t0 + 1.0);
-      const subGain = this.ctx.createGain();
-      subGain.gain.setValueAtTime(0.8, t0);
-      subGain.gain.exponentialRampToValueAtTime(0.001, t0 + 1.0);
-      sub.connect(subGain).connect(this.masterGain);
-      sub.start(t0);
-      sub.stop(t0 + 1.5);
     } catch (e) {}
   }
 }
